@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: Self
+  datasource:
+    url: jdbc:postgresql://localhost:5432/self
+    username: ${SELF_USERNAME}
+    password: ${SELF_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      format_sql: true
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
+  main:
+    allow-bean-definition-overriding: true
+    lazy-initialization: true
+
+logging:
+  level:
+    web: info
+
+jwt:
+  secret: YourSuperSecretKeyThatIsAtLeast256BitsLongAndIsRandomlyGenerated
+  expiration:
+    ms: 86400000
