@@ -14,10 +14,14 @@ spring:
     properties:
       format_sql: true
       dialect: org.hibernate.dialect.PostgreSQLDialect
-    open-in-view: false
+    open-in-view: true
   main:
     allow-bean-definition-overriding: true
     lazy-initialization: true
+
+  jackson:
+    mapper:
+      accept-case-insensitive-enums: true
 
 logging:
   level:

@@ -1,11 +1,14 @@
 package com.iamalangreen.self
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import org.springframework.http.HttpStatus
 
 data class Response(
     val status: Int = HttpStatus.OK.value(),
     val message: String = String(),
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     val data: Any? = null,
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     val error: Any? = null
 )
 

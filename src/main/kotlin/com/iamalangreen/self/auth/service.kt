@@ -4,7 +4,6 @@ import com.iamalangreen.self.auth.config.JwtService
 import com.iamalangreen.self.auth.dto.*
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -25,7 +24,7 @@ class DefaultAuthService(
     override fun authenticate(request: AuthRequest): AuthResponse {
         val token = UsernamePasswordAuthenticationToken(request.username, request.password)
         authenticationManager.authenticate(token)
-        val userDetails: UserDetails = userDetailsService.loadUserByUsername(request.username)
+        val userDetails = userDetailsService.loadUserByUsername(request.username)
         val jwtToken = jwtService.generateToken(userDetails)
         return AuthResponse(jwtToken)
     }
