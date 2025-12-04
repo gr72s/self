@@ -1,4 +1,4 @@
-package com.iamalangreen.self.rbac.config
+package com.iamalangreen.self.auth.config
 
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts

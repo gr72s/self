@@ -1,8 +1,7 @@
-package com.iamalangreen.self.rbac.config
+package com.iamalangreen.self.auth.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpMethod
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
@@ -39,10 +38,6 @@ class SecurityConfig(
                         "/swagger-resources"
                     ).permitAll()
                     .requestMatchers("/icon/**").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/api/users").hasAuthority("user:create")
-                    .requestMatchers(HttpMethod.GET, "/api/users").hasAuthority("user:read")
-                    .requestMatchers("/api/roles/**").hasAuthority("role:manage")
-                    .requestMatchers("/api/permissions/**").hasAuthority("permission:manage")
                     .anyRequest().permitAll()
             }
             .sessionManagement { session ->

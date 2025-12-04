@@ -8,7 +8,7 @@
  * @Chengdu Winring Technology Co.,Ltd.
  * all rights reserved.
  */
-package com.iamalangreen.self.rbac.dto
+package com.iamalangreen.self.auth.dto
 
 import jakarta.validation.constraints.Email
 

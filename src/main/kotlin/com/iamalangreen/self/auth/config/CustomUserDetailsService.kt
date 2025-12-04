@@ -1,6 +1,6 @@
-package com.iamalangreen.self.rbac.config
+package com.iamalangreen.self.auth.config
 
-import com.iamalangreen.self.rbac.repository.UserRepository
+import com.iamalangreen.self.auth.UserRepository
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.User
@@ -19,13 +19,6 @@ class CustomUserDetailsService(
             .orElseThrow { UsernameNotFoundException("User not found with username: $username") }
 
         val authorities: MutableSet<GrantedAuthority> = mutableSetOf()
-
-        user.roles.forEach { role ->
-            authorities.add(SimpleGrantedAuthority("ROLE_${role.name}"))
-            role.permissions.forEach { permission ->
-                authorities.add(SimpleGrantedAuthority(permission.name))
-            }
-        }
 
         return User(
             user.username,

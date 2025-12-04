@@ -1,16 +1,36 @@
-package com.iamalangreen.self.rbac.service
+package com.iamalangreen.self.auth
 
-import com.iamalangreen.self.rbac.config.JwtService
-import com.iamalangreen.self.rbac.dto.AssignRoleRequest
-import com.iamalangreen.self.rbac.dto.UserCreateRequest
-import com.iamalangreen.self.rbac.dto.UserResponse
-import com.iamalangreen.self.rbac.dto.UserUpdateRequest
-import com.iamalangreen.self.rbac.model.User
-import com.iamalangreen.self.rbac.repository.RoleRepository
-import com.iamalangreen.self.rbac.repository.UserRepository
+import com.iamalangreen.self.auth.config.JwtService
+import com.iamalangreen.self.auth.dto.*
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+
+
+interface AuthService {
+    fun authenticate(request: AuthRequest): AuthResponse
+}
+
+@Service
+class DefaultAuthService(
+    private val authenticationManager: AuthenticationManager,
+    private val userDetailsService: UserDetailsService,
+    private val jwtService: JwtService
+) : AuthService {
+
+    override fun authenticate(request: AuthRequest): AuthResponse {
+        val token = UsernamePasswordAuthenticationToken(request.username, request.password)
+        authenticationManager.authenticate(token)
+        val userDetails: UserDetails = userDetailsService.loadUserByUsername(request.username)
+        val jwtToken = jwtService.generateToken(userDetails)
+        return AuthResponse(jwtToken)
+    }
+
+}
 
 
 interface UserService {
@@ -20,14 +40,11 @@ interface UserService {
     fun getUserById(id: Long): UserResponse
     fun getUserByUsername(username: String): UserResponse
     fun updateUser(user: User, request: UserUpdateRequest): UserResponse
-    fun assignRoleToUser(userId: Long, request: AssignRoleRequest): UserResponse
-    fun removeRoleFromUser(userId: Long, request: AssignRoleRequest): UserResponse
 }
 
 @Service
 class DefaultUserService(
     private val userRepository: UserRepository,
-    private val roleRepository: RoleRepository,
     private val jwtService: JwtService,
     private val passwordEncoder: PasswordEncoder
 ) : UserService {
@@ -41,15 +58,10 @@ class DefaultUserService(
             throw RuntimeException("Email already exists: ${request.email}")
         }
 
-        val roles = request.roleNames?.mapNotNull { roleName ->
-            roleRepository.findByName(roleName).orElse(null)
-        }?.toMutableSet() ?: mutableSetOf()
-
         val user = User(
             username = request.username,
             password = passwordEncoder.encode(request.password),
             email = request.email,
-            roles = roles
         )
         val savedUser = userRepository.save(user)
         return convertToUserResponse(savedUser)
@@ -90,36 +102,11 @@ class DefaultUserService(
         return convertToUserResponse(user)
     }
 
-    @Transactional
-    override fun assignRoleToUser(userId: Long, request: AssignRoleRequest): UserResponse {
-        val user = userRepository.findById(userId)
-            .orElseThrow { RuntimeException("User not found with ID: $userId") }
-        val role = roleRepository.findByName(request.roleName)
-            .orElseThrow { RuntimeException("Role not found with name: ${request.roleName}") }
-
-        user.roles.add(role)
-        val updatedUser = userRepository.save(user)
-        return convertToUserResponse(updatedUser)
-    }
-
-    @Transactional
-    override fun removeRoleFromUser(userId: Long, request: AssignRoleRequest): UserResponse {
-        val user = userRepository.findById(userId)
-            .orElseThrow { RuntimeException("User not found with ID: $userId") }
-        val role = roleRepository.findByName(request.roleName)
-            .orElseThrow { RuntimeException("Role not found with name: ${request.roleName}") }
-
-        user.roles.remove(role)
-        val updatedUser = userRepository.save(user)
-        return convertToUserResponse(updatedUser)
-    }
-
     private fun convertToUserResponse(user: User): UserResponse {
         return UserResponse(
             id = user.id,
             username = user.username,
             email = user.email,
-            roles = user.roles.map { it.name }.toSet()
         )
     }
 }

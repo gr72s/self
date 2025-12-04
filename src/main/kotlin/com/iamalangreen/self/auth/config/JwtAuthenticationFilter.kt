@@ -1,4 +1,4 @@
-package com.iamalangreen.self.rbac.config
+package com.iamalangreen.self.auth.config
 
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
