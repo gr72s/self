@@ -12,7 +12,9 @@ abstract class SelfServerException(val statusCode: Int, val reason: String, mess
 const val UNKNOWN_ERROR_STATUS_CODE = 4000
 
 class NotFoundEntityException : SelfServerException(4001, "NotFoundEntity", "Not found entity")
-class UnsupportedIntervalException : SelfServerException(4002, "UnsupportedInterval", "Unsupported interval")
+class EntityAlreadyExistException : SelfServerException(4002, "EntityAlreadyExist", "Entity already exist")
+class UnsupportedIntervalException : SelfServerException(4003, "UnsupportedInterval", "Unsupported interval")
+class IllegalRequestArgumentException: SelfServerException(4004, "IllegalRequestArgument", "Illegal request argument")
 
 @RestControllerAdvice
 class GlobalExceptionHandler {
