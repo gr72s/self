@@ -42,21 +42,27 @@ class TagController(private val tagService: TagService) {
 
 }
 
-@Service
-class TagService(private val repository: TagRepository) {
+interface TagService {
+    fun createOrGetTag(name: String): Tag
+    fun deleteTag(id: Long)
+    fun getTags(ids: List<Long>): List<Tag>
+}
 
-    fun createOrGetTag(name: String): Tag {
+@Service
+class DefaultTagService(private val repository: TagRepository) : TagService {
+
+    override fun createOrGetTag(name: String): Tag {
         val tag = repository.findByName(name) ?: run {
             repository.save(Tag(name = name))
         }
         return tag
     }
 
-    fun deleteTag(id: Long) {
+    override fun deleteTag(id: Long) {
         repository.deleteById(id)
     }
 
-    fun getTags(ids: List<Long>): List<Tag> {
+    override fun getTags(ids: List<Long>): List<Tag> {
         return repository.findAllById(ids)
     }
 

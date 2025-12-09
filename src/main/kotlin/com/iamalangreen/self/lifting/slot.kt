@@ -53,7 +53,20 @@ data class Slot(
     var duration: Int,
     @Column
     var sequence: Int
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Slot
+
+        return id == other.id
+    }
+
+    override fun hashCode(): Int {
+        return id?.hashCode() ?: 0
+    }
+}
 
 enum class Category {
     Mobility, // Self-MyofascialRelease FoamRolling

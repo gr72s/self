@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import kotlin.jvm.optionals.getOrNull
 
 data class CreateGymRequest(
     val name: String,
@@ -47,25 +48,41 @@ class GymController(private val gymService: GymService) {
 
 }
 
-@Service
-class GymService(private val gymRepository: GymRepository) {
+interface GymService {
+    fun createGym(name: String, location: String): Gym
+    fun getAllGym(): List<Gym>
+    fun findByName(name: String): Gym?
+    fun findById(id: Long): Gym?
+    fun getById(id: Long): Gym
+}
 
-    fun createGym(name: String, location: String): Gym {
-        findGym(name) ?: throw EntityAlreadyExistException()
+@Service
+class DefaultGymService(private val gymRepository: GymRepository) : GymService {
+
+    override fun createGym(name: String, location: String): Gym {
+        findByName(name) ?: throw EntityAlreadyExistException()
         return gymRepository.save(Gym(name = name, location = location))
     }
 
-    fun getAllGym(): List<Gym> {
+    override fun getAllGym(): List<Gym> {
         return gymRepository.findAll()
     }
 
-    fun findGym(name: String): Gym? {
+    override fun findByName(name: String): Gym? {
         return gymRepository.findByName(name)
+    }
+
+    override fun findById(id: Long): Gym? {
+        return gymRepository.findById(id).getOrNull()
+    }
+
+    override fun getById(id: Long): Gym {
+        return gymRepository.findById(id).orElseThrow()
     }
 
 }
 
-interface GymRepository : JpaRepository<Gym, Int> {
+interface GymRepository : JpaRepository<Gym, Long> {
     fun findByName(name: String): Gym?
 }
 

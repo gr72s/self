@@ -1,6 +1,7 @@
 package com.iamalangreen.self.lifting
 
 import jakarta.persistence.*
+import org.springframework.stereotype.Service
 
 data class TargetResponse(
     val id: Long,
@@ -9,6 +10,18 @@ data class TargetResponse(
 
 fun Target.toResponse(): TargetResponse {
     return TargetResponse(id!!, name)
+}
+
+interface TargetService {
+    fun getById(id: Long): Target
+}
+
+@Service
+class DefaultTargetService() : TargetService {
+    override fun getById(id: Long): Target {
+        TODO("Not yet implemented")
+    }
+
 }
 
 @Entity
