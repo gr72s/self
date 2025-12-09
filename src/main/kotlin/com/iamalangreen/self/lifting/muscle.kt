@@ -11,9 +11,13 @@ data class Muscle(
     @Column
     var name: String,
     @Column
-    var function: String
+    var originName: String,
+    @Column
+    var function: String?,
+    @OneToMany(mappedBy = "muscle", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var exercises: MutableSet<Exercise> = mutableSetOf(),
 ) {
     override fun toString(): String {
-        return "Muscle(name='$name', function='$function')"
+        return "Muscle(name='$name')"
     }
 }

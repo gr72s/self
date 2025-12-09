@@ -1,5 +1,3 @@
-@file:JvmName("SlotKt")
-
 package com.iamalangreen.self.lifting
 
 import jakarta.persistence.*
@@ -41,6 +39,8 @@ data class Slot(
     @JoinColumn(name = "routine_id") // 数据库外键
     var routine: Routine? = null,
     @Column
+    var stars: Int,
+    @Column
     @Enumerated(EnumType.STRING)
     var category: Category = Category.WorkingSets,
     @Column
@@ -56,7 +56,7 @@ data class Slot(
 )
 
 enum class Category {
-    Mobility, //Self-MyofascialRelease FoamRolling
+    Mobility, // Self-MyofascialRelease FoamRolling
     WarmUp,
     Activation,
     WorkingSets,
