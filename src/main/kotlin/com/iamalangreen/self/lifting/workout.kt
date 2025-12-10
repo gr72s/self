@@ -44,7 +44,7 @@ fun Workout.toResponse(): WorkoutResponse {
         startTime,
         endTime,
         gym.toResponse(),
-        routine?.toRoutineResponse(),
+        routine?.toResponse(),
         target.map { it.toResponse() }.toSet(),
         note
     )
@@ -87,14 +87,36 @@ class WorkoutController(val workoutService: WorkoutService, val gymService: GymS
 
 }
 
+interface WorkoutService {
+    fun create(
+        startTime: LocalDateTime?,
+        gymId: Long,
+        routineId: Long?,
+        targetIds: Set<Long>,
+        note: String?
+    ): Workout
+    fun getById(id: Long): Workout
+    fun getAll(): List<Workout>
+    fun update(
+        id: Long,
+        startTime: LocalDateTime?,
+        endTime: LocalDateTime?,
+        gym: Long,
+        routine: Long?,
+        target: Set<Long>,
+        note: String?
+    ): Workout
+    fun findInProcessWorkout(): Workout
+}
+
 @Service
-class WorkoutService(
+class DefaultWorkoutService(
     private val workoutRepository: WorkoutRepository,
     private val targetService: TargetService,
     private val gymService: GymService,
     private val routineService: RoutineService
-) {
-    fun create(
+): WorkoutService {
+    override fun create(
         startTime: LocalDateTime?,
         gymId: Long,
         routineId: Long?,
@@ -108,11 +130,15 @@ class WorkoutService(
         return workout
     }
 
-    fun getAll(): List<Workout> {
+    override fun getById(id: Long): Workout {
+        return workoutRepository.findById(id).orElseThrow()
+    }
+
+    override fun getAll(): List<Workout> {
         return workoutRepository.findAll()
     }
 
-    fun update(
+    override fun update(
         id: Long,
         startTime: LocalDateTime?,
         endTime: LocalDateTime?,
@@ -137,7 +163,7 @@ class WorkoutService(
         return workoutRepository.save(workout)
     }
 
-    fun findInProcessWorkout(): Workout {
+    override fun findInProcessWorkout(): Workout {
         val workouts = getAll()
         val today = LocalDate.now(ZoneId.of("Asia/Shanghai"))
         val workout = workouts.first { it.startTime?.toLocalDate()?.equals(today) ?: false }

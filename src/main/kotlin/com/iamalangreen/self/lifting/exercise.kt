@@ -69,6 +69,7 @@ interface ExerciseService {
         supportMuscleIds: Set<Long>,
         cues: List<String>
     ): Exercise
+    fun getById(id: Long): Exercise
 }
 
 @Service
@@ -91,6 +92,10 @@ class DefaultExerciseService(
         exercise.supportMuscles.addAll(supportMuscles)
         exercise.cues.addAll(cues)
         return exerciseRepository.save(exercise)
+    }
+
+    override fun getById(id: Long): Exercise {
+        return exerciseRepository.findById(id).orElseThrow()
     }
 }
 

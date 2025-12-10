@@ -1,22 +1,40 @@
 package com.iamalangreen.self.lifting
 
 import jakarta.persistence.*
+import org.springframework.stereotype.Service
+
+data class SlotRequest(
+    val id: Long?,
+    val routineId: Long,
+    val exerciseId: Long,
+    val stars: Int,
+    val category: Category,
+    val setNumber: Int?,
+    val weight: Float?,
+    val reps: Int?,
+    val duration: Int? = 0,
+    val sequence: Int
+)
 
 data class SlotResponse(
     val id: Long,
+    val routine: RoutineResponse,
     val exercise: ExerciseResponse,
+    val stars: Int,
     val category: Category,
-    val setNumber: Int,
-    val weight: Float,
-    val reps: Int,
-    val duration: Int,
+    val setNumber: Int?,
+    val weight: Float?,
+    val reps: Int?,
+    val duration: Int?,
     val sequence: Int
 )
 
 fun Slot.toResponse(): SlotResponse {
     return SlotResponse(
         id!!,
+        routine.toResponse(),
         exercise.toResponse(),
+        stars,
         category,
         setNumber,
         weight,
@@ -24,6 +42,44 @@ fun Slot.toResponse(): SlotResponse {
         duration,
         sequence
     )
+}
+
+interface SlotService {
+    fun createSlotInRoutine(
+        routineId: Long,
+        exerciseId: Long,
+        stars: Int,
+        category: Category,
+        setNumber: Int?,
+        weight: Float?,
+        reps: Int?,
+        duration: Int?,
+        sequence: Int
+    ): Slot
+}
+
+@Service
+class DefaultSlotService(
+    private val routineService: RoutineService,
+    private val exerciseService: ExerciseService,
+) : SlotService {
+
+    override fun createSlotInRoutine(
+        routineId: Long,
+        exerciseId: Long,
+        stars: Int,
+        category: Category,
+        setNumber: Int?,
+        weight: Float?,
+        reps: Int?,
+        duration: Int?,
+        sequence: Int
+    ): Slot {
+        val routine = routineService.getById(routineId)
+        val exercise = exerciseService.getById(exerciseId)
+        return Slot(null, exercise, routine, stars, category, setNumber, weight, reps, duration, sequence)
+    }
+
 }
 
 @Entity
@@ -37,20 +93,20 @@ data class Slot(
     var exercise: Exercise,
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "routine_id") // 数据库外键
-    var routine: Routine? = null,
+    var routine: Routine,
     @Column
     var stars: Int,
     @Column
     @Enumerated(EnumType.STRING)
     var category: Category = Category.WorkingSets,
     @Column
-    var setNumber: Int,
+    var setNumber: Int?,
     @Column
-    var weight: Float,
+    var weight: Float?,
     @Column
-    var reps: Int,
+    var reps: Int?,
     @Column
-    var duration: Int,
+    var duration: Int?,
     @Column
     var sequence: Int
 ) {
@@ -69,8 +125,11 @@ data class Slot(
 }
 
 enum class Category {
-    Mobility, // Self-MyofascialRelease FoamRolling
-    WarmUp,
-    Activation,
-    WorkingSets,
+    Mobility, // Self-MyofascialRelease FoamRolling, 泡沫轴松解
+    WarmUp, // 热身
+    Activation, // 激活
+    WorkingSets, // 正式组
+    Corrective, // 纠正性训练
+    Aerobic, // 有氧
+    CoolDown // 静态拉伸
 }
