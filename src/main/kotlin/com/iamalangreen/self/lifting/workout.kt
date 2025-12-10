@@ -104,16 +104,7 @@ class WorkoutService(
         val gym = gymService.getById(gymId)
         val routine = routineId?.let { routineService.getById(routineId) }
         val targets = targetIds.map { targetService.getById(it) }.toMutableSet()
-        val workout = workoutRepository.save(
-            Workout(
-                startTime = startTime,
-                endTime = null,
-                gym = gym,
-                routine = routine,
-                target = targets,
-                note = note
-            )
-        )
+        val workout = workoutRepository.save(newWorkout(startTime, null, gym, routine, targets, note))
         return workout
     }
 
@@ -195,4 +186,22 @@ data class Workout(
         return id?.hashCode() ?: 0
     }
 
+}
+
+fun newWorkout(
+    startTime: LocalDateTime?,
+    endTime: LocalDateTime?,
+    gym: Gym,
+    routine: Routine?,
+    target: MutableSet<Target>,
+    note: String?
+): Workout {
+    return Workout(
+        startTime = startTime,
+        endTime = endTime,
+        gym = gym,
+        routine = routine,
+        target = target,
+        note = note
+    )
 }

@@ -33,3 +33,6 @@ INSERT INTO public.lifting_muscle (id, function, name, origin_name) VALUES (13, 
 INSERT INTO public.lifting_muscle (id, function, name, origin_name) VALUES (14, '稳定躯干；抗躯干旋转', '腹内斜肌', 'Internal Obliques');
 INSERT INTO public.lifting_muscle (id, function, name, origin_name) VALUES (35, '髋伸展；膝屈曲', '腘绳肌', 'Hamstrings (Hams)');
 INSERT INTO public.lifting_muscle (id, function, name, origin_name) VALUES (36, '维持脊柱中立，防止弯腰', '竖脊肌', 'Erector Spinae');
+INSERT INTO public.lifting_muscle (id, function, name, origin_name) VALUES (37, '肘屈曲、前臂旋后', '肱二头肌', 'Biceps Brachii');
+INSERT INTO public.lifting_muscle (id, function, name, origin_name) VALUES (38, '纯粹的肘屈曲', '肱肌', 'Brachialis');
+INSERT INTO public.lifting_muscle (id, function, name, origin_name) VALUES (39, '前臂中立位时的肘屈曲', '肱桡肌', 'Brachioradialis');

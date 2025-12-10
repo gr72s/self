@@ -15,8 +15,9 @@ data class ExerciseRequest(
     val id: Long?,
     val name: String,
     val originName: String,
-    val muscles: Set<Long> = setOf(),
-    val keypoint: List<String> = listOf(),
+    val description: String? = null,
+    val mainMuscles: Set<Long> = setOf(),
+    val supportMuscles: Set<Long> = setOf(),
     val cues: List<String> = listOf(),
 )
 
@@ -24,7 +25,9 @@ data class ExerciseResponse(
     val id: Long,
     val name: String,
     val originName: String,
-    val keypoint: List<String> = listOf(),
+    val description: String? = null,
+    val mainMuscles: Set<MuscleResponse> = setOf(),
+    val supportMuscles: Set<MuscleResponse> = setOf(),
     val cues: List<String> = listOf(),
 )
 
@@ -33,7 +36,9 @@ fun Exercise.toResponse(): ExerciseResponse {
         id!!,
         name,
         originName,
-        keypoint,
+        description,
+        mainMuscles.map { it.toResponse() }.toSet(),
+        supportMuscles.map { it.toResponse() }.toSet(),
         cues
     )
 }
@@ -46,8 +51,9 @@ class ExerciseController(val exerciseService: ExerciseService) {
         val exercise = exerciseService.create(
             request.name,
             request.originName,
-            request.muscles,
-            request.keypoint,
+            request.description,
+            request.mainMuscles,
+            request.supportMuscles,
             request.cues
         )
         return success(exercise.toResponse())
@@ -58,8 +64,9 @@ interface ExerciseService {
     fun create(
         name: String,
         originName: String,
-        muscleIds: Set<Long>,
-        keypoint: List<String>,
+        description: String?,
+        mainMuscleIds: Set<Long>,
+        supportMuscleIds: Set<Long>,
         cues: List<String>
     ): Exercise
 }
@@ -72,14 +79,16 @@ class DefaultExerciseService(
     override fun create(
         name: String,
         originName: String,
-        muscleIds: Set<Long>,
-        keypoint: List<String>,
+        description: String?,
+        mainMuscleIds: Set<Long>,
+        supportMuscleIds: Set<Long>,
         cues: List<String>
     ): Exercise {
-        val muscles = muscleIds.map { muscleService.getById(it) }
+        val mainMuscles = mainMuscleIds.map { muscleService.getById(it) }
+        val supportMuscles = supportMuscleIds.map { muscleService.getById(it) }
         val exercise = Exercise(name = name, originName = originName)
-        exercise.muscles.addAll(muscles)
-        exercise.keypoint.addAll(keypoint)
+        exercise.mainMuscles.addAll(mainMuscles)
+        exercise.supportMuscles.addAll(supportMuscles)
         exercise.cues.addAll(cues)
         return exerciseRepository.save(exercise)
     }
@@ -97,23 +106,29 @@ data class Exercise(
     var name: String,
     @Column
     var originName: String,
+    @Column
+    var description: String? = null,
     @ManyToMany
     @JoinTable(
-        name = "lifting_muscle_exercise",
+        name = "lifting_main_muscle_exercise",
         joinColumns = [JoinColumn(name = "exercise_id")],
         inverseJoinColumns = [JoinColumn(name = "muscle_id")]
     )
-    var muscles: MutableSet<Muscle> = mutableSetOf(),
-    @Type(ListArrayType::class)
-    @Column(name = "keypoint", columnDefinition = "text[]")
-    var keypoint: MutableList<String> = mutableListOf(),
+    var mainMuscles: MutableSet<Muscle> = mutableSetOf(),
+    @ManyToMany
+    @JoinTable(
+        name = "lifting_support_muscle_exercise",
+        joinColumns = [JoinColumn(name = "exercise_id")],
+        inverseJoinColumns = [JoinColumn(name = "muscle_id")]
+    )
+    var supportMuscles: MutableSet<Muscle> = mutableSetOf(),
     @Type(ListArrayType::class)
     @Column(name = "cues", columnDefinition = "text[]")
     var cues: MutableList<String> = mutableListOf(),
 ) {
 
     override fun toString(): String {
-        return "Exercise(name='$name', keypoint=$keypoint, cues=$cues)"
+        return "Exercise(name='$name', description=$description)"
     }
 
     override fun equals(other: Any?): Boolean {
