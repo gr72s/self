@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-    <!-- 控制台输出 -->
     <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>
@@ -10,60 +9,46 @@
         </encoder>
     </appender>
 
-    <!-- 普通日志文件输出，按周滚动，每周压缩 -->
     <appender name="File" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!-- 日志文件路径 -->
         <file>logs/application.log</file>
         
-        <!-- 滚动策略：按周滚动 -->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- 归档日志文件路径，%d{yyyy-ww} 表示按周归档 -->
             <fileNamePattern>logs/application.%d{yyyy-ww}.gz</fileNamePattern>
-            <!-- 保留30天的日志 -->
             <maxHistory>30</maxHistory>
-            <!-- 总日志大小限制，超过后删除旧日志 -->
             <totalSizeCap>1GB</totalSizeCap>
         </rollingPolicy>
         
-        <!-- 编码器 -->
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <!-- 警告和异常日志文件输出，按周滚动，每周压缩 -->
     <appender name="WarnErrorFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!-- 日志文件路径 -->
         <file>logs/warn-error.log</file>
         
-        <!-- 过滤器：只记录WARN及以上级别的日志 -->
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>WARN</level>
         </filter>
         
-        <!-- 滚动策略：按周滚动 -->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- 归档日志文件路径，%d{yyyy-ww} 表示按周归档 -->
             <fileNamePattern>logs/warn-error.%d{yyyy-ww}.gz</fileNamePattern>
-            <!-- 保留30天的日志 -->
             <maxHistory>30</maxHistory>
-            <!-- 总日志大小限制，超过后删除旧日志 -->
             <totalSizeCap>1GB</totalSizeCap>
         </rollingPolicy>
         
-        <!-- 编码器 -->
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n%throwable</pattern>
         </encoder>
     </appender>
 
-    <!-- 根日志配置，输出到控制台和普通日志文件 -->
-    <root level="info">
+    <root level="debug">
         <appender-ref ref="Console" />
+    </root>
+
+    <root level="info">
         <appender-ref ref="File" />
     </root>
 
-    <!-- 所有日志输出到警告和异常日志文件 -->
     <root level="WARN">
         <appender-ref ref="WarnErrorFile" />
     </root>

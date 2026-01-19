@@ -38,7 +38,7 @@ class DefaultAuthService(
             // 获取管理员用户（假设username为admin的用户是管理员）
             val adminUser = userRepository.findByUsername("admin")
                 .orElseThrow { RuntimeException("Admin user not found") }
-            
+
             // 创建新设备
             val newDevice = Device(
                 deviceId = request.deviceId,
@@ -47,11 +47,11 @@ class DefaultAuthService(
             )
             deviceRepository.save(newDevice)
         }
-        
+
         // 更新设备的最后使用时间
         device.lastUsedAt = java.time.LocalDateTime.now()
         deviceRepository.save(device)
-        
+
         // 为设备关联的用户生成JWT令牌
         val userDetails = org.springframework.security.core.userdetails.User(
             device.user.username,
