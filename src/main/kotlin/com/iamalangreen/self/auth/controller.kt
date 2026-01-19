@@ -17,6 +17,12 @@ class AuthController(private val authService: AuthService) {
         return ResponseEntity.ok(authResponse)
     }
 
+    @PostMapping("/authenticate-device")
+    fun authenticateDevice(@RequestBody request: DeviceAuthRequest): ResponseEntity<AuthResponse> {
+        val authResponse = authService.authenticateDevice(request)
+        return ResponseEntity.ok(authResponse)
+    }
+
 }
 
 @RestController

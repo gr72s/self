@@ -1,0 +1,99 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ master, main ]
+  
+jobs:
+  deploy:
+    name: Deploy to Server
+    runs-on: ubuntu-latest
+    
+    steps:
+      # 步骤1: 检查代码
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      # 步骤2: 设置SSH密钥
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SERVER_SSH_KEY }}
+          
+      # 步骤3: 连接到服务器并执行命令
+      - name: Deploy to Server
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
+            # 进入项目目录
+            cd ${{ secrets.PROJECT_PATH }}
+            
+            # 拉取最新代码
+            git pull origin ${{ github.ref_name }}
+            
+            # 执行测试
+            echo "Running tests..."
+            ./gradlew test
+            
+            # 检查测试结果
+            if [ $? -ne 0 ]; then
+              echo "Tests failed! Aborting deployment."
+              exit 1
+            fi
+            
+            # 编译项目
+            echo "Building project..."
+            ./gradlew build
+            
+            # 检查编译结果
+            if [ $? -ne 0 ]; then
+              echo "Build failed! Aborting deployment."
+              exit 1
+            fi
+            
+            # 停止旧服务（如果存在）
+            echo "Stopping old service..."
+            pkill -f "java -jar" || true
+            
+            # 启动新服务
+            echo "Starting new service..."
+            nohup java -jar build/libs/self-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
+            
+            echo "Deployment completed successfully!"
+          EOF
+        env:
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          PROJECT_PATH: ${{ secrets.PROJECT_PATH }}
+          
+      # 步骤4: 发送部署通知
+      - name: Send Deployment Email
+        if: success()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          # SMTP服务器配置
+          server_address: ${{ secrets.SMTP_SERVER }}
+          server_port: ${{ secrets.SMTP_PORT }}
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          
+          # 邮件内容
+          subject: '✅ Deployment Successful - ${{ github.repository }}'
+          body: |
+            Hello,
+            
+            The deployment of ${{ github.repository }} to ${{ secrets.SERVER_HOST }} has been completed successfully!
+            
+            Details:
+            - Branch: ${{ github.ref_name }}
+            - Commit: ${{ github.sha }}
+            - Committer: ${{ github.actor }}
+            - Deployed at: ${{ github.event.head_commit.timestamp }}
+            
+            The service is now running on ${{ secrets.SERVER_HOST }}.
+            
+            Regards,
+            CI/CD Pipeline
+          
+          # 邮件地址
+          to: ${{ secrets.EMAIL_RECIPIENTS }}
+          from: CI/CD Pipeline <${{ secrets.SMTP_USERNAME }}>

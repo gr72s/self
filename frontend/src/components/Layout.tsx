@@ -1,6 +1,13 @@
 import React from 'react';
 import { AppBar, Toolbar, Typography, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Box } from '@mui/material';
-import { FitnessCenter as FitnessCenterIcon, CalendarToday as CalendarIcon, Settings as SettingsIcon, Home as HomeIcon } from '@mui/icons-material';
+import { 
+  FitnessCenter as FitnessCenterIcon, 
+  CalendarToday as CalendarIcon, 
+  Settings as SettingsIcon, 
+  Home as HomeIcon,
+  SportsHandball as ExerciseIcon,
+  LocationOn as LocationIcon
+} from '@mui/icons-material';
 import { Link, Outlet } from 'react-router-dom';
 
 const Layout: React.FC = () => {
@@ -49,6 +56,22 @@ const Layout: React.FC = () => {
                   <FitnessCenterIcon />
                 </ListItemIcon>
                 <ListItemText primary="训练计划" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton component={Link} to="/exercises">
+                <ListItemIcon>
+                  <ExerciseIcon />
+                </ListItemIcon>
+                <ListItemText primary="动作管理" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton component={Link} to="/gyms">
+                <ListItemIcon>
+                  <LocationIcon />
+                </ListItemIcon>
+                <ListItemText primary="健身场所" />
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding>

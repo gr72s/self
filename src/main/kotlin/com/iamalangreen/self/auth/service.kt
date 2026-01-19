@@ -12,19 +12,52 @@ import org.springframework.transaction.annotation.Transactional
 
 interface AuthService {
     fun authenticate(request: AuthRequest): AuthResponse
+    fun authenticateDevice(request: DeviceAuthRequest): AuthResponse
 }
 
 @Service
 class DefaultAuthService(
     private val authenticationManager: AuthenticationManager,
     private val userDetailsService: UserDetailsService,
-    private val jwtService: JwtService
+    private val jwtService: JwtService,
+    private val deviceRepository: DeviceRepository,
+    private val userRepository: UserRepository
 ) : AuthService {
 
     override fun authenticate(request: AuthRequest): AuthResponse {
         val token = UsernamePasswordAuthenticationToken(request.username, request.password)
         authenticationManager.authenticate(token)
         val userDetails = userDetailsService.loadUserByUsername(request.username)
+        val jwtToken = jwtService.generateToken(userDetails)
+        return AuthResponse(jwtToken)
+    }
+
+    override fun authenticateDevice(request: DeviceAuthRequest): AuthResponse {
+        // 查找设备，如果不存在则创建新设备并关联到管理员用户
+        val device = deviceRepository.findByDeviceId(request.deviceId).orElseGet {
+            // 获取管理员用户（假设username为admin的用户是管理员）
+            val adminUser = userRepository.findByUsername("admin")
+                .orElseThrow { RuntimeException("Admin user not found") }
+            
+            // 创建新设备
+            val newDevice = Device(
+                deviceId = request.deviceId,
+                deviceInfo = request.deviceInfo,
+                user = adminUser
+            )
+            deviceRepository.save(newDevice)
+        }
+        
+        // 更新设备的最后使用时间
+        device.lastUsedAt = java.time.LocalDateTime.now()
+        deviceRepository.save(device)
+        
+        // 为设备关联的用户生成JWT令牌
+        val userDetails = org.springframework.security.core.userdetails.User(
+            device.user.username,
+            device.user.password,
+            emptyList()
+        )
         val jwtToken = jwtService.generateToken(userDetails)
         return AuthResponse(jwtToken)
     }
