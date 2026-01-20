@@ -32,19 +32,19 @@ import {
   Save as SaveIcon,
   Cancel as CancelIcon
 } from '@mui/icons-material';
-import { exerciseApi } from '@/services/api';
-import type { ExerciseResponse } from '@/types';
+import { muscleApi } from '@/services/api';
+import type { MuscleResponse } from '@/types';
 import { useModuleState } from '@/context/AdminStateContext';
 
-interface Exercise extends ExerciseResponse {
+interface Muscle extends MuscleResponse {
   isNew?: boolean;
 }
 
-const ExercisePage: React.FC = () => {
-  const { state, dispatch } = useModuleState('exercises');
+const MusclePage: React.FC = () => {
+  const { state, dispatch } = useModuleState('muscles');
   
   const {
-    data: exercises,
+    data: muscles,
     loading,
     error,
     searchTerm,
@@ -52,87 +52,79 @@ const ExercisePage: React.FC = () => {
     rowsPerPage,
     sortConfig,
     deleteDialogOpen,
-    itemToDelete: exerciseToDelete,
+    itemToDelete: muscleToDelete,
     editingId
   } = state;
 
-  // 获取所有动作数据
+  // 获取所有肌肉数据
   useEffect(() => {
-    fetchExercises();
+    fetchMuscles();
   }, []);
 
-  const fetchExercises = async () => {
+  const fetchMuscles = async () => {
     dispatch({ type: 'SET_LOADING', payload: true });
     dispatch({ type: 'SET_ERROR', payload: null });
     try {
-      const response = await exerciseApi.getAll();
+      const response = await muscleApi.getAll();
       if (response.status === 200 && response.data.success) {
         dispatch({ type: 'SET_DATA', payload: response.data.data });
       }
     } catch (err) {
-      dispatch({ type: 'SET_ERROR', payload: '获取动作列表失败' });
-      console.error('获取动作列表失败:', err);
+      dispatch({ type: 'SET_ERROR', payload: '获取肌肉列表失败' });
+      console.error('获取肌肉列表失败:', err);
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
     }
   };
 
-  // 添加新动作行
+  // 添加新肌肉行
   const handleAddNew = () => {
-    const newExercise: Exercise = {
+    const newMuscle: Muscle = {
       id: Date.now(),
       name: '',
-      originName: '',
       description: '',
-      mainMuscles: new Set(),
-      supportMuscles: new Set(),
-      cues: [],
       isNew: true
     };
-    dispatch({ type: 'ADD_ITEM', payload: newExercise });
-    dispatch({ type: 'SET_EDITING_ID', payload: newExercise.id });
+    dispatch({ type: 'ADD_ITEM', payload: newMuscle });
+    dispatch({ type: 'SET_EDITING_ID', payload: newMuscle.id });
   };
 
-  // 保存新动作
-  const handleSave = async (exercise: Exercise) => {
-    if (!exercise.name.trim() || !exercise.originName.trim()) {
-      dispatch({ type: 'SET_ERROR', payload: '动作名称和原始名称不能为空' });
+  // 保存新肌肉
+  const handleSave = async (muscle: Muscle) => {
+    if (!muscle.name.trim()) {
+      dispatch({ type: 'SET_ERROR', payload: '肌肉名称不能为空' });
       return;
     }
 
     dispatch({ type: 'SET_LOADING', payload: true });
     dispatch({ type: 'SET_ERROR', payload: null });
     try {
-      const response = await exerciseApi.create({
-        name: exercise.name,
-        originName: exercise.originName,
-        description: exercise.description,
-        mainMuscles: Array.from(exercise.mainMuscles).map(m => m.id),
-        supportMuscles: Array.from(exercise.supportMuscles).map(m => m.id),
-        cues: exercise.cues
+      const response = await muscleApi.create({
+        name: muscle.name,
+        description: muscle.description
       });
       if (response.status === 200 && response.data.success) {
-        await fetchExercises();
+        await fetchMuscles();
         dispatch({ type: 'SET_EDITING_ID', payload: null });
       }
     } catch (err) {
-      dispatch({ type: 'SET_ERROR', payload: '保存动作失败' });
-      console.error('保存动作失败:', err);
+      dispatch({ type: 'SET_ERROR', payload: '保存肌肉失败' });
+      console.error('保存肌肉失败:', err);
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
     }
   };
 
   // 取消编辑
-  const handleCancel = (exercise: Exercise) => {
-    if (exercise.isNew) {
-      dispatch({ type: 'DELETE_ITEM', payload: exercise.id });
+  const handleCancel = (muscle: Muscle) => {
+    if (muscle.isNew) {
+      dispatch({ type: 'DELETE_ITEM', payload: muscle.id });
     }
     dispatch({ type: 'SET_EDITING_ID', payload: null });
   };
 
   // 处理输入变化
-  const handleInputChange = (id: number, field: keyof Exercise, value: string) => {
+  const handleInputChange = (id: number, field: keyof Muscle, value: string) => {
     dispatch({ 
       type: 'UPDATE_ITEM', 
       payload: { id, data: { [field]: value } } 
@@ -147,20 +139,20 @@ const ExercisePage: React.FC = () => {
 
   // 确认删除
   const handleDeleteConfirm = async () => {
-    if (exerciseToDelete === null) return;
+    if (muscleToDelete === null) return;
 
     dispatch({ type: 'SET_LOADING', payload: true });
     dispatch({ type: 'SET_ERROR', payload: null });
     try {
-      const response = await exerciseApi.delete(exerciseToDelete);
+      const response = await muscleApi.delete(muscleToDelete);
       if (response.status === 200 && response.data.success) {
-        dispatch({ type: 'DELETE_ITEM', payload: exerciseToDelete });
+        dispatch({ type: 'DELETE_ITEM', payload: muscleToDelete });
         dispatch({ type: 'SET_DELETE_DIALOG_OPEN', payload: false });
         dispatch({ type: 'SET_ITEM_TO_DELETE', payload: null });
       }
     } catch (err) {
-      dispatch({ type: 'SET_ERROR', payload: '删除动作失败' });
-      console.error('删除动作失败:', err);
+      dispatch({ type: 'SET_ERROR', payload: '删除肌肉失败' });
+      console.error('删除肌肉失败:', err);
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
     }
@@ -173,7 +165,7 @@ const ExercisePage: React.FC = () => {
   };
 
   // 排序功能
-  const handleSort = (key: keyof Exercise) => {
+  const handleSort = (key: keyof Muscle) => {
     let direction: 'asc' | 'desc' = 'asc';
     if (sortConfig.key === key && sortConfig.direction === 'asc') {
       direction = 'desc';
@@ -182,14 +174,13 @@ const ExercisePage: React.FC = () => {
   };
 
   // 过滤功能
-  const filteredExercises = exercises.filter(exercise =>
-    exercise.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    exercise.originName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (exercise.description && exercise.description.toLowerCase().includes(searchTerm.toLowerCase()))
+  const filteredMuscles = muscles.filter(muscle =>
+    muscle.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (muscle.description && muscle.description.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   // 排序逻辑
-  const sortedExercises = [...filteredExercises].sort((a, b) => {
+  const sortedMuscles = [...filteredMuscles].sort((a, b) => {
     const aValue = a[sortConfig.key] ?? '';
     const bValue = b[sortConfig.key] ?? '';
     
@@ -203,7 +194,7 @@ const ExercisePage: React.FC = () => {
   });
 
   // 分页逻辑
-  const paginatedExercises = sortedExercises.slice(
+  const paginatedMuscles = sortedMuscles.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
@@ -222,7 +213,7 @@ const ExercisePage: React.FC = () => {
     <Box sx={{ p: 3 }}>
       <Box sx={{ mb: 3 }}>
         <Typography variant="h4" component="h1">
-          动作管理
+          肌肉信息管理
         </Typography>
       </Box>
 
@@ -237,7 +228,7 @@ const ExercisePage: React.FC = () => {
         <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <TextField
             variant="outlined"
-            placeholder="搜索动作..."
+            placeholder="搜索肌肉..."
             size="small"
             value={searchTerm}
             onChange={(e) => dispatch({ type: 'SET_SEARCH_TERM', payload: e.target.value })}
@@ -256,12 +247,12 @@ const ExercisePage: React.FC = () => {
             onClick={handleAddNew}
             disabled={loading}
           >
-            新增动作
+            新增肌肉
           </Button>
         </Toolbar>
       </Paper>
 
-      {/* 动作表格 */}
+      {/* 肌肉表格 */}
       <Paper>
         <TableContainer>
           <Table>
@@ -282,16 +273,7 @@ const ExercisePage: React.FC = () => {
                     direction={sortConfig.direction}
                     onClick={() => handleSort('name')}
                   >
-                    动作名称
-                  </TableSortLabel>
-                </TableCell>
-                <TableCell>
-                  <TableSortLabel
-                    active={sortConfig.key === 'originName'}
-                    direction={sortConfig.direction}
-                    onClick={() => handleSort('originName')}
-                  >
-                    原始名称
+                    肌肉名称
                   </TableSortLabel>
                 </TableCell>
                 <TableCell>
@@ -300,111 +282,84 @@ const ExercisePage: React.FC = () => {
                     direction={sortConfig.direction}
                     onClick={() => handleSort('description')}
                   >
-                    描述
+                    功能描述
                   </TableSortLabel>
                 </TableCell>
-                <TableCell>主要肌肉</TableCell>
-                <TableCell>辅助肌肉</TableCell>
-                <TableCell>提示</TableCell>
                 <TableCell sx={{ textAlign: 'right' }}>操作</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {loading && exercises.length === 0 ? (
+              {loading && muscles.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={8} sx={{ textAlign: 'center', py: 4 }}>
+                  <TableCell colSpan={4} sx={{ textAlign: 'center', py: 4 }}>
                     <CircularProgress />
                   </TableCell>
                 </TableRow>
-              ) : paginatedExercises.length === 0 ? (
+              ) : paginatedMuscles.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={8} sx={{ textAlign: 'center', py: 4 }}>
-                    暂无动作数据
+                  <TableCell colSpan={4} sx={{ textAlign: 'center', py: 4 }}>
+                    暂无肌肉数据
                   </TableCell>
                 </TableRow>
               ) : (
-                paginatedExercises.map((exercise) => (
-                  <TableRow key={exercise.id} hover>
-                    <TableCell>{exercise.id}</TableCell>
+                paginatedMuscles.map((muscle) => (
+                  <TableRow key={muscle.id} hover>
+                    <TableCell>{muscle.id}</TableCell>
                     <TableCell>
-                      {editingId === exercise.id ? (
+                      {editingId === muscle.id ? (
                         <TextField
                           fullWidth
-                          value={exercise.name}
-                          onChange={(e) => handleInputChange(exercise.id, 'name', e.target.value)}
-                          error={!exercise.name.trim()}
-                          helperText={!exercise.name.trim() ? '动作名称不能为空' : ''}
+                          value={muscle.name}
+                          onChange={(e) => handleInputChange(muscle.id, 'name', e.target.value)}
+                          error={!muscle.name.trim()}
+                          helperText={!muscle.name.trim() ? '肌肉名称不能为空' : ''}
                           size="small"
                           variant="outlined"
                           autoFocus
                         />
                       ) : (
-                        exercise.name
+                        muscle.name
                       )}
                     </TableCell>
                     <TableCell>
-                      {editingId === exercise.id ? (
+                      {editingId === muscle.id ? (
                         <TextField
                           fullWidth
-                          value={exercise.originName}
-                          onChange={(e) => handleInputChange(exercise.id, 'originName', e.target.value)}
-                          error={!exercise.originName.trim()}
-                          helperText={!exercise.originName.trim() ? '原始名称不能为空' : ''}
-                          size="small"
-                          variant="outlined"
-                        />
-                      ) : (
-                        exercise.originName
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {editingId === exercise.id ? (
-                        <TextField
-                          fullWidth
-                          value={exercise.description || ''}
-                          onChange={(e) => handleInputChange(exercise.id, 'description', e.target.value)}
+                          value={muscle.description || ''}
+                          onChange={(e) => handleInputChange(muscle.id, 'description', e.target.value)}
                           size="small"
                           variant="outlined"
                           multiline
                           maxRows={2}
                         />
                       ) : (
-                        exercise.description || '-' 
+                        muscle.description || '-' 
                       )}
                     </TableCell>
-                    <TableCell>
-                      {Array.from(exercise.mainMuscles).map(muscle => muscle.name).join(', ')}
-                    </TableCell>
-                    <TableCell>
-                      {Array.from(exercise.supportMuscles).map(muscle => muscle.name).join(', ')}
-                    </TableCell>
-                    <TableCell>
-                      {exercise.cues.join(', ')}
-                    </TableCell>
                     <TableCell sx={{ textAlign: 'right' }}>
-                      {editingId === exercise.id ? (
+                      {editingId === muscle.id ? (
                         <>
                           <Tooltip title="保存">
                             <IconButton
-                              onClick={() => handleSave(exercise)}
-                              disabled={!exercise.name.trim() || !exercise.originName.trim()}
+                              onClick={() => handleSave(muscle)}
+                              disabled={!muscle.name.trim()}
                               color="success"
                             >
                               <SaveIcon />
                             </IconButton>
                           </Tooltip>
                           <Tooltip title="取消">
-                            <IconButton onClick={() => handleCancel(exercise)} color="error">
+                            <IconButton onClick={() => handleCancel(muscle)} color="error">
                               <CancelIcon />
                             </IconButton>
                           </Tooltip>
                         </>
                       ) : (
                         <>
-                          {!exercise.isNew && (
+                          {!muscle.isNew && (
                             <Tooltip title="删除">
                               <IconButton
-                                onClick={() => handleDeleteClick(exercise.id)}
+                                onClick={() => handleDeleteClick(muscle.id)}
                                 color="error"
                                 disabled={loading}
                               >
@@ -425,7 +380,7 @@ const ExercisePage: React.FC = () => {
         {/* 分页控件 */}
         <TablePagination
           component="div"
-          count={filteredExercises.length}
+          count={filteredMuscles.length}
           page={page}
           onPageChange={handleChangePage}
           rowsPerPage={rowsPerPage}
@@ -448,7 +403,7 @@ const ExercisePage: React.FC = () => {
         <DialogTitle id="delete-dialog-title">确认删除</DialogTitle>
         <DialogContent>
           <DialogContentText id="delete-dialog-description">
-            您确定要删除这条动作记录吗？此操作不可恢复。
+            您确定要删除这条肌肉记录吗？此操作不可恢复。
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -469,4 +424,4 @@ const ExercisePage: React.FC = () => {
   );
 };
 
-export default ExercisePage;
+export default MusclePage;

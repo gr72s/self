@@ -6,7 +6,8 @@ import {
   Settings as SettingsIcon, 
   Home as HomeIcon,
   SportsHandball as ExerciseIcon,
-  LocationOn as LocationIcon
+  LocationOn as LocationIcon,
+  Accessibility as MuscleIcon
 } from '@mui/icons-material';
 import { Link, Outlet } from 'react-router-dom';
 
@@ -72,6 +73,14 @@ const Layout: React.FC = () => {
                   <LocationIcon />
                 </ListItemIcon>
                 <ListItemText primary="健身场所" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton component={Link} to="/muscles">
+                <ListItemIcon>
+                  <MuscleIcon />
+                </ListItemIcon>
+                <ListItemText primary="肌肉管理" />
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding>

@@ -70,7 +70,9 @@ export const exerciseApi = {
   // 获取所有动作
   getAll: () => liftingApi.get<Response<unknown>>('/exercise'),
   // 获取动作详情
-  getById: (id: string) => liftingApi.get<Response<unknown>>(`/exercise/${id}`)
+  getById: (id: string) => liftingApi.get<Response<unknown>>(`/exercise/${id}`),
+  // 删除动作
+  delete: (id: number) => liftingApi.delete<Response<unknown>>(`/exercise/${id}`)
 };
 
 // 健身场所相关API
@@ -78,7 +80,19 @@ export const gymApi = {
   // 创建健身场所
   create: (data: unknown) => liftingApi.post<Response<unknown>>('/gym', data),
   // 获取所有健身场所
-  getAll: () => liftingApi.get<Response<unknown>>('/gym')
+  getAll: () => liftingApi.get<Response<unknown>>('/gym'),
+  // 删除健身场所
+  delete: (id: number) => liftingApi.delete<Response<unknown>>(`/gym/${id}`)
+};
+
+// 肌肉相关API
+export const muscleApi = {
+  // 创建肌肉
+  create: (data: unknown) => liftingApi.post<Response<unknown>>('/muscle', data),
+  // 获取所有肌肉
+  getAll: () => liftingApi.get<Response<unknown>>('/muscle'),
+  // 删除肌肉
+  delete: (id: number) => liftingApi.delete<Response<unknown>>(`/muscle/${id}`)
 };
 
 // 登录相关API

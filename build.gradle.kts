@@ -48,6 +48,11 @@ dependencies {
     implementation(libs.jjwt.api)
     implementation(libs.jjwt.impl)
     implementation(libs.jjwt.jackson)
+    
+    // Testcontainers dependencies for integration testing
+    testImplementation("org.testcontainers:testcontainers:1.20.3")
+    testImplementation("org.testcontainers:postgresql:1.20.3")
+    testImplementation("org.testcontainers:junit-jupiter:1.20.3")
 }
 
 tasks {
