@@ -129,11 +129,10 @@ class RoutineControllerIntegrationTest : TestConfig() {
                 note = "今天的训练"
             )
         )
-        val muscle = muscleRepository.save(Muscle(name = "胸大肌", originName = "Pectoralis Major", function = "胸肌"))
+        val muscle = muscleRepository.save(Muscle(name = "胸大肌", description = "胸肌"))
         val exercise = exerciseRepository.save(
             Exercise(
                 name = "平板卧推",
-                originName = "Barbell Bench Press",
                 description = "胸肌训练动作",
                 mainMuscles = mutableSetOf(muscle),
                 supportMuscles = mutableSetOf(),

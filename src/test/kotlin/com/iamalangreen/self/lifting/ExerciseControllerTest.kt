@@ -27,7 +27,6 @@ class ExerciseControllerTest {
         val exerciseRequest = ExerciseRequest(
             null,
             "测试动作",
-            "Test Exercise",
             "这是一个测试动作",
             emptySet(),
             emptySet(),
@@ -37,7 +36,6 @@ class ExerciseControllerTest {
         val exercise = Exercise(
             id = 1L,
             name = "测试动作",
-            originName = "Test Exercise",
             description = "这是一个测试动作"
         )
         
@@ -46,7 +44,6 @@ class ExerciseControllerTest {
         
         `when`(exerciseService.create(
             exerciseRequest.name,
-            exerciseRequest.originName,
             exerciseRequest.description,
             exerciseRequest.mainMuscles,
             exerciseRequest.supportMuscles,

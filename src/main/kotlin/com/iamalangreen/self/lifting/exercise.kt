@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController
 data class ExerciseRequest(
     val id: Long?,
     val name: String,
-    val originName: String,
     val description: String? = null,
     val mainMuscles: Set<Long> = setOf(),
     val supportMuscles: Set<Long> = setOf(),
@@ -24,7 +23,6 @@ data class ExerciseRequest(
 data class ExerciseResponse(
     val id: Long,
     val name: String,
-    val originName: String,
     val description: String? = null,
     val mainMuscles: Set<MuscleResponse> = setOf(),
     val supportMuscles: Set<MuscleResponse> = setOf(),
@@ -35,7 +33,6 @@ fun Exercise.toResponse(): ExerciseResponse {
     return ExerciseResponse(
         id!!,
         name,
-        originName,
         description,
         mainMuscles.map { it.toResponse() }.toSet(),
         supportMuscles.map { it.toResponse() }.toSet(),
@@ -50,7 +47,6 @@ class ExerciseController(val exerciseService: ExerciseService) {
     fun createExercise(request: ExerciseRequest): Response {
         val exercise = exerciseService.create(
             request.name,
-            request.originName,
             request.description,
             request.mainMuscles,
             request.supportMuscles,
@@ -63,7 +59,6 @@ class ExerciseController(val exerciseService: ExerciseService) {
 interface ExerciseService {
     fun create(
         name: String,
-        originName: String,
         description: String?,
         mainMuscleIds: Set<Long>,
         supportMuscleIds: Set<Long>,
@@ -79,7 +74,6 @@ class DefaultExerciseService(
 ) : ExerciseService {
     override fun create(
         name: String,
-        originName: String,
         description: String?,
         mainMuscleIds: Set<Long>,
         supportMuscleIds: Set<Long>,
@@ -87,7 +81,8 @@ class DefaultExerciseService(
     ): Exercise {
         val mainMuscles = mainMuscleIds.map { muscleService.getById(it) }
         val supportMuscles = supportMuscleIds.map { muscleService.getById(it) }
-        val exercise = Exercise(name = name, originName = originName)
+        val exercise = Exercise(name = name)
+        exercise.description = description
         exercise.mainMuscles.addAll(mainMuscles)
         exercise.supportMuscles.addAll(supportMuscles)
         exercise.cues.addAll(cues)
@@ -109,8 +104,6 @@ data class Exercise(
     val id: Long? = null,
     @Column
     var name: String,
-    @Column
-    var originName: String,
     @Column
     var description: String? = null,
     @ManyToMany

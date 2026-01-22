@@ -197,7 +197,7 @@ data class Routine(
     var workout: Workout? = null,
     @ManyToMany(cascade = [CascadeType.PERSIST, CascadeType.MERGE])
     @JoinTable(
-        name = "lifting_target",
+        name = "lifting_routine_target",
         joinColumns = [JoinColumn(name = "routine_id")],
         inverseJoinColumns = [JoinColumn(name = "target_id")]
     )

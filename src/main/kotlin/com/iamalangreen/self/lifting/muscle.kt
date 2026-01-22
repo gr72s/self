@@ -7,16 +7,14 @@ import org.springframework.stereotype.Service
 data class MuscleResponse(
     val id: Long,
     val name: String,
-    val originName: String,
-    val function: String
+    val description: String
 )
 
 fun Muscle.toResponse(): MuscleResponse {
     return MuscleResponse(
         id!!,
         name,
-        originName,
-        function
+        description
     )
 }
 
@@ -42,16 +40,14 @@ data class Muscle(
     @Column
     var name: String,
     @Column
-    var originName: String,
-    @Column
-    var function: String,
+    var description: String,
     @ManyToMany(mappedBy = "mainMuscles")
     var exercisesAsMain: MutableSet<Exercise> = mutableSetOf(),
     @ManyToMany(mappedBy = "supportMuscles")
     var exercisesAsSupport: MutableSet<Exercise> = mutableSetOf()
 ) {
     override fun toString(): String {
-        return "Muscle(name='$name', originName='$originName', function='$function')"
+        return "Muscle(name='$name', description='$description')"
     }
 
     override fun equals(other: Any?): Boolean {

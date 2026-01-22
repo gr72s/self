@@ -40,14 +40,13 @@ class ExerciseControllerIntegrationTest : TestConfig() {
     @Test
     fun `createExercise should create a new exercise with main muscles`() {
         // 创建测试用的肌肉
-        val muscle1 = muscleRepository.save(Muscle(name = "胸大肌", originName = "Pectoralis Major", function = "胸肌主要发力"))
-        val muscle2 = muscleRepository.save(Muscle(name = "三角肌前束", originName = "Anterior Deltoid", function = "肩部前侧肌肉"))
+        val muscle1 = muscleRepository.save(Muscle(name = "胸大肌", description = "胸肌主要发力"))
+        val muscle2 = muscleRepository.save(Muscle(name = "三角肌前束", description = "肩部前侧肌肉"))
 
         // 创建运动请求
         val exerciseRequest = ExerciseRequest(
             id = null,
             name = "平板卧推",
-            originName = "Barbell Bench Press",
             description = "胸肌训练动作",
             mainMuscles = setOf(muscle1.id!!, muscle2.id!!),
             supportMuscles = emptySet(),
@@ -64,7 +63,6 @@ class ExerciseControllerIntegrationTest : TestConfig() {
             .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
             .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").isNumber)
             .andExpect(MockMvcResultMatchers.jsonPath("$.data.name").value("平板卧推"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.data.originName").value("Barbell Bench Press"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.data.description").value("胸肌训练动作"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.data.mainMuscles").isArray)
             .andExpect(MockMvcResultMatchers.jsonPath("$.data.mainMuscles.length()").value(2))
@@ -82,7 +80,6 @@ class ExerciseControllerIntegrationTest : TestConfig() {
         val exerciseRequest = ExerciseRequest(
             id = null,
             name = "跑步",
-            originName = "Running",
             description = "有氧运动",
             mainMuscles = emptySet(),
             supportMuscles = emptySet(),
@@ -109,7 +106,6 @@ class ExerciseControllerIntegrationTest : TestConfig() {
         val exerciseRequest = ExerciseRequest(
             id = null,
             name = "深蹲",
-            originName = "Squat",
             description = null
         )
 
@@ -122,22 +118,20 @@ class ExerciseControllerIntegrationTest : TestConfig() {
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
             .andExpect(MockMvcResultMatchers.jsonPath("$.data.name").value("深蹲"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.data.originName").value("Squat"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.data.description").isEmpty)
     }
 
     @Test
     fun `createExercise should handle support muscles`() {
         // 创建测试用的肌肉
-        val mainMuscle = muscleRepository.save(Muscle(name = "股四头肌", originName = "Quadriceps", function = "大腿前侧肌肉"))
-        val supportMuscle1 = muscleRepository.save(Muscle(name = "臀大肌", originName = "Gluteus Maximus", function = "臀部肌肉"))
-        val supportMuscle2 = muscleRepository.save(Muscle(name = "腘绳肌", originName = "Hamstrings", function = "大腿后侧肌肉"))
+        val mainMuscle = muscleRepository.save(Muscle(name = "股四头肌", description = "大腿前侧肌肉"))
+        val supportMuscle1 = muscleRepository.save(Muscle(name = "臀大肌", description = "臀部肌肉"))
+        val supportMuscle2 = muscleRepository.save(Muscle(name = "腘绳肌", description = "大腿后侧肌肉"))
 
         // 创建包含辅助肌肉的运动请求
         val exerciseRequest = ExerciseRequest(
             id = null,
             name = "深蹲",
-            originName = "Squat",
             description = "下肢综合训练动作",
             mainMuscles = setOf(mainMuscle.id!!),
             supportMuscles = setOf(supportMuscle1.id!!, supportMuscle2.id!!),
@@ -162,7 +156,6 @@ class ExerciseControllerIntegrationTest : TestConfig() {
         val exerciseRequest = ExerciseRequest(
             id = null,
             name = "平板卧推",
-            originName = "Barbell Bench Press",
             mainMuscles = setOf(9999L) // 不存在的肌肉ID
         )
 
@@ -178,12 +171,11 @@ class ExerciseControllerIntegrationTest : TestConfig() {
     @Test
     fun `exerciseService getById should return exercise when it exists`() {
         // 创建测试用的肌肉
-        val muscle = muscleRepository.save(Muscle(name = "胸大肌", originName = "Pectoralis Major", function = "胸肌主要发力"))
+        val muscle = muscleRepository.save(Muscle(name = "胸大肌", description = "胸肌主要发力"))
 
         // 直接使用service创建exercise
         val exercise = exerciseService.create(
             name = "平板卧推",
-            originName = "Barbell Bench Press",
             description = "胸肌训练动作",
             mainMuscleIds = setOf(muscle.id!!),
             supportMuscleIds = emptySet(),
@@ -196,19 +188,17 @@ class ExerciseControllerIntegrationTest : TestConfig() {
         // 验证获取的exercise与创建的exercise一致
         assert(retrievedExercise.id == exercise.id)
         assert(retrievedExercise.name == exercise.name)
-        assert(retrievedExercise.originName == exercise.originName)
     }
 
     @Test
     fun `createExercise should handle special characters in cues`() {
         // 创建测试用的肌肉
-        val muscle = muscleRepository.save(Muscle(name = "胸大肌", originName = "Pectoralis Major", function = "胸肌主要发力"))
+        val muscle = muscleRepository.save(Muscle(name = "胸大肌", description = "胸肌主要发力"))
 
         // 创建包含特殊字符的运动请求
         val exerciseRequest = ExerciseRequest(
             id = null,
             name = "平板卧推",
-            originName = "Barbell Bench Press",
             mainMuscles = setOf(muscle.id!!),
             cues = listOf("保持背部贴紧长椅: 3秒下放", "控制重量: 80% 1RM", "呼吸节奏: 下吸上呼")
         )
@@ -230,12 +220,11 @@ class ExerciseControllerIntegrationTest : TestConfig() {
     @Test
     fun `exerciseRepository should save and retrieve exercise correctly`() {
         // 创建测试用的肌肉
-        val muscle = muscleRepository.save(Muscle(name = "胸大肌", originName = "Pectoralis Major", function = "胸肌主要发力"))
+        val muscle = muscleRepository.save(Muscle(name = "胸大肌", description = "胸肌主要发力"))
 
         // 直接创建Exercise实体
         val exercise = Exercise(
             name = "平板卧推",
-            originName = "Barbell Bench Press",
             description = "胸肌训练动作"
         )
         exercise.mainMuscles.add(muscle)

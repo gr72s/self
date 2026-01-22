@@ -38,12 +38,12 @@ class GymController(private val gymService: GymService) {
         if (request.name.isBlank() || request.location.isBlank()) {
             throw IllegalRequestArgumentException()
         }
-        return success(gymService.createGym(request.name, request.location))
+        return success(gymService.createGym(request.name, request.location).toResponse())
     }
 
     @GetMapping
     fun getAllGym(): Response {
-        return success(gymService.getAllGym())
+        return success(gymService.getAllGym().map { it.toResponse() })
     }
 
 }
