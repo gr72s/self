@@ -103,8 +103,12 @@ interface TagRepository : JpaRepository<Tag, Long> {
 
     @Transactional
     override fun deleteAll() {
-        deleteAllPracticeTagLinks()
-        deleteAllPieceTagLinks()
+        try {
+            deleteAllPracticeTagLinks()
+            deleteAllPieceTagLinks()
+        } catch (_: Exception) {
+            // 忽略表不存在的异常
+        }
         deleteAllInBatch()
     }
 }

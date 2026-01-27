@@ -13,11 +13,9 @@ abstract class TestConfig {
 
     companion object {
         private val embeddedPostgres: EmbeddedPostgres by lazy {
-            val postgres = EmbeddedPostgres.builder()
+            EmbeddedPostgres.builder()
                 .setPort(0)
                 .start()
-            Runtime.getRuntime().addShutdownHook(Thread { postgres.close() })
-            postgres
         }
 
         @DynamicPropertySource
@@ -28,7 +26,7 @@ abstract class TestConfig {
             }
             registry.add("spring.datasource.username", { "postgres" })
             registry.add("spring.datasource.password", { "" })
-            registry.add("spring.jpa.hibernate.ddl-auto", { "create-drop" })
+            registry.add("spring.jpa.hibernate.ddl-auto", { "create" })
         }
     }
 }
