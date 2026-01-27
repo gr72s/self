@@ -3,6 +3,8 @@ package com.iamalangreen.self.piano
 import com.iamalangreen.self.Response
 import com.iamalangreen.self.success
 import jakarta.persistence.*
+import org.hibernate.annotations.OnDelete
+import org.hibernate.annotations.OnDeleteAction
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
@@ -34,7 +36,7 @@ fun Piece.toResponse() = PieceResponse(
     title = title,
     composer = composer,
     status = status,
-    tags = tags.map { tag -> tag.toResponse() }
+    tags = tags.sortedBy { it.id }.map { tag -> tag.toResponse() }
 )
 
 @RestController
@@ -88,12 +90,13 @@ data class Piece(
     @Enumerated(EnumType.STRING)
     var status: PieceStatus = PieceStatus.LEARNING,
 
-    @ManyToMany(cascade = [CascadeType.PERSIST, CascadeType.MERGE])
+    @ManyToMany(fetch = FetchType.EAGER, cascade = [CascadeType.MERGE])
     @JoinTable(
         name = "piece_tags",
         joinColumns = [JoinColumn(name = "piece_id")],
         inverseJoinColumns = [JoinColumn(name = "tag_id")]
     )
+    @OnDelete(action = OnDeleteAction.CASCADE)
     var tags: MutableSet<Tag> = mutableSetOf(),
 
     @CreatedDate

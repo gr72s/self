@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import kotlin.jvm.optionals.getOrNull
@@ -34,7 +35,7 @@ fun Gym.toResponse(): GymResponse {
 class GymController(private val gymService: GymService) {
 
     @PostMapping
-    fun createGym(request: CreateGymRequest): Response {
+    fun createGym(@RequestBody request: CreateGymRequest): Response {
         if (request.name.isBlank() || request.location.isBlank()) {
             throw IllegalRequestArgumentException()
         }
@@ -60,12 +61,14 @@ interface GymService {
 class DefaultGymService(private val gymRepository: GymRepository) : GymService {
 
     override fun createGym(name: String, location: String): Gym {
-        findByName(name) ?: throw EntityAlreadyExistException()
+        if (findByName(name) != null) {
+            throw EntityAlreadyExistException()
+        }
         return gymRepository.save(Gym(name = name, location = location))
     }
 
     override fun getAllGym(): List<Gym> {
-        return gymRepository.findAll()
+        return gymRepository.findAll(org.springframework.data.domain.Sort.by("id"))
     }
 
     override fun findByName(name: String): Gym? {

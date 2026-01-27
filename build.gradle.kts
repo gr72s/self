@@ -53,6 +53,7 @@ dependencies {
     testImplementation("org.testcontainers:testcontainers:1.20.3")
     testImplementation("org.testcontainers:postgresql:1.20.3")
     testImplementation("org.testcontainers:junit-jupiter:1.20.3")
+    testImplementation("com.opentable.components:otj-pg-embedded:0.13.4")
 }
 
 tasks {

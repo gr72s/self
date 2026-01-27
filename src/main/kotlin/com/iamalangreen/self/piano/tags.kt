@@ -7,7 +7,14 @@ import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Modifying
+import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDateTime
@@ -30,12 +37,14 @@ fun Tag.toResponse(): TagResponse {
 @RequestMapping("/api/piano/tag")
 class TagController(private val tagService: TagService) {
 
-    fun createOrGetTag(request: CreateTagRequest): Response {
+    @PostMapping
+    fun createOrGetTag(@RequestBody request: CreateTagRequest): Response {
         val tag = tagService.createOrGetTag(request.name)
         return success(tag.toResponse())
     }
 
-    fun deleteTag(id: Long): Response {
+    @DeleteMapping("/{id}")
+    fun deleteTag(@PathVariable id: Long): Response {
         tagService.deleteTag(id)
         return success()
     }
@@ -58,8 +67,13 @@ class DefaultTagService(private val repository: TagRepository) : TagService {
         return tag
     }
 
+    @Transactional
     override fun deleteTag(id: Long) {
-        repository.deleteById(id)
+        if (repository.existsById(id)) {
+            repository.deletePieceTagLinks(id)
+            repository.deletePracticeTagLinks(id)
+            repository.deleteById(id)
+        }
     }
 
     override fun getTags(ids: List<Long>): List<Tag> {
@@ -70,6 +84,29 @@ class DefaultTagService(private val repository: TagRepository) : TagService {
 
 interface TagRepository : JpaRepository<Tag, Long> {
     fun findByName(name: String): Tag?
+
+    @Modifying
+    @Query(value = "delete from piece_tags where tag_id = :tagId", nativeQuery = true)
+    fun deletePieceTagLinks(tagId: Long)
+
+    @Modifying
+    @Query(value = "delete from practice_tags where tag_id = :tagId", nativeQuery = true)
+    fun deletePracticeTagLinks(tagId: Long)
+
+    @Modifying
+    @Query(value = "delete from piece_tags", nativeQuery = true)
+    fun deleteAllPieceTagLinks()
+
+    @Modifying
+    @Query(value = "delete from practice_tags", nativeQuery = true)
+    fun deleteAllPracticeTagLinks()
+
+    @Transactional
+    override fun deleteAll() {
+        deleteAllPracticeTagLinks()
+        deleteAllPieceTagLinks()
+        deleteAllInBatch()
+    }
 }
 
 @Entity

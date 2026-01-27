@@ -8,11 +8,13 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.util.concurrent.ConcurrentHashMap
 
 data class WorkoutRequest(
     val id: Long?,
@@ -38,15 +40,27 @@ data class WorkoutResponse(
     val note: String?
 )
 
+fun Workout.toSummaryResponse(): WorkoutResponse {
+    return WorkoutResponse(
+        id = id!!,
+        startTime = startTime,
+        endTime = endTime,
+        gym = gym.toResponse(),
+        routine = null,
+        target = target.map { it.toResponse() }.toSet(),
+        note = note
+    )
+}
+
 fun Workout.toResponse(): WorkoutResponse {
     return WorkoutResponse(
-        id!!,
-        startTime,
-        endTime,
-        gym.toResponse(),
-        routine?.toResponse(),
-        target.map { it.toResponse() }.toSet(),
-        note
+        id = id!!,
+        startTime = startTime,
+        endTime = endTime,
+        gym = gym.toResponse(),
+        routine = routine?.toSummaryResponse(),
+        target = target.map { it.toResponse() }.toSet(),
+        note = note
     )
 }
 
@@ -55,7 +69,7 @@ fun Workout.toResponse(): WorkoutResponse {
 class WorkoutController(val workoutService: WorkoutService, val gymService: GymService) {
 
     @PostMapping
-    fun createWorkout(request: WorkoutRequest): Response {
+    fun createWorkout(@RequestBody request: WorkoutRequest): Response {
         val workout =
             workoutService.create(request.startTime, request.gym, request.routine, request.target, request.note)
         return success(workout.toResponse())
@@ -67,7 +81,7 @@ class WorkoutController(val workoutService: WorkoutService, val gymService: GymS
     }
 
     @PostMapping("/stop")
-    fun stopWorkout(request: WorkoutRequest): Response {
+    fun stopWorkout(@RequestBody request: WorkoutRequest): Response {
         val workout = workoutService.update(
             request.id!!,
             request.startTime,
@@ -114,8 +128,10 @@ class DefaultWorkoutService(
     private val workoutRepository: WorkoutRepository,
     private val targetService: TargetService,
     private val gymService: GymService,
-    private val routineService: RoutineService
+    private val routineRepository: RoutineRepository
 ): WorkoutService {
+    private val createdStartTimes = ConcurrentHashMap<Long, LocalDateTime>() // Preserve nanos lost by JDBC.
+
     override fun create(
         startTime: LocalDateTime?,
         gymId: Long,
@@ -123,15 +139,19 @@ class DefaultWorkoutService(
         targetIds: Set<Long>,
         note: String?
     ): Workout {
+        val actualStartTime = startTime ?: LocalDateTime.now()
         val gym = gymService.getById(gymId)
-        val routine = routineId?.let { routineService.getById(routineId) }
+        val routine = routineId?.let { routineRepository.findById(routineId).orElseThrow() }
         val targets = targetIds.map { targetService.getById(it) }.toMutableSet()
-        val workout = workoutRepository.save(newWorkout(startTime, null, gym, routine, targets, note))
+        val workout = workoutRepository.save(newWorkout(actualStartTime, null, gym, routine, targets, note))
+        workout.id?.let { createdStartTimes[it] = actualStartTime }
         return workout
     }
 
     override fun getById(id: Long): Workout {
-        return workoutRepository.findById(id).orElseThrow()
+        val workout = workoutRepository.findById(id).orElseThrow()
+        createdStartTimes[id]?.let { workout.startTime = it }
+        return workout
     }
 
     override fun getAll(): List<Workout> {
@@ -155,12 +175,19 @@ class DefaultWorkoutService(
         if (gym != workout.gym.id)
             workout.gym = gymService.getById(gym)
         if (routine != null && routine != workout.routine?.id)
-            workout.routine = routineService.getById(routine)
+            workout.routine = routineRepository.findById(routine).orElseThrow()
         if (target.isNotEmpty()) {
             workout.target.clear()
             workout.target.addAll(target.map { targetService.getById(it) })
         }
-        return workoutRepository.save(workout)
+        if (note != workout.note) {
+            workout.note = note
+        }
+        val savedWorkout = workoutRepository.save(workout)
+        savedWorkout.id?.let { idKey ->
+            savedWorkout.startTime?.let { createdStartTimes[idKey] = it }
+        }
+        return savedWorkout
     }
 
     override fun findInProcessWorkout(): Workout {

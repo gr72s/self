@@ -1,9 +1,0 @@
-2026-01-20 16:55:05.567 [Test worker] ERROR o.t.d.DockerClientProviderStrategy - Could not find a valid Docker environment. Please check configuration. Attempted configurations were:
-As no valid configuration was found, execution cannot continue.
-See https://java.testcontainers.org/on_failure.html for more details.
-2026-01-23 01:59:03.378 [Test worker] ERROR o.t.d.DockerClientProviderStrategy - Could not find a valid Docker environment. Please check configuration. Attempted configurations were:
-As no valid configuration was found, execution cannot continue.
-See https://java.testcontainers.org/on_failure.html for more details.
-2026-01-23 01:59:21.418 [Test worker] ERROR o.t.d.DockerClientProviderStrategy - Could not find a valid Docker environment. Please check configuration. Attempted configurations were:
-As no valid configuration was found, execution cannot continue.
-See https://java.testcontainers.org/on_failure.html for more details.

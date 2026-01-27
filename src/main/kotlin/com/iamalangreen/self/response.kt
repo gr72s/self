@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus
 
 data class Response(
     val status: Int = HttpStatus.OK.value(),
+    val success: Boolean = true,
     val message: String = String(),
     @JsonInclude(JsonInclude.Include.NON_NULL)
     val data: Any? = null,
@@ -13,14 +14,14 @@ data class Response(
 )
 
 fun errorResponse(status: Int, message: String, error: Any?): Response {
-    return Response(status, message, error)
+    return Response(status, false, message, error = error)
 }
 
 private const val SUCCESS = "success"
 private const val ERROR = "error"
 
 fun success(data: Any? = null): Response {
-    return Response(HttpStatus.OK.value(), SUCCESS, data)
+    return Response(HttpStatus.OK.value(), true, SUCCESS, data)
 }
 
 private data class ExceptionWrapper(val reason: String, val message: String? = null, val stackTrace: String? = null)

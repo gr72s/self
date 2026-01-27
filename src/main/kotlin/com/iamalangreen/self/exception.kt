@@ -1,6 +1,9 @@
 package com.iamalangreen.self
 
+import io.jsonwebtoken.JwtException
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.AuthenticationException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.RestControllerAdvice
@@ -19,14 +22,37 @@ class IllegalRequestArgumentException: SelfServerException(4004, "IllegalRequest
 @RestControllerAdvice
 class GlobalExceptionHandler {
 
+    @ExceptionHandler(AuthenticationException::class)
+    @ResponseBody
+    fun handleAuthenticationException(e: AuthenticationException): ResponseEntity<Response> {
+        val response = errorResponse(
+            HttpStatus.UNAUTHORIZED.value(),
+            "error",
+            mapOf("reason" to "Unauthorized", "message" to e.localizedMessage)
+        )
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response)
+    }
+
+    @ExceptionHandler(JwtException::class)
+    @ResponseBody
+    fun handleJwtException(e: JwtException): ResponseEntity<Response> {
+        val response = errorResponse(
+            HttpStatus.UNAUTHORIZED.value(),
+            "error",
+            mapOf("reason" to "InvalidToken", "message" to e.localizedMessage)
+        )
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response)
+    }
+
     @ExceptionHandler(Exception::class)
     @ResponseBody
     fun handleException(e: Exception): ResponseEntity<Response> {
         e.printStackTrace()
 
         return when (e) {
-            is SelfServerException -> ResponseEntity.ok(serverError(e))
-            else -> ResponseEntity.ok(unknownError(e))
+            is SelfServerException ->
+                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(serverError(e))
+            else -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(unknownError(e))
         }
     }
 

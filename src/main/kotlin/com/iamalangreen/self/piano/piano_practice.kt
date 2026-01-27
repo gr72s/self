@@ -3,6 +3,8 @@ package com.iamalangreen.self.piano
 import com.iamalangreen.self.Response
 import com.iamalangreen.self.success
 import jakarta.persistence.*
+import org.hibernate.annotations.OnDelete
+import org.hibernate.annotations.OnDeleteAction
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
@@ -117,6 +119,7 @@ data class PianoPractice(
         joinColumns = [JoinColumn(name = "practice_id")],
         inverseJoinColumns = [JoinColumn(name = "tag_id")]
     )
+    @OnDelete(action = OnDeleteAction.CASCADE)
     var tags: MutableSet<Tag> = mutableSetOf(),
 
     @CreatedDate
@@ -131,6 +134,7 @@ data class PianoPractice(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "piece_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     var piece: Piece? = null,
 
     @Column

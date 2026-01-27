@@ -1,6 +1,9 @@
 package com.iamalangreen.self.lifting
 
 import jakarta.persistence.*
+import org.hibernate.annotations.OnDelete
+import org.hibernate.annotations.OnDeleteAction
+import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 
 data class SlotRequest(
@@ -29,10 +32,25 @@ data class SlotResponse(
     val sequence: Int
 )
 
+fun Slot.toSummaryResponse(): SlotResponse {
+    return SlotResponse(
+        id!!,
+        routine.toSummaryResponse(),
+        exercise.toResponse(),
+        stars,
+        category,
+        setNumber,
+        weight,
+        reps,
+        duration,
+        sequence
+    )
+}
+
 fun Slot.toResponse(): SlotResponse {
     return SlotResponse(
         id!!,
-        routine.toResponse(),
+        routine.toSummaryResponse(),
         exercise.toResponse(),
         stars,
         category,
@@ -62,6 +80,7 @@ interface SlotService {
 class DefaultSlotService(
     private val routineService: RoutineService,
     private val exerciseService: ExerciseService,
+    private val slotRepository: SlotRepository,
 ) : SlotService {
 
     override fun createSlotInRoutine(
@@ -77,10 +96,13 @@ class DefaultSlotService(
     ): Slot {
         val routine = routineService.getById(routineId)
         val exercise = exerciseService.getById(exerciseId)
-        return Slot(null, exercise, routine, stars, category, setNumber, weight, reps, duration, sequence)
+        val slot = Slot(null, exercise, routine, stars, category, setNumber, weight, reps, duration, sequence)
+        return slotRepository.save(slot)
     }
 
 }
+
+interface SlotRepository : JpaRepository<Slot, Long>
 
 @Entity
 @Table(name = "lifting_slot")
@@ -90,6 +112,7 @@ data class Slot(
     val id: Long? = null,
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "exercise_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     var exercise: Exercise,
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "routine_id") // 数据库外键

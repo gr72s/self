@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -33,15 +34,38 @@ data class RoutineResponse(
     val note: String? = null
 )
 
+private fun Routine.resolveTargets(): Set<TargetResponse> {
+    if (target.isNotEmpty()) {
+        return target.map { it.toResponse() }.toSet()
+    }
+    if (checklist.isNotEmpty()) {
+        return checklist.mapIndexed { index, item ->
+            TargetResponse(id = (index + 1).toLong(), name = item.name)
+        }.toSet()
+    }
+    return emptySet()
+}
+
+fun Routine.toSummaryResponse(): RoutineResponse = RoutineResponse(
+    id = id!!,
+    name = name,
+    description = description,
+    workout = null,
+    targets = resolveTargets(),
+    slots = emptySet(),
+    checklist = checklist,
+    note = note
+)
+
 fun Routine.toResponse(): RoutineResponse = RoutineResponse(
-    id!!,
-    name,
-    description,
-    workout?.toResponse(),
-    target.map { it.toResponse() }.toSet(),
-    slots.map { it.toResponse() }.toSet(),
-    checklist,
-    note
+    id = id!!,
+    name = name,
+    description = description,
+    workout = workout?.toSummaryResponse(),
+    targets = resolveTargets(),
+    slots = slots.map { it.toSummaryResponse() }.toSet(),
+    checklist = checklist,
+    note = note
 )
 
 @RestController
@@ -52,7 +76,7 @@ class RoutineController(
 ) {
 
     @PostMapping
-    fun createRoutine(request: RoutineRequest): Response {
+    fun createRoutine(@RequestBody request: RoutineRequest): Response {
         require(request.workoutId != null)
         val routine = routineService.createRoutine(
             request.name,
@@ -66,7 +90,7 @@ class RoutineController(
     }
 
     @PostMapping("/template")
-    fun createRoutineTemplate(request: RoutineRequest): Response {
+    fun createRoutineTemplate(@RequestBody request: RoutineRequest): Response {
         val routine = routineService.createRoutineTemplate(
             request.name,
             request.description,
@@ -79,11 +103,11 @@ class RoutineController(
 
     @GetMapping
     fun getAllRoutines(): Response {
-        return success()
+        return success(routineService.getAll().map { it.toResponse() })
     }
 
     @PostMapping("/exercise")
-    fun addExercise(request: SlotRequest): Response {
+    fun addExercise(@RequestBody request: SlotRequest): Response {
         val slot = slotService.createSlotInRoutine(
             request.routineId,
             request.exerciseId,
@@ -118,6 +142,7 @@ interface RoutineService {
         note: String?
     ): Routine
 
+    fun getAll(): List<Routine>
 
     fun getById(id: Long): Routine
 }
@@ -171,11 +196,15 @@ class DefaultRoutineService(
         )
         routine.target.addAll(targets)
         routine.checklist.addAll(checklist)
-        return routine
+        return routineRepository.save(routine)
     }
 
     override fun getById(id: Long): Routine {
         return routineRepository.findById(id).orElseThrow()
+    }
+
+    override fun getAll(): List<Routine> {
+        return routineRepository.findAll()
     }
 }
 

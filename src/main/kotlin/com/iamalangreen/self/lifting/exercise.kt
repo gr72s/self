@@ -8,6 +8,7 @@ import org.hibernate.annotations.Type
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -44,7 +45,7 @@ fun Exercise.toResponse(): ExerciseResponse {
 @RequestMapping("/api/lifting/exercise")
 class ExerciseController(val exerciseService: ExerciseService) {
     @PostMapping
-    fun createExercise(request: ExerciseRequest): Response {
+    fun createExercise(@RequestBody request: ExerciseRequest): Response {
         val exercise = exerciseService.create(
             request.name,
             request.description,
@@ -106,14 +107,14 @@ data class Exercise(
     var name: String,
     @Column
     var description: String? = null,
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "lifting_main_muscle_exercise",
         joinColumns = [JoinColumn(name = "exercise_id")],
         inverseJoinColumns = [JoinColumn(name = "muscle_id")]
     )
     var mainMuscles: MutableSet<Muscle> = mutableSetOf(),
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "lifting_support_muscle_exercise",
         joinColumns = [JoinColumn(name = "exercise_id")],
