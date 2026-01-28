@@ -1,60 +1,20 @@
 package com.iamalangreen.self.auth
 
-import com.iamalangreen.self.auth.config.JwtService
-import com.iamalangreen.self.auth.dto.*
-import jakarta.servlet.http.HttpServletRequest
-import org.springframework.http.HttpStatus
+import com.iamalangreen.self.auth.dto.UserResponse
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
-
-@RestController
-@RequestMapping("/api/auth")
-class AuthController(private val authService: AuthService) {
-
-    @PostMapping("/authenticate")
-    fun authenticate(@RequestBody request: AuthRequest): ResponseEntity<AuthResponse> {
-        val authResponse = authService.authenticate(request)
-        return ResponseEntity.ok(authResponse)
-    }
-
-    @PostMapping("/authenticate-device")
-    fun authenticateDevice(@RequestBody request: DeviceAuthRequest): ResponseEntity<AuthResponse> {
-        val authResponse = authService.authenticateDevice(request)
-        return ResponseEntity.ok(authResponse)
-    }
-
-}
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/users")
 class UserController(
     private val userService: UserService,
-    private val jwtService: JwtService,
 ) {
 
-    @PostMapping
-    fun createUser(@RequestBody request: UserCreateRequest): ResponseEntity<UserResponse> {
-        val user = userService.createUser(request)
-        return ResponseEntity(user, HttpStatus.CREATED)
-    }
-
     @GetMapping("/current")
-    fun getUserById(request: HttpServletRequest): ResponseEntity<UserResponse> {
-        val header = request.getHeader("Authorization")
-        val jwt = header.substring(7)
-        val extractUsername = jwtService.extractUsername(jwt)
-        val userByUsername = userService.getUserByUsername(extractUsername)
-        return ResponseEntity.ok(userByUsername)
-    }
-
-    @PostMapping("/current/update")
-    fun updateCurrentUser(
-        @RequestBody updateRequest: UserUpdateRequest,
-        request: HttpServletRequest
-    ): ResponseEntity<UserResponse> {
-        val header = request.getHeader("Authorization")
-        val currentUser = userService.getCurrentUser(header)
-        val userByUsername = userService.updateUser(currentUser, updateRequest)
-        return ResponseEntity.ok(userByUsername)
+    fun getUser(): ResponseEntity<UserResponse> {
+        val user = userService.getUserByUsername("alan green")
+        return ResponseEntity.ok(user)
     }
 }

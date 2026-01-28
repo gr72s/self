@@ -32,7 +32,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("org.springframework.boot:spring-boot-starter-security")
+
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     compileOnly("org.projectlombok:lombok")
@@ -45,9 +45,7 @@ dependencies {
     mockitoAgent(libs.mockito.core) { isTransitive = false }
     implementation(libs.hypersistence.utils)
 
-    implementation(libs.jjwt.api)
-    implementation(libs.jjwt.impl)
-    implementation(libs.jjwt.jackson)
+
     
     // Testcontainers dependencies for integration testing
     testImplementation("org.testcontainers:testcontainers:1.20.3")

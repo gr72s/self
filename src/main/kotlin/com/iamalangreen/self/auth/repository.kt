@@ -10,9 +10,3 @@ interface UserRepository : JpaRepository<User, Long> {
     fun existsByUsername(username: String): Boolean
     fun existsByEmail(email: String): Boolean
 }
-
-@Repository
-interface DeviceRepository : JpaRepository<Device, Long> {
-    fun findByDeviceId(deviceId: String): Optional<Device>
-    fun existsByDeviceId(deviceId: String): Boolean
-}
