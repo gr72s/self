@@ -51,7 +51,7 @@ const HomePage: React.FC = () => {
 
       {/* 统计卡片 */}
       <Grid container spacing={3} sx={{mb: 4}}>
-        <Grid item xs={12} sm={4}>
+        <Grid xs={12} sm={4}>
           <Card>
             <CardActionArea component={Link} to="/workouts">
               <CardContent>
@@ -71,7 +71,7 @@ const HomePage: React.FC = () => {
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={4}>
+        <Grid xs={12} sm={4}>
           <Card>
             <CardActionArea component={Link} to="/routines">
               <CardContent>
@@ -91,7 +91,7 @@ const HomePage: React.FC = () => {
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={4}>
+        <Grid xs={12} sm={4}>
           <Card>
             <CardActionArea component={Link} to="/workouts">
               <CardContent>

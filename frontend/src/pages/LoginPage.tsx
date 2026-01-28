@@ -28,6 +28,10 @@ const LoginPage: React.FC = () => {
         localStorage.setItem('token', response.data.data);
         // 刷新页面或重定向
         window.location.reload();
+      } else {
+        // 非200状态也显示错误信息
+        console.error('设备认证失败:', response);
+        alert('设备认证失败，请稍后重试');
       }
     } catch (err) {
       console.error('设备认证失败:', err);
