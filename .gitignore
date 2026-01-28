@@ -29,4 +29,5 @@ out/
 .DS_Store
 
 *.txt
+*.log
 logs/

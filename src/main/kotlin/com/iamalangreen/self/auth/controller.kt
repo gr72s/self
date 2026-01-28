@@ -1,6 +1,6 @@
 package com.iamalangreen.self.auth
 
-import com.iamalangreen.self.auth.dto.UserResponse
+import com.iamalangreen.self.auth.UserResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
