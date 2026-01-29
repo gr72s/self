@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Button, Card, CardActionArea, CardContent, CircularProgress, Paper, Typography } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import {
   CalendarToday as CalendarIcon,
   FitnessCenter as FitnessCenterIcon,
@@ -9,21 +9,34 @@ import {
 import { workoutApi } from '@/services/api';
 import type { WorkoutResponse } from '@/types';
 import { Link } from 'react-router-dom';
+import PageContainer from '@/components/dashboard/PageContainer';
 
 const HomePage: React.FC = () => {
   const [workouts, setWorkouts] = useState<WorkoutResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentWorkout, setCurrentWorkout] = useState<WorkoutResponse | null>(null);
+  const [user, setUser] = useState<any>(null); // Using any for now as UserResponse type isn't strictly defined on frontend yet
 
   useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await userApi.getCurrent();
+        if (response.status === 200 && response.data) {
+          setUser((response.data as any).data || response.data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch user:', error);
+      }
+    };
+
     const fetchWorkouts = async () => {
       try {
         const response = await workoutApi.getAll();
-        if (response.status == 200 && response.data) {
-          setWorkouts(response.data.data);
+        if (response.status === 200 && response.data) {
+          setWorkouts((response.data as any).data || response.data);
         }
       } catch (error) {
-        console.error('获取训练记录失败:', error);
+        console.error('Failed to fetch workouts:', error);
       } finally {
         setLoading(false);
       }
@@ -32,25 +45,22 @@ const HomePage: React.FC = () => {
     const fetchCurrentWorkout = async () => {
       try {
         const response = await workoutApi.getInProcess();
-        if (response.status == 200 && response.data) {
-          setCurrentWorkout(response.data.data);
+        if (response.status === 200 && response.data) {
+          setCurrentWorkout((response.data as any).data || response.data);
         }
       } catch (error) {
-        console.error('获取进行中训练失败:', error);
+        console.error('Failed to fetch current workout:', error);
       }
     };
 
+    fetchUser();
     fetchWorkouts();
     fetchCurrentWorkout();
   }, []);
 
   return (
-    <Box sx={{ mt: 2 }}>
-      <Typography variant="h4" component="h1" gutterBottom>
-        欢迎回来
-      </Typography>
-
-      {/* 统计卡片 */}
+    <PageContainer title="Dashboard" breadcrumbs={[{ title: 'Home' }]}>
+      {/* Stats Cards */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
         <Grid size={{ xs: 12, sm: 4 }}>
           <Card>
@@ -60,7 +70,7 @@ const HomePage: React.FC = () => {
                   <CalendarIcon sx={{ fontSize: 40, mr: 2, color: '#1976d2' }} />
                   <Box>
                     <Typography variant="h6" color="textSecondary">
-                      训练次数
+                      Total Workouts
                     </Typography>
                     <Typography variant="h4">
                       {workouts.length}
@@ -80,7 +90,7 @@ const HomePage: React.FC = () => {
                   <FitnessCenterIcon sx={{ fontSize: 40, mr: 2, color: '#43a047' }} />
                   <Box>
                     <Typography variant="h6" color="textSecondary">
-                      训练计划
+                      Routines Used
                     </Typography>
                     <Typography variant="h4">
                       {new Set(workouts.map(w => w.routine?.id)).size}
@@ -100,7 +110,7 @@ const HomePage: React.FC = () => {
                   <TrendingUpIcon sx={{ fontSize: 40, mr: 2, color: '#f57c00' }} />
                   <Box>
                     <Typography variant="h6" color="textSecondary">
-                      本月训练
+                      This Month
                     </Typography>
                     <Typography variant="h4">
                       {workouts.filter(w => {
@@ -117,10 +127,10 @@ const HomePage: React.FC = () => {
         </Grid>
       </Grid>
 
-      {/* 进行中的训练 */}
+      {/* Current Workout */}
       <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
         <Typography variant="h5" gutterBottom>
-          当前训练
+          Current Workout
         </Typography>
         {loading ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
@@ -129,10 +139,10 @@ const HomePage: React.FC = () => {
         ) : currentWorkout ? (
           <Box>
             <Typography variant="h6">
-              {currentWorkout.routine?.name || '未命名训练'}
+              {currentWorkout.routine?.name || 'Unnamed Workout'}
             </Typography>
             <Typography variant="body1" color="textSecondary">
-              开始时间: {new Date(currentWorkout.startTime || '').toLocaleString()}
+              Started: {new Date(currentWorkout.startTime || '').toLocaleString()}
             </Typography>
             <Box sx={{ mt: 2 }}>
               <Button
@@ -141,25 +151,25 @@ const HomePage: React.FC = () => {
                 component={Link}
                 to={`/workouts/${currentWorkout.id}`}
               >
-                查看详情
+                View Details
               </Button>
             </Box>
           </Box>
         ) : (
           <Typography variant="body1" color="textSecondary">
-            目前没有进行中的训练
+            No active workout
           </Typography>
         )}
       </Paper>
 
-      {/* 最近训练记录 */}
+      {/* Recent Activity */}
       <Paper elevation={3} sx={{ p: 3 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
           <Typography variant="h5" gutterBottom>
-            最近训练
+            Recent Activity
           </Typography>
           <Button variant="outlined" component={Link} to="/workouts">
-            查看全部
+            View All
           </Button>
         </Box>
 
@@ -169,7 +179,7 @@ const HomePage: React.FC = () => {
           </Box>
         ) : workouts.length === 0 ? (
           <Typography variant="body1" color="textSecondary">
-            暂无训练记录
+            No workout history
           </Typography>
         ) : (
           <Box>
@@ -186,7 +196,7 @@ const HomePage: React.FC = () => {
               >
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <Typography variant="h6">
-                    {workout.routine?.name || '未命名训练'}
+                    {workout.routine?.name || 'Unnamed Workout'}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
                     {new Date(workout.startTime || '').toLocaleDateString()}
@@ -194,14 +204,14 @@ const HomePage: React.FC = () => {
                 </Box>
                 <Typography variant="body2" color="textSecondary">
                   {workout.startTime ? new Date(workout.startTime).toLocaleTimeString() : ''} -
-                  {workout.endTime ? new Date(workout.endTime).toLocaleTimeString() : '进行中'}
+                  {workout.endTime ? new Date(workout.endTime).toLocaleTimeString() : 'In Progress'}
                 </Typography>
               </Box>
             ))}
           </Box>
         )}
       </Paper>
-    </Box>
+    </PageContainer>
   );
 };
 

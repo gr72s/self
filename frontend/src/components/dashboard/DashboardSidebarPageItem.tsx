@@ -12,19 +12,9 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import type { } from '@mui/material/themeCssVarsAugmentation';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Link } from 'react-router';
-// Removed old import
-import { MINI_DRAWER_WIDTH } from '../constants';
-
-export interface SidebarDisplayState {
-  onPageItemClick: (id: string, hasNestedNavigation: boolean) => void;
-  mini: boolean;
-  fullyExpanded: boolean;
-  fullyCollapsed: boolean;
-  hasDrawerTransitions: boolean;
-}
-
-export const SidebarDisplayContext = React.createContext<SidebarDisplayState | null>(null);
+import { Link } from 'react-router-dom';
+import DashboardSidebarContext from '../../context/DashboardSidebarContext';
+import { MINI_DRAWER_WIDTH } from './constants';
 
 export interface DashboardSidebarPageItemProps {
   id: string;
@@ -51,7 +41,7 @@ export default function DashboardSidebarPageItem({
   disabled = false,
   nestedNavigation,
 }: DashboardSidebarPageItemProps) {
-  const sidebarContext = React.useContext(SidebarDisplayContext);
+  const sidebarContext = React.useContext(DashboardSidebarContext);
   if (!sidebarContext) {
     throw new Error('Sidebar context was used without a provider.');
   }
@@ -142,14 +132,16 @@ export default function DashboardSidebarPageItem({
             : {})}
           {...(!nestedNavigation
             ? {
-              LinkComponent,
+              component: LinkComponent,
               ...(hasExternalHref
                 ? {
                   target: '_blank',
                   rel: 'noopener noreferrer',
+                  href: href,
                 }
-                : {}),
-              to: href,
+                : {
+                  to: href,
+                }),
               onClick: handleClick,
             }
             : {})}
@@ -243,11 +235,11 @@ export default function DashboardSidebarPageItem({
                   transform: 'translateY(-50px)',
                 }}
               >
-                <SidebarDisplayContext.Provider
+                <DashboardSidebarContext.Provider
                   value={miniNestedNavigationSidebarContextValue}
                 >
                   {nestedNavigation}
-                </SidebarDisplayContext.Provider>
+                </DashboardSidebarContext.Provider>
               </Paper>
             </Box>
           </Grow>

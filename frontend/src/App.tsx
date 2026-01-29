@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { createHashRouter, RouterProvider, Outlet } from 'react-router-dom';
 import CssBaseline from '@mui/material/CssBaseline';
 import AppTheme from '@/theme/AppTheme';
 import {
@@ -11,12 +11,17 @@ import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import HomePage from '@/pages/HomePage';
 import WorkoutPage from '@/pages/WorkoutPage';
 import RoutinePage from '@/pages/RoutinePage';
-import ExercisePage from '@/pages/ExercisePage';
-import GymPage from '@/pages/GymPage';
-import MusclePage from '@/pages/MusclePage';
-import LoginPage from '@/pages/LoginPage';
-import ProtectedRoute from '@/components/ProtectedRoute';
-import { AdminStateProvider } from '@/context/AdminStateContext';
+import ExerciseList from '@/pages/exercises/ExerciseList';
+import ExerciseCreate from '@/pages/exercises/ExerciseCreate';
+import ExerciseEdit from '@/pages/exercises/ExerciseEdit';
+import GymList from '@/pages/gyms/GymList';
+import GymCreate from '@/pages/gyms/GymCreate';
+import GymEdit from '@/pages/gyms/GymEdit';
+import MuscleList from '@/pages/muscles/MuscleList';
+import MuscleCreate from '@/pages/muscles/MuscleCreate';
+import MuscleEdit from '@/pages/muscles/MuscleEdit';
+import NotificationsProvider from '@/providers/NotificationsProvider';
+import DialogsProvider from '@/providers/DialogsProvider';
 import '@/App.css';
 
 const themeComponents = {
@@ -26,42 +31,75 @@ const themeComponents = {
   ...formInputCustomizations,
 };
 
+const router = createHashRouter([
+  {
+    path: '/',
+    element: <DashboardLayout />,
+    children: [
+      {
+        index: true,
+        element: <HomePage />,
+      },
+      {
+        path: 'workouts',
+        children: [
+          { index: true, element: <WorkoutPage /> },
+          { path: ':id', element: <div>训练详情</div> },
+          { path: 'new', element: <div>开始新训练</div> },
+          { path: ':id/edit', element: <div>编辑训练</div> },
+        ],
+      },
+      {
+        path: 'routines',
+        children: [
+          { index: true, element: <RoutinePage /> },
+          { path: ':id', element: <div>训练计划详情</div> },
+          { path: 'new', element: <div>创建新计划</div> },
+          { path: ':id/edit', element: <div>编辑训练计划</div> },
+        ],
+      },
+      {
+        path: 'exercises',
+        children: [
+          { index: true, element: <ExerciseList /> },
+          { path: 'new', element: <ExerciseCreate /> },
+          { path: ':id/edit', element: <ExerciseEdit /> },
+        ],
+      },
+      {
+        path: 'gyms',
+        children: [
+          { index: true, element: <GymList /> },
+          { path: 'new', element: <GymCreate /> },
+          { path: ':id/edit', element: <GymEdit /> },
+        ],
+      },
+      {
+        path: 'muscles',
+        children: [
+          { index: true, element: <MuscleList /> },
+          { path: 'new', element: <MuscleCreate /> },
+          { path: ':id/edit', element: <MuscleEdit /> },
+        ],
+      },
+      {
+        path: 'settings',
+        element: <div>设置</div>,
+      },
+    ],
+  },
+]);
+
 function App() {
   return (
-    <AdminStateProvider>
-      <AppTheme themeComponents={themeComponents}>
-        <CssBaseline enableColorScheme />
-        <Router>
-          <Routes>
-            {/* 登录页面 */}
-            <Route path="/login" element={<LoginPage />} />
-
-            {/* 受保护的路由 */}
-            <Route element={<ProtectedRoute />}>
-              <Route path="/" element={<DashboardLayout />}>
-                <Route index element={<HomePage />} />
-                <Route path="workouts">
-                  <Route index element={<WorkoutPage />} />
-                  <Route path=":id" element={<div>训练详情</div>} />
-                  <Route path="new" element={<div>开始新训练</div>} />
-                  <Route path=":id/edit" element={<div>编辑训练</div>} />
-                </Route>
-                <Route path="routines">
-                  <Route index element={<RoutinePage />} />
-                  <Route path=":id" element={<div>训练计划详情</div>} />
-                  <Route path="new" element={<div>创建新计划</div>} />
-                  <Route path=":id/edit" element={<div>编辑训练计划</div>} />
-                </Route>
-                <Route path="exercises" element={<ExercisePage />} />
-                <Route path="gyms" element={<GymPage />} />
-                <Route path="muscles" element={<MusclePage />} />
-                <Route path="settings" element={<div>设置</div>} />
-              </Route>
-            </Route>
-          </Routes>
-        </Router>
-      </AppTheme>
-    </AdminStateProvider>
+    <AppTheme themeComponents={themeComponents}>
+      <CssBaseline enableColorScheme />
+      <NotificationsProvider>
+        <DialogsProvider>
+          <RouterProvider router={router} />
+        </DialogsProvider>
+      </NotificationsProvider>
+    </AppTheme>
   );
 }
 

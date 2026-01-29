@@ -1,128 +1,151 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Button, IconButton, Tooltip } from '@mui/material';
-import { Delete as DeleteIcon, Edit as EditIcon, Visibility as VisibilityIcon } from '@mui/icons-material';
+import { DataGrid, type GridColDef, type GridRenderCellParams } from '@mui/x-data-grid';
+import { Button, IconButton, Stack } from '@mui/material';
+import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, Visibility as VisibilityIcon } from '@mui/icons-material';
 import { workoutApi } from '@/services/api';
 import type { WorkoutResponse } from '@/types';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import PageContainer from '@/components/dashboard/PageContainer';
+import useNotifications from '@/providers/useNotifications';
+import { useDialogs } from '@/providers/useDialogs';
 
 const WorkoutPage: React.FC = () => {
   const [workouts, setWorkouts] = useState<WorkoutResponse[]>([]);
   const [loading, setLoading] = useState(true);
+  const notifications = useNotifications();
+  const dialogs = useDialogs();
+  const navigate = useNavigate();
+
+  const fetchWorkouts = async () => {
+    setLoading(true);
+    try {
+      const response = await workoutApi.getAll();
+      if (response.status === 200 && response.data) {
+        setWorkouts((response.data as any).data || response.data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch workouts:', error);
+      notifications.show('Failed to fetch workouts', { severity: 'error' });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchWorkouts = async () => {
-      try {
-        const response = await workoutApi.getAll();
-        if (response.status == 200 && response.data) {
-          setWorkouts(response.data.data);
-        }
-      } catch (error) {
-        console.error('获取训练记录失败:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchWorkouts();
   }, []);
 
-  return (
-    <Box sx={{ mt: 2 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          训练记录
-        </Typography>
-        <Button variant="contained" color="primary" component={Link} to="/workouts/new">
-          开始新训练
-        </Button>
-      </Box>
+  const handleDelete = async (id: number) => {
+    const confirmed = await dialogs.confirm('Are you sure you want to delete this workout?', {
+      okText: 'Delete',
+      severity: 'error',
+    });
+    if (confirmed) {
+      try {
+        await workoutApi.delete(id);
+        notifications.show('Workout deleted successfully', { severity: 'success' });
+        fetchWorkouts();
+      } catch (error) {
+        console.error('Failed to delete workout:', error);
+        notifications.show('Failed to delete workout', { severity: 'error' });
+      }
+    }
+  };
 
-      {loading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-          <CircularProgress />
-        </Box>
-      ) : workouts.length === 0 ? (
-        <Paper elevation={3} sx={{ p: 3, textAlign: 'center' }}>
-          <Typography variant="body1" color="textSecondary">
-            暂无训练记录
-          </Typography>
-          <Button 
-            variant="contained" 
-            color="primary" 
-            component={Link} 
-            to="/workouts/new" 
-            sx={{ mt: 2 }}
+  const columns: GridColDef[] = [
+    { field: 'id', headerName: 'ID', width: 70 },
+    {
+      field: 'routineName',
+      headerName: 'Routine',
+      width: 200,
+      valueGetter: (_value, row) => row.routine?.name || 'Unnamed'
+    },
+    {
+      field: 'startTime',
+      headerName: 'Started',
+      width: 200,
+      valueFormatter: (_value, row) => row.startTime ? new Date(row.startTime).toLocaleString() : '-'
+    },
+    {
+      field: 'endTime',
+      headerName: 'Ended',
+      width: 200,
+      valueFormatter: (_value, row) => row.endTime ? new Date(row.endTime).toLocaleString() : 'In Progress'
+    },
+    {
+      field: 'gymName',
+      headerName: 'Location',
+      width: 150,
+      valueGetter: (_value, row) => row.gym?.name || '-'
+    },
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      width: 150,
+      renderCell: (params: GridRenderCellParams) => (
+        <Stack direction="row" spacing={1}>
+          <IconButton
+            size="small"
+            component={Link}
+            to={`/workouts/${params.row.id}`}
+            title="View Details"
+            onClick={(e) => e.stopPropagation()}
           >
-            开始第一个训练
-          </Button>
-        </Paper>
-      ) : (
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="训练记录表格">
-            <TableHead>
-              <TableRow>
-                <TableCell>训练名称</TableCell>
-                <TableCell>开始时间</TableCell>
-                <TableCell>结束时间</TableCell>
-                <TableCell>时长</TableCell>
-                <TableCell>场所</TableCell>
-                <TableCell>操作</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {workouts.map((workout) => {
-                const startTime = workout.startTime ? new Date(workout.startTime) : null;
-                const endTime = workout.endTime ? new Date(workout.endTime) : null;
-                const duration = startTime && endTime ? Math.round((endTime.getTime() - startTime.getTime()) / (1000 * 60)) : null;
-                
-                return (
-                  <TableRow
-                    key={workout.id}
-                    sx={{
-                      '&:last-child td, &:last-child th': { border: 0 },
-                      '&:hover': { backgroundColor: '#f5f5f5' }
-                    }}
-                  >
-                    <TableCell component="th" scope="row">
-                      {workout.routine?.name || '未命名训练'}
-                    </TableCell>
-                    <TableCell>
-                      {startTime ? startTime.toLocaleString() : '-'}
-                    </TableCell>
-                    <TableCell>
-                      {endTime ? endTime.toLocaleString() : '进行中'}
-                    </TableCell>
-                    <TableCell>
-                      {duration ? `${duration} 分钟` : '-'}
-                    </TableCell>
-                    <TableCell>
-                      {workout.gym.name}
-                    </TableCell>
-                    <TableCell>
-                      <Tooltip title="查看">
-                        <IconButton component={Link} to={`/workouts/${workout.id}`} color="primary" size="small">
-                          <VisibilityIcon />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="编辑">
-                        <IconButton component={Link} to={`/workouts/${workout.id}/edit`} color="primary" size="small">
-                          <EditIcon />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="删除">
-                        <IconButton color="error" size="small">
-                          <DeleteIcon />
-                        </IconButton>
-                      </Tooltip>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
-    </Box>
+            <VisibilityIcon fontSize="small" />
+          </IconButton>
+          <IconButton
+            size="small"
+            component={Link}
+            to={`/workouts/${params.row.id}/edit`}
+            title="Edit"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <EditIcon fontSize="small" />
+          </IconButton>
+          <IconButton
+            size="small"
+            color="error"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDelete(params.row.id);
+            }}
+            title="Delete"
+          >
+            <DeleteIcon fontSize="small" />
+          </IconButton>
+        </Stack>
+      ),
+    },
+  ];
+
+  return (
+    <PageContainer
+      title="Workouts"
+      breadcrumbs={[{ title: 'Home', path: '/' }, { title: 'Workouts' }]}
+      actions={
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          component={Link}
+          to="/workouts/new"
+        >
+          New Workout
+        </Button>
+      }
+    >
+      <DataGrid
+        rows={workouts}
+        columns={columns}
+        loading={loading}
+        onRowClick={(params) => navigate(`/workouts/${params.row.id}`)}
+        initialState={{
+          pagination: { paginationModel: { pageSize: 10 } },
+        }}
+        pageSizeOptions={[5, 10, 25]}
+        sx={{ border: 0 }}
+        disableRowSelectionOnClick
+      />
+    </PageContainer>
   );
 };
 

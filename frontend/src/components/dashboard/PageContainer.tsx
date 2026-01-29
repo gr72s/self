@@ -8,7 +8,7 @@ import MuiLink from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import NavigateNextRoundedIcon from '@mui/icons-material/NavigateNextRounded';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 
 const PageContentHeader = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -34,6 +34,7 @@ const PageHeaderToolbar = styled('div')(({ theme }) => ({
   gap: theme.spacing(1),
   // Ensure the toolbar is always on the right side, even after wrapping
   marginLeft: 'auto',
+  height: 'fit-content',
 }));
 
 export interface Breadcrumb {
@@ -51,34 +52,34 @@ export default function PageContainer(props: PageContainerProps) {
   const { children, breadcrumbs, title, actions = null } = props;
 
   return (
-    <Container sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-      <Stack sx={{ flex: 1, my: 2 }} spacing={2}>
-        <Stack>
+    <Container sx={{ flex: 1, display: 'flex', flexDirection: 'column' }} maxWidth={false} disableGutters>
+      <Stack sx={{ flex: 1, my: 2, px: 3, width: '100%' }} spacing={2}>
+        <Stack spacing={1}>
           <PageHeaderBreadcrumbs
             aria-label="breadcrumb"
             separator={<NavigateNextRoundedIcon fontSize="small" />}
           >
             {breadcrumbs
               ? breadcrumbs.map((breadcrumb, index) => {
-                  return breadcrumb.path ? (
-                    <MuiLink
-                      key={index}
-                      component={Link}
-                      underline="hover"
-                      color="inherit"
-                      to={breadcrumb.path}
-                    >
-                      {breadcrumb.title}
-                    </MuiLink>
-                  ) : (
-                    <Typography
-                      key={index}
-                      sx={{ color: 'text.primary', fontWeight: 600 }}
-                    >
-                      {breadcrumb.title}
-                    </Typography>
-                  );
-                })
+                return breadcrumb.path ? (
+                  <MuiLink
+                    key={index}
+                    component={Link}
+                    underline="hover"
+                    color="inherit"
+                    to={breadcrumb.path}
+                  >
+                    {breadcrumb.title}
+                  </MuiLink>
+                ) : (
+                  <Typography
+                    key={index}
+                    sx={{ color: 'text.primary', fontWeight: 600 }}
+                  >
+                    {breadcrumb.title}
+                  </Typography>
+                );
+              })
               : null}
           </PageHeaderBreadcrumbs>
           <PageContentHeader>
@@ -86,7 +87,7 @@ export default function PageContainer(props: PageContainerProps) {
             <PageHeaderToolbar>{actions}</PageHeaderToolbar>
           </PageContentHeader>
         </Stack>
-        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', width: '100%' }}>
           {children}
         </Box>
       </Stack>

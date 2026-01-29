@@ -1,152 +1,133 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Grid, Card, CardContent, CardActions, Button, CircularProgress, Paper, Chip } from '@mui/material';
-import { Add as AddIcon, Visibility as VisibilityIcon, Edit as EditIcon } from '@mui/icons-material';
+import { DataGrid, type GridColDef, type GridRenderCellParams } from '@mui/x-data-grid';
+import { Button, IconButton, Stack } from '@mui/material';
+import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, Visibility as VisibilityIcon } from '@mui/icons-material';
 import { routineApi } from '@/services/api';
 import type { RoutineResponse } from '@/types';
-import { Category } from '@/types';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import PageContainer from '@/components/dashboard/PageContainer';
+import useNotifications from '@/providers/useNotifications';
+import { useDialogs } from '@/providers/useDialogs';
 
 const RoutinePage: React.FC = () => {
   const [routines, setRoutines] = useState<RoutineResponse[]>([]);
   const [loading, setLoading] = useState(true);
+  const notifications = useNotifications();
+  const dialogs = useDialogs();
+  const navigate = useNavigate();
+
+  const fetchRoutines = async () => {
+    setLoading(true);
+    try {
+      const response = await routineApi.getAll();
+      if (response.status === 200 && response.data) {
+        setRoutines((response.data as any).data || response.data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch routines:', error);
+      notifications.show('Failed to fetch routines', { severity: 'error' });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchRoutines = async () => {
-      try {
-        const response = await routineApi.getAll();
-        if (response.status == 200 && response.data) {
-          setRoutines(response.data.data);
-        }
-      } catch (error) {
-        console.error('获取训练计划失败:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchRoutines();
   }, []);
 
-  // 获取分类中文名称
-  const getCategoryName = (category: Category): string => {
-    const categoryMap: Record<Category, string> = {
-      [Category.Mobility]: '柔韧性',
-      [Category.WarmUp]: '热身',
-      [Category.Activation]: '激活',
-      [Category.WorkingSets]: '正式组',
-      [Category.Corrective]: '纠正性',
-      [Category.Aerobic]: '有氧',
-      [Category.CoolDown]: '放松'
-    };
-    return categoryMap[category];
+  const handleDelete = async (id: number) => {
+    const confirmed = await dialogs.confirm('Are you sure you want to delete this routine?', {
+      okText: 'Delete',
+      severity: 'error',
+    });
+    if (confirmed) {
+      try {
+        await routineApi.delete(id);
+        notifications.show('Routine deleted successfully', { severity: 'success' });
+        fetchRoutines();
+      } catch (error) {
+        console.error('Failed to delete routine:', error);
+        notifications.show('Failed to delete routine', { severity: 'error' });
+      }
+    }
   };
 
+  // Helper handling Category display if needed, but for list view usually just basic info
+  // Map Slot categories? Maybe too complex for a grid cell. Just showing slot count.
+
+  const columns: GridColDef[] = [
+    { field: 'id', headerName: 'ID', width: 70 },
+    { field: 'name', headerName: 'Name', width: 200 },
+    { field: 'description', headerName: 'Description', width: 300, flex: 1 },
+    // { field: 'slots', headerName: 'Exercises', width: 120, valueGetter: (params) => params.row.slots?.size || 0 }, // Adjust based on data structure
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      width: 150,
+      renderCell: (params: GridRenderCellParams) => (
+        <Stack direction="row" spacing={1}>
+          <IconButton
+            size="small"
+            component={Link}
+            to={`/routines/${params.row.id}`}
+            title="View Details"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <VisibilityIcon fontSize="small" />
+          </IconButton>
+          <IconButton
+            size="small"
+            component={Link}
+            to={`/routines/${params.row.id}/edit`}
+            title="Edit"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <EditIcon fontSize="small" />
+          </IconButton>
+          <IconButton
+            size="small"
+            color="error"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDelete(params.row.id);
+            }}
+            title="Delete"
+          >
+            <DeleteIcon fontSize="small" />
+          </IconButton>
+        </Stack>
+      ),
+    },
+  ];
+
   return (
-    <Box sx={{ mt: 2 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          训练计划
-        </Typography>
-        <Button 
-          variant="contained" 
-          color="primary" 
+    <PageContainer
+      title="Routines"
+      breadcrumbs={[{ title: 'Home', path: '/' }, { title: 'Routines' }]}
+      actions={
+        <Button
+          variant="contained"
           startIcon={<AddIcon />}
-          component={Link} 
+          component={Link}
           to="/routines/new"
         >
-          创建新计划
+          Create Routine
         </Button>
-      </Box>
-
-      {loading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-          <CircularProgress />
-        </Box>
-      ) : routines.length === 0 ? (
-        <Paper elevation={3} sx={{ p: 3, textAlign: 'center' }}>
-          <Typography variant="body1" color="textSecondary">
-            暂无训练计划
-          </Typography>
-          <Button 
-            variant="contained" 
-            color="primary" 
-            component={Link} 
-            to="/routines/new" 
-            sx={{ mt: 2 }}
-          >
-            创建第一个计划
-          </Button>
-        </Paper>
-      ) : (
-        <Grid container spacing={3}>
-          {routines.map((routine) => {
-            // 统计不同分类的动作数量
-            const categoryCounts: Record<string, number> = {};
-            routine.slots.forEach(slot => {
-              const categoryName = getCategoryName(slot.category);
-              categoryCounts[categoryName] = (categoryCounts[categoryName] || 0) + 1;
-            });
-
-            return (
-              <Grid item xs={12} sm={6} md={4} key={routine.id}>
-                <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                  <CardContent>
-                    <Typography variant="h6" gutterBottom>
-                      {routine.name}
-                    </Typography>
-                    {routine.description && (
-                      <Typography variant="body2" color="textSecondary" paragraph>
-                        {routine.description}
-                      </Typography>
-                    )}
-                    <Box sx={{ mb: 2 }}>
-                      <Typography variant="subtitle2" gutterBottom>
-                        动作分类:
-                      </Typography>
-                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                        {Object.entries(categoryCounts).map(([category, count]) => (
-                          <Chip key={category} label={`${category}: ${count}`} size="small" />
-                        ))}
-                      </Box>
-                    </Box>
-                    <Typography variant="body2" color="textSecondary">
-                      总动作数: {routine.slots.size}
-                    </Typography>
-                    {routine.checklist.length > 0 && (
-                      <Typography variant="body2" color="textSecondary">
-                        检查项: {routine.checklist.length}
-                      </Typography>
-                    )}
-                  </CardContent>
-                  <CardActions sx={{ mt: 'auto', justifyContent: 'flex-start', p: 2 }}>
-                    <Button 
-                      size="small" 
-                      variant="outlined" 
-                      color="primary" 
-                      startIcon={<VisibilityIcon />}
-                      component={Link} 
-                      to={`/routines/${routine.id}`}
-                    >
-                      查看详情
-                    </Button>
-                    <Button 
-                      size="small" 
-                      variant="outlined" 
-                      color="secondary" 
-                      startIcon={<EditIcon />}
-                      component={Link} 
-                      to={`/routines/${routine.id}/edit`}
-                    >
-                      编辑
-                    </Button>
-                  </CardActions>
-                </Card>
-              </Grid>
-            );
-          })}
-        </Grid>
-      )}
-    </Box>
+      }
+    >
+      <DataGrid
+        rows={routines}
+        columns={columns}
+        loading={loading}
+        onRowClick={(params) => navigate(`/routines/${params.row.id}`)}
+        initialState={{
+          pagination: { paginationModel: { pageSize: 10 } },
+        }}
+        pageSizeOptions={[5, 10, 25]}
+        sx={{ border: 0 }}
+        disableRowSelectionOnClick
+      />
+    </PageContainer>
   );
 };
 

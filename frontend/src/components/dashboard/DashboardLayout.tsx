@@ -3,16 +3,18 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import { Outlet } from 'react-router';
+import { Outlet } from 'react-router-dom';
 import DashboardHeader from './DashboardHeader';
 import DashboardSidebar from './DashboardSidebar';
 import SitemarkIcon from './SitemarkIcon';
-import { useAdminState } from '../../context/AdminStateContext';
 
 export default function DashboardLayout() {
   const theme = useTheme();
-  const { state, dispatch } = useAdminState();
-  const { isDesktopNavigationExpanded, isMobileNavigationExpanded } = state.sidebar;
+
+  const [isDesktopNavigationExpanded, setIsDesktopNavigationExpanded] =
+    React.useState(true);
+  const [isMobileNavigationExpanded, setIsMobileNavigationExpanded] =
+    React.useState(false);
 
   const isOverMdViewport = useMediaQuery(theme.breakpoints.up('md'));
 
@@ -20,15 +22,26 @@ export default function DashboardLayout() {
     ? isDesktopNavigationExpanded
     : isMobileNavigationExpanded;
 
-  const handleToggleHeaderMenu = React.useCallback(
-    (open: boolean) => {
+  const setIsNavigationExpanded = React.useCallback(
+    (newExpanded: boolean) => {
       if (isOverMdViewport) {
-        dispatch({ type: 'SIDEBAR_SET_DESKTOP_EXPANDED', payload: open });
+        setIsDesktopNavigationExpanded(newExpanded);
       } else {
-        dispatch({ type: 'SIDEBAR_SET_MOBILE_EXPANDED', payload: open });
+        setIsMobileNavigationExpanded(newExpanded);
       }
     },
-    [dispatch, isOverMdViewport]
+    [
+      isOverMdViewport,
+      setIsDesktopNavigationExpanded,
+      setIsMobileNavigationExpanded,
+    ],
+  );
+
+  const handleToggleHeaderMenu = React.useCallback(
+    (isExpanded: boolean) => {
+      setIsNavigationExpanded(isExpanded);
+    },
+    [setIsNavigationExpanded],
   );
 
   const layoutRef = React.useRef<HTMLDivElement>(null);
@@ -41,16 +54,18 @@ export default function DashboardLayout() {
         display: 'flex',
         overflow: 'hidden',
         height: '100vh',
-        width: '100%',
+        width: '100vw',
       }}
     >
       <DashboardHeader
         logo={<SitemarkIcon />}
-        title="Admin Dashboard"
+        title="Admin"
         menuOpen={isNavigationExpanded}
         onToggleMenu={handleToggleHeaderMenu}
       />
       <DashboardSidebar
+        expanded={isNavigationExpanded}
+        setExpanded={setIsNavigationExpanded}
         container={layoutRef?.current ?? undefined}
       />
       <Box

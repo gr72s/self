@@ -6,16 +6,15 @@ import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import Toolbar from '@mui/material/Toolbar';
 import type { } from '@mui/material/themeCssVarsAugmentation';
+import DashboardIcon from '@mui/icons-material/Dashboard';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
-import EventNoteIcon from '@mui/icons-material/EventNote';
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
-import AccessibilityIcon from '@mui/icons-material/Accessibility';
-import HomeIcon from '@mui/icons-material/Home';
-import SettingsIcon from '@mui/icons-material/Settings';
-
-import { matchPath, useLocation } from 'react-router';
-import { SidebarDisplayContext } from './DashboardSidebarPageItem';
-import { useAdminState } from '../../context/AdminStateContext';
+import MonitorHeartIcon from '@mui/icons-material/MonitorHeart';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import DateRangeIcon from '@mui/icons-material/DateRange';
+import { matchPath, useLocation } from 'react-router-dom';
+import DashboardSidebarContext from '../../context/DashboardSidebarContext';
 import { DRAWER_WIDTH, MINI_DRAWER_WIDTH } from './constants';
 import DashboardSidebarPageItem from './DashboardSidebarPageItem';
 import DashboardSidebarHeaderItem from './DashboardSidebarHeaderItem';
@@ -26,49 +25,42 @@ import {
 } from './mixins';
 
 export interface DashboardSidebarProps {
+  expanded?: boolean;
+  setExpanded: (expanded: boolean) => void;
   disableCollapsibleSidebar?: boolean;
   container?: Element;
 }
 
 export default function DashboardSidebar({
+  expanded = true,
+  setExpanded,
   disableCollapsibleSidebar = false,
   container,
 }: DashboardSidebarProps) {
   const theme = useTheme();
+
   const { pathname } = useLocation();
-  const { state, dispatch } = useAdminState();
-  const {
-    isDesktopNavigationExpanded,
-    isMobileNavigationExpanded,
-    expandedItemIds,
-    isFullyExpanded,
-    isFullyCollapsed
-  } = state.sidebar;
+
+  const [expandedItemIds, setExpandedItemIds] = React.useState<string[]>([]);
 
   const isOverSmViewport = useMediaQuery(theme.breakpoints.up('sm'));
   const isOverMdViewport = useMediaQuery(theme.breakpoints.up('md'));
 
-  const expanded = isOverMdViewport ? isDesktopNavigationExpanded : isMobileNavigationExpanded;
-
-  const setExpanded = React.useCallback((newExpanded: boolean) => {
-    if (isOverMdViewport) {
-      dispatch({ type: 'SIDEBAR_SET_DESKTOP_EXPANDED', payload: newExpanded });
-    } else {
-      dispatch({ type: 'SIDEBAR_SET_MOBILE_EXPANDED', payload: newExpanded });
-    }
-  }, [dispatch, isOverMdViewport]);
-
-  const setIsFullyExpanded = (val: boolean) => dispatch({ type: 'SIDEBAR_SET_FULLY_EXPANDED', payload: val });
-  const setIsFullyCollapsed = (val: boolean) => dispatch({ type: 'SIDEBAR_SET_FULLY_COLLAPSED', payload: val });
+  const [isFullyExpanded, setIsFullyExpanded] = React.useState(expanded);
+  const [isFullyCollapsed, setIsFullyCollapsed] = React.useState(!expanded);
 
   React.useEffect(() => {
     if (expanded) {
       const drawerWidthTransitionTimeout = setTimeout(() => {
         setIsFullyExpanded(true);
       }, theme.transitions.duration.enteringScreen);
+
       return () => clearTimeout(drawerWidthTransitionTimeout);
     }
+
     setIsFullyExpanded(false);
+
+    return () => { };
   }, [expanded, theme.transitions.duration.enteringScreen]);
 
   React.useEffect(() => {
@@ -76,26 +68,39 @@ export default function DashboardSidebar({
       const drawerWidthTransitionTimeout = setTimeout(() => {
         setIsFullyCollapsed(true);
       }, theme.transitions.duration.leavingScreen);
+
       return () => clearTimeout(drawerWidthTransitionTimeout);
     }
+
     setIsFullyCollapsed(false);
+
+    return () => { };
   }, [expanded, theme.transitions.duration.leavingScreen]);
 
   const mini = !disableCollapsibleSidebar && !expanded;
 
-  const handleSetSidebarExpanded = (newExpanded: boolean) => () => {
-    setExpanded(newExpanded);
-  };
+  const handleSetSidebarExpanded = React.useCallback(
+    (newExpanded: boolean) => () => {
+      setExpanded(newExpanded);
+    },
+    [setExpanded],
+  );
 
   const handlePageItemClick = React.useCallback(
     (itemId: string, hasNestedNavigation: boolean) => {
       if (hasNestedNavigation && !mini) {
-        dispatch({ type: 'SIDEBAR_TOGGLE_ITEM', payload: itemId });
+        setExpandedItemIds((previousValue) =>
+          previousValue.includes(itemId)
+            ? previousValue.filter(
+              (previousValueItemId) => previousValueItemId !== itemId,
+            )
+            : [...previousValue, itemId],
+        );
       } else if (!isOverSmViewport && !hasNestedNavigation) {
         setExpanded(false);
       }
     },
-    [mini, setExpanded, isOverSmViewport, dispatch],
+    [mini, setExpanded, isOverSmViewport],
   );
 
   const hasDrawerTransitions =
@@ -133,25 +138,33 @@ export default function DashboardSidebar({
             <DashboardSidebarHeaderItem>Main</DashboardSidebarHeaderItem>
             <DashboardSidebarPageItem
               id="home"
-              title="Home"
-              icon={<HomeIcon />}
+              title="Dashboard"
+              icon={<DashboardIcon />}
               href="/"
               selected={pathname === '/'}
             />
+
+            <DashboardSidebarDividerItem />
+
+            <DashboardSidebarHeaderItem>Training</DashboardSidebarHeaderItem>
             <DashboardSidebarPageItem
               id="workouts"
               title="Workouts"
-              icon={<FitnessCenterIcon />}
+              icon={<DateRangeIcon />}
               href="/workouts"
               selected={!!matchPath('/workouts/*', pathname)}
             />
             <DashboardSidebarPageItem
               id="routines"
               title="Routines"
-              icon={<EventNoteIcon />}
+              icon={<AssignmentIcon />}
               href="/routines"
               selected={!!matchPath('/routines/*', pathname)}
             />
+
+            <DashboardSidebarDividerItem />
+
+            <DashboardSidebarHeaderItem>Library</DashboardSidebarHeaderItem>
             <DashboardSidebarPageItem
               id="exercises"
               title="Exercises"
@@ -162,25 +175,16 @@ export default function DashboardSidebar({
             <DashboardSidebarPageItem
               id="gyms"
               title="Gyms"
-              icon={<Box component={FitnessCenterIcon} sx={{ transform: 'rotate(90deg)' }} />}
+              icon={<LocationOnIcon />}
               href="/gyms"
               selected={!!matchPath('/gyms/*', pathname)}
             />
             <DashboardSidebarPageItem
               id="muscles"
               title="Muscles"
-              icon={<AccessibilityIcon />}
+              icon={<MonitorHeartIcon />}
               href="/muscles"
               selected={!!matchPath('/muscles/*', pathname)}
-            />
-            <DashboardSidebarDividerItem />
-            <DashboardSidebarHeaderItem>System</DashboardSidebarHeaderItem>
-            <DashboardSidebarPageItem
-              id="settings"
-              title="Settings"
-              icon={<SettingsIcon />}
-              href="/settings"
-              selected={!!matchPath('/settings/*', pathname)}
             />
           </List>
         </Box>
@@ -228,14 +232,14 @@ export default function DashboardSidebar({
   ]);
 
   return (
-    <SidebarDisplayContext.Provider value={sidebarContextValue}>
+    <DashboardSidebarContext.Provider value={sidebarContextValue}>
       <Drawer
         container={container}
         variant="temporary"
         open={expanded}
         onClose={handleSetSidebarExpanded(false)}
         ModalProps={{
-          keepMounted: true,
+          keepMounted: true, // Better open performance on mobile.
         }}
         sx={{
           display: {
@@ -270,6 +274,6 @@ export default function DashboardSidebar({
       >
         {getDrawerContent('desktop')}
       </Drawer>
-    </SidebarDisplayContext.Provider>
+    </DashboardSidebarContext.Provider>
   );
 }

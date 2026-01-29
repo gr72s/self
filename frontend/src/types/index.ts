@@ -28,18 +28,29 @@ export interface GymResponse {
   id: number;
   name: string;
   description?: string;
+  location?: string;
 }
 
 // 动作分类
-export enum Category {
-  Mobility = 'Mobility',
-  WarmUp = 'WarmUp',
-  Activation = 'Activation',
-  WorkingSets = 'WorkingSets',
-  Corrective = 'Corrective',
-  Aerobic = 'Aerobic',
-  CoolDown = 'CoolDown'
-}
+// 动作分类
+export type Category =
+  | 'Mobility'
+  | 'WarmUp'
+  | 'Activation'
+  | 'WorkingSets'
+  | 'Corrective'
+  | 'Aerobic'
+  | 'CoolDown';
+
+export const Category = {
+  Mobility: 'Mobility',
+  WarmUp: 'WarmUp',
+  Activation: 'Activation',
+  WorkingSets: 'WorkingSets',
+  Corrective: 'Corrective',
+  Aerobic: 'Aerobic',
+  CoolDown: 'CoolDown'
+} as const;
 
 // 检查项
 export interface ChecklistItem {
