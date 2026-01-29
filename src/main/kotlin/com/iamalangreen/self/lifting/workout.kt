@@ -80,6 +80,20 @@ class WorkoutController(val workoutService: WorkoutService, val gymService: GymS
         return success(workoutService.getAll().map { it.toResponse() })
     }
 
+    @org.springframework.web.bind.annotation.PutMapping("/{id}")
+    fun updateWorkout(@org.springframework.web.bind.annotation.PathVariable id: Long, @RequestBody request: WorkoutRequest): Response {
+        val workout = workoutService.update(
+            id,
+            request.startTime,
+            request.endTime,
+            request.gym,
+            request.routine,
+            request.target,
+            request.note
+        )
+        return success(workout.toResponse())
+    }
+
     @PostMapping("/stop")
     fun stopWorkout(@RequestBody request: WorkoutRequest): Response {
         val workout = workoutService.update(

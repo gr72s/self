@@ -42,6 +42,14 @@ class GymController(private val gymService: GymService) {
         return success(gymService.createGym(request.name, request.location).toResponse())
     }
 
+    @org.springframework.web.bind.annotation.PutMapping("/{id}")
+    fun updateGym(@org.springframework.web.bind.annotation.PathVariable id: Long, @RequestBody request: CreateGymRequest): Response {
+        if (request.name.isBlank() || request.location.isBlank()) {
+            throw IllegalRequestArgumentException()
+        }
+        return success(gymService.updateGym(id, request.name, request.location).toResponse())
+    }
+
     @GetMapping
     fun getAllGym(): Response {
         return success(gymService.getAllGym().map { it.toResponse() })
@@ -51,6 +59,7 @@ class GymController(private val gymService: GymService) {
 
 interface GymService {
     fun createGym(name: String, location: String): Gym
+    fun updateGym(id: Long, name: String, location: String): Gym
     fun getAllGym(): List<Gym>
     fun findByName(name: String): Gym?
     fun findById(id: Long): Gym?
@@ -65,6 +74,13 @@ class DefaultGymService(private val gymRepository: GymRepository) : GymService {
             throw EntityAlreadyExistException()
         }
         return gymRepository.save(Gym(name = name, location = location))
+    }
+
+    override fun updateGym(id: Long, name: String, location: String): Gym {
+        val gym = getById(id)
+        gym.name = name
+        gym.location = location
+        return gymRepository.save(gym)
     }
 
     override fun getAllGym(): List<Gym> {

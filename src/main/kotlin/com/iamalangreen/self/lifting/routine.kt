@@ -101,6 +101,19 @@ class RoutineController(
         return success(routine.toResponse())
     }
 
+    @org.springframework.web.bind.annotation.PutMapping("/{id}")
+    fun updateRoutine(@org.springframework.web.bind.annotation.PathVariable id: Long, @RequestBody request: RoutineRequest): Response {
+        val routine = routineService.updateRoutine(
+            id,
+            request.name,
+            request.description,
+            request.targetIds,
+            request.checklist,
+            request.note
+        )
+        return success(routine.toResponse())
+    }
+
     @GetMapping
     fun getAllRoutines(): Response {
         return success(routineService.getAll().map { it.toResponse() })
@@ -142,6 +155,15 @@ interface RoutineService {
         note: String?
     ): Routine
 
+    fun updateRoutine(
+        id: Long,
+        name: String,
+        description: String?,
+        targetIds: Set<Long>,
+        checklist: List<ChecklistItem>,
+        note: String?
+    ): Routine
+
     fun getAll(): List<Routine>
 
     fun getById(id: Long): Routine
@@ -173,6 +195,30 @@ class DefaultRoutineService(
         note: String?
     ): Routine {
         return create(name, description, null, targetIds, checklist, note)
+    }
+
+    override fun updateRoutine(
+        id: Long,
+        name: String,
+        description: String?,
+        targetIds: Set<Long>,
+        checklist: List<ChecklistItem>,
+        note: String?
+    ): Routine {
+        val routine = getById(id)
+        val targets = targetIds.map { targetService.getById(it) }
+
+        routine.name = name
+        routine.description = description
+        routine.note = note
+
+        routine.target.clear()
+        routine.target.addAll(targets)
+
+        routine.checklist.clear()
+        routine.checklist.addAll(checklist)
+
+        return routineRepository.save(routine)
     }
 
     fun create(

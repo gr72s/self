@@ -55,10 +55,31 @@ class ExerciseController(val exerciseService: ExerciseService) {
         )
         return success(exercise.toResponse())
     }
+
+    @org.springframework.web.bind.annotation.PutMapping("/{id}")
+    fun updateExercise(@org.springframework.web.bind.annotation.PathVariable id: Long, @RequestBody request: ExerciseRequest): Response {
+        val exercise = exerciseService.update(
+            id,
+            request.name,
+            request.description,
+            request.mainMuscles,
+            request.supportMuscles,
+            request.cues
+        )
+        return success(exercise.toResponse())
+    }
 }
 
 interface ExerciseService {
     fun create(
+        name: String,
+        description: String?,
+        mainMuscleIds: Set<Long>,
+        supportMuscleIds: Set<Long>,
+        cues: List<String>
+    ): Exercise
+    fun update(
+        id: Long,
         name: String,
         description: String?,
         mainMuscleIds: Set<Long>,
@@ -87,6 +108,33 @@ class DefaultExerciseService(
         exercise.mainMuscles.addAll(mainMuscles)
         exercise.supportMuscles.addAll(supportMuscles)
         exercise.cues.addAll(cues)
+        return exerciseRepository.save(exercise)
+    }
+
+    override fun update(
+        id: Long,
+        name: String,
+        description: String?,
+        mainMuscleIds: Set<Long>,
+        supportMuscleIds: Set<Long>,
+        cues: List<String>
+    ): Exercise {
+        val exercise = getById(id)
+        val mainMuscles = mainMuscleIds.map { muscleService.getById(it) }
+        val supportMuscles = supportMuscleIds.map { muscleService.getById(it) }
+
+        exercise.name = name
+        exercise.description = description
+
+        exercise.mainMuscles.clear()
+        exercise.mainMuscles.addAll(mainMuscles)
+
+        exercise.supportMuscles.clear()
+        exercise.supportMuscles.addAll(supportMuscles)
+
+        exercise.cues.clear()
+        exercise.cues.addAll(cues)
+
         return exerciseRepository.save(exercise)
     }
 
