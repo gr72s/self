@@ -1,13 +1,14 @@
-import React, {useEffect, useState} from 'react';
-import {Box, Button, Card, CardActionArea, CardContent, CircularProgress, Grid, Paper, Typography} from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Box, Button, Card, CardActionArea, CardContent, CircularProgress, Paper, Typography } from '@mui/material';
+import Grid from '@mui/material/Grid2';
 import {
   CalendarToday as CalendarIcon,
   FitnessCenter as FitnessCenterIcon,
   TrendingUp as TrendingUpIcon
 } from '@mui/icons-material';
-import {workoutApi} from '@/services/api';
-import type {WorkoutResponse} from '@/types';
-import {Link} from 'react-router-dom';
+import { workoutApi } from '@/services/api';
+import type { WorkoutResponse } from '@/types';
+import { Link } from 'react-router-dom';
 
 const HomePage: React.FC = () => {
   const [workouts, setWorkouts] = useState<WorkoutResponse[]>([]);
@@ -44,19 +45,19 @@ const HomePage: React.FC = () => {
   }, []);
 
   return (
-    <Box sx={{mt: 2}}>
+    <Box sx={{ mt: 2 }}>
       <Typography variant="h4" component="h1" gutterBottom>
         欢迎回来
       </Typography>
 
       {/* 统计卡片 */}
-      <Grid container spacing={3} sx={{mb: 4}}>
-        <Grid xs={12} sm={4}>
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid size={{ xs: 12, sm: 4 }}>
           <Card>
             <CardActionArea component={Link} to="/workouts">
               <CardContent>
-                <Box sx={{display: 'flex', alignItems: 'center'}}>
-                  <CalendarIcon sx={{fontSize: 40, mr: 2, color: '#1976d2'}}/>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <CalendarIcon sx={{ fontSize: 40, mr: 2, color: '#1976d2' }} />
                   <Box>
                     <Typography variant="h6" color="textSecondary">
                       训练次数
@@ -71,12 +72,12 @@ const HomePage: React.FC = () => {
           </Card>
         </Grid>
 
-        <Grid xs={12} sm={4}>
+        <Grid size={{ xs: 12, sm: 4 }}>
           <Card>
             <CardActionArea component={Link} to="/routines">
               <CardContent>
-                <Box sx={{display: 'flex', alignItems: 'center'}}>
-                  <FitnessCenterIcon sx={{fontSize: 40, mr: 2, color: '#43a047'}}/>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <FitnessCenterIcon sx={{ fontSize: 40, mr: 2, color: '#43a047' }} />
                   <Box>
                     <Typography variant="h6" color="textSecondary">
                       训练计划
@@ -91,12 +92,12 @@ const HomePage: React.FC = () => {
           </Card>
         </Grid>
 
-        <Grid xs={12} sm={4}>
+        <Grid size={{ xs: 12, sm: 4 }}>
           <Card>
             <CardActionArea component={Link} to="/workouts">
               <CardContent>
-                <Box sx={{display: 'flex', alignItems: 'center'}}>
-                  <TrendingUpIcon sx={{fontSize: 40, mr: 2, color: '#f57c00'}}/>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <TrendingUpIcon sx={{ fontSize: 40, mr: 2, color: '#f57c00' }} />
                   <Box>
                     <Typography variant="h6" color="textSecondary">
                       本月训练
@@ -117,13 +118,13 @@ const HomePage: React.FC = () => {
       </Grid>
 
       {/* 进行中的训练 */}
-      <Paper elevation={3} sx={{p: 3, mb: 4}}>
+      <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
         <Typography variant="h5" gutterBottom>
           当前训练
         </Typography>
         {loading ? (
-          <Box sx={{display: 'flex', justifyContent: 'center', py: 4}}>
-            <CircularProgress/>
+          <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+            <CircularProgress />
           </Box>
         ) : currentWorkout ? (
           <Box>
@@ -133,7 +134,7 @@ const HomePage: React.FC = () => {
             <Typography variant="body1" color="textSecondary">
               开始时间: {new Date(currentWorkout.startTime || '').toLocaleString()}
             </Typography>
-            <Box sx={{mt: 2}}>
+            <Box sx={{ mt: 2 }}>
               <Button
                 variant="contained"
                 color="primary"
@@ -152,8 +153,8 @@ const HomePage: React.FC = () => {
       </Paper>
 
       {/* 最近训练记录 */}
-      <Paper elevation={3} sx={{p: 3}}>
-        <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2}}>
+      <Paper elevation={3} sx={{ p: 3 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
           <Typography variant="h5" gutterBottom>
             最近训练
           </Typography>
@@ -163,8 +164,8 @@ const HomePage: React.FC = () => {
         </Box>
 
         {loading ? (
-          <Box sx={{display: 'flex', justifyContent: 'center', py: 4}}>
-            <CircularProgress/>
+          <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+            <CircularProgress />
           </Box>
         ) : workouts.length === 0 ? (
           <Typography variant="body1" color="textSecondary">
@@ -180,10 +181,10 @@ const HomePage: React.FC = () => {
                   mb: 1,
                   border: '1px solid #e0e0e0',
                   borderRadius: 1,
-                  '&:hover': {backgroundColor: '#f5f5f5'}
+                  '&:hover': { backgroundColor: '#f5f5f5' }
                 }}
               >
-                <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <Typography variant="h6">
                     {workout.routine?.name || '未命名训练'}
                   </Typography>

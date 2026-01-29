@@ -1,7 +1,13 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import Layout from '@/components/Layout';
+import AppTheme from '@/theme/AppTheme';
+import {
+  dataGridCustomizations,
+  datePickersCustomizations,
+  sidebarCustomizations,
+  formInputCustomizations,
+} from '@/theme/customizations';
+import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import HomePage from '@/pages/HomePage';
 import WorkoutPage from '@/pages/WorkoutPage';
 import RoutinePage from '@/pages/RoutinePage';
@@ -13,34 +19,26 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import { AdminStateProvider } from '@/context/AdminStateContext';
 import '@/App.css';
 
-// 创建主题
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#1976d2',
-    },
-    secondary: {
-      main: '#dc004e',
-    },
-  },
-  typography: {
-    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-  },
-});
+const themeComponents = {
+  ...dataGridCustomizations,
+  ...datePickersCustomizations,
+  ...sidebarCustomizations,
+  ...formInputCustomizations,
+};
 
 function App() {
   return (
     <AdminStateProvider>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
+      <AppTheme themeComponents={themeComponents}>
+        <CssBaseline enableColorScheme />
         <Router>
           <Routes>
             {/* 登录页面 */}
             <Route path="/login" element={<LoginPage />} />
-            
+
             {/* 受保护的路由 */}
             <Route element={<ProtectedRoute />}>
-              <Route path="/" element={<Layout />}>
+              <Route path="/" element={<DashboardLayout />}>
                 <Route index element={<HomePage />} />
                 <Route path="workouts">
                   <Route index element={<WorkoutPage />} />
@@ -62,7 +60,7 @@ function App() {
             </Route>
           </Routes>
         </Router>
-      </ThemeProvider>
+      </AppTheme>
     </AdminStateProvider>
   );
 }

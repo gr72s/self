@@ -17,10 +17,20 @@ interface TableState<T> {
 }
 
 // 定义完整的应用状态
+interface SidebarState {
+  isDesktopNavigationExpanded: boolean;
+  isMobileNavigationExpanded: boolean;
+  expandedItemIds: string[];
+  isFullyExpanded: boolean;
+  isFullyCollapsed: boolean;
+}
+
+// 定义完整的应用状态
 interface AppState {
   muscles: TableState<MuscleResponse & { isNew?: boolean }>;
   exercises: TableState<ExerciseResponse & { isNew?: boolean }>;
   gyms: TableState<GymResponse & { isNew?: boolean }>;
+  sidebar: SidebarState;
 }
 
 // 定义Action类型
@@ -39,7 +49,14 @@ type ActionType =
   | { type: 'SET_EDITING_ID'; module: keyof AppState; payload: number | null }
   | { type: 'SET_DELETE_DIALOG_OPEN'; module: keyof AppState; payload: boolean }
   | { type: 'SET_ITEM_TO_DELETE'; module: keyof AppState; payload: number | null }
-  | { type: 'RESET_STATE'; module: keyof AppState };
+  | { type: 'RESET_STATE'; module: keyof AppState }
+  // Sidebar Actions
+  | { type: 'SIDEBAR_SET_DESKTOP_EXPANDED'; payload: boolean }
+  | { type: 'SIDEBAR_SET_MOBILE_EXPANDED'; payload: boolean }
+  | { type: 'SIDEBAR_SET_EXPANDED_ITEMS'; payload: string[] }
+  | { type: 'SIDEBAR_TOGGLE_ITEM'; payload: string }
+  | { type: 'SIDEBAR_SET_FULLY_EXPANDED'; payload: boolean }
+  | { type: 'SIDEBAR_SET_FULLY_COLLAPSED'; payload: boolean };
 
 // 初始状态
 const initialState: AppState = {
@@ -78,6 +95,13 @@ const initialState: AppState = {
     editingId: null,
     deleteDialogOpen: false,
     itemToDelete: null
+  },
+  sidebar: {
+    isDesktopNavigationExpanded: true,
+    isMobileNavigationExpanded: false,
+    expandedItemIds: [],
+    isFullyExpanded: true,
+    isFullyCollapsed: false,
   }
 };
 
@@ -92,7 +116,7 @@ const adminReducer = (state: AppState, action: ActionType): AppState => {
           data: action.payload
         }
       };
-    
+
     case 'SET_LOADING':
       return {
         ...state,
@@ -101,7 +125,7 @@ const adminReducer = (state: AppState, action: ActionType): AppState => {
           loading: action.payload
         }
       };
-    
+
     case 'SET_ERROR':
       return {
         ...state,
@@ -110,7 +134,7 @@ const adminReducer = (state: AppState, action: ActionType): AppState => {
           error: action.payload
         }
       };
-    
+
     case 'ADD_ITEM':
       return {
         ...state,
@@ -119,18 +143,18 @@ const adminReducer = (state: AppState, action: ActionType): AppState => {
           data: [action.payload, ...state[action.module].data]
         }
       };
-    
+
     case 'UPDATE_ITEM':
       return {
         ...state,
         [action.module]: {
           ...state[action.module],
-          data: state[action.module].data.map(item => 
+          data: state[action.module].data.map(item =>
             item.id === action.payload.id ? { ...item, ...action.payload.data } : item
           )
         }
       };
-    
+
     case 'DELETE_ITEM':
       return {
         ...state,
@@ -139,7 +163,7 @@ const adminReducer = (state: AppState, action: ActionType): AppState => {
           data: state[action.module].data.filter(item => item.id !== action.payload)
         }
       };
-    
+
     case 'SET_SEARCH_TERM':
       return {
         ...state,
@@ -149,7 +173,7 @@ const adminReducer = (state: AppState, action: ActionType): AppState => {
           page: 0 // 搜索时重置页码
         }
       };
-    
+
     case 'SET_PAGE':
       return {
         ...state,
@@ -158,7 +182,7 @@ const adminReducer = (state: AppState, action: ActionType): AppState => {
           page: action.payload
         }
       };
-    
+
     case 'SET_ROWS_PER_PAGE':
       return {
         ...state,
@@ -168,7 +192,7 @@ const adminReducer = (state: AppState, action: ActionType): AppState => {
           page: 0 // 改变每页行数时重置页码
         }
       };
-    
+
     case 'SET_SORT_CONFIG':
       return {
         ...state,
@@ -177,7 +201,7 @@ const adminReducer = (state: AppState, action: ActionType): AppState => {
           sortConfig: action.payload as any
         }
       };
-    
+
     case 'SET_EDITING_ID':
       return {
         ...state,
@@ -186,7 +210,7 @@ const adminReducer = (state: AppState, action: ActionType): AppState => {
           editingId: action.payload
         }
       };
-    
+
     case 'SET_DELETE_DIALOG_OPEN':
       return {
         ...state,
@@ -195,7 +219,7 @@ const adminReducer = (state: AppState, action: ActionType): AppState => {
           deleteDialogOpen: action.payload
         }
       };
-    
+
     case 'SET_ITEM_TO_DELETE':
       return {
         ...state,
@@ -204,13 +228,55 @@ const adminReducer = (state: AppState, action: ActionType): AppState => {
           itemToDelete: action.payload
         }
       };
-    
+
     case 'RESET_STATE':
       return {
         ...state,
         [action.module]: initialState[action.module]
       };
-    
+
+    case 'SIDEBAR_SET_DESKTOP_EXPANDED':
+      return {
+        ...state,
+        sidebar: { ...state.sidebar, isDesktopNavigationExpanded: action.payload }
+      };
+
+    case 'SIDEBAR_SET_MOBILE_EXPANDED':
+      return {
+        ...state,
+        sidebar: { ...state.sidebar, isMobileNavigationExpanded: action.payload }
+      };
+
+    case 'SIDEBAR_SET_EXPANDED_ITEMS':
+      return {
+        ...state,
+        sidebar: { ...state.sidebar, expandedItemIds: action.payload }
+      };
+
+    case 'SIDEBAR_TOGGLE_ITEM': {
+      const itemId = action.payload;
+      const currentIds = state.sidebar.expandedItemIds;
+      const newIds = currentIds.includes(itemId)
+        ? currentIds.filter((id) => id !== itemId)
+        : [...currentIds, itemId];
+      return {
+        ...state,
+        sidebar: { ...state.sidebar, expandedItemIds: newIds }
+      };
+    }
+
+    case 'SIDEBAR_SET_FULLY_EXPANDED':
+      return {
+        ...state,
+        sidebar: { ...state.sidebar, isFullyExpanded: action.payload }
+      };
+
+    case 'SIDEBAR_SET_FULLY_COLLAPSED':
+      return {
+        ...state,
+        sidebar: { ...state.sidebar, isFullyCollapsed: action.payload }
+      };
+
     default:
       return state;
   }
@@ -251,7 +317,7 @@ export const useAdminState = () => {
 // 自定义Hook，用于特定模块
 export const useModuleState = <T extends keyof AppState>(module: T) => {
   const { state, dispatch: rootDispatch } = useAdminState();
-  
+
   return {
     state: state[module],
     dispatch: (action: any) => {
