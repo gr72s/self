@@ -6,7 +6,7 @@ import {
   FitnessCenter as FitnessCenterIcon,
   TrendingUp as TrendingUpIcon
 } from '@mui/icons-material';
-import { workoutApi } from '@/services/api';
+import { workoutApi, userApi } from '@/services/api';
 import type { WorkoutResponse } from '@/types';
 import { Link } from 'react-router-dom';
 import PageContainer from '@/components/dashboard/PageContainer';
@@ -59,7 +59,10 @@ const HomePage: React.FC = () => {
   }, []);
 
   return (
-    <PageContainer title="Dashboard" breadcrumbs={[{ title: 'Home' }]}>
+    <PageContainer 
+      title={`Welcome back${user?.username ? `, ${user.username}` : ''}`} 
+      breadcrumbs={[{ title: 'Home' }]}
+    >
       {/* Stats Cards */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
         <Grid size={{ xs: 12, sm: 4 }}>
