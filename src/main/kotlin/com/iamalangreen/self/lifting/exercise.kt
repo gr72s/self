@@ -7,10 +7,7 @@ import jakarta.persistence.*
 import org.hibernate.annotations.Type
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 data class ExerciseRequest(
     val id: Long?,
@@ -56,8 +53,8 @@ class ExerciseController(val exerciseService: ExerciseService) {
         return success(exercise.toResponse())
     }
 
-    @org.springframework.web.bind.annotation.PutMapping("/{id}")
-    fun updateExercise(@org.springframework.web.bind.annotation.PathVariable id: Long, @RequestBody request: ExerciseRequest): Response {
+    @PutMapping("/{id}")
+    fun updateExercise(@PathVariable id: Long, @RequestBody request: ExerciseRequest): Response {
         val exercise = exerciseService.update(
             id,
             request.name,
