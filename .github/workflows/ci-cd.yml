@@ -22,6 +22,7 @@ jobs:
           
       # 步骤3: 连接到服务器并执行命令
       - name: Deploy to Server
+        if: "contains(github.event.head_commit.message, 'feat') || contains(github.event.head_commit.message, 'fix') || contains(github.event.head_commit.message, 'feature')"
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
             # 进入项目目录
@@ -67,7 +68,7 @@ jobs:
           
       # 步骤4: 发送部署通知
       - name: Send Deployment Email
-        if: success()
+        if: "success() && (contains(github.event.head_commit.message, 'feat') || contains(github.event.head_commit.message, 'fix') || contains(github.event.head_commit.message, 'feature'))"
         uses: dawidd6/action-send-mail@v3
         with:
           # SMTP服务器配置

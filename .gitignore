@@ -31,3 +31,4 @@ out/
 *.txt
 *.log
 logs/
+node_modules/
