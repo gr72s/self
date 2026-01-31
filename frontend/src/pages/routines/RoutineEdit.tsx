@@ -1,52 +1,51 @@
 import * as React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import PageContainer from '@/components/dashboard/PageContainer';
-import MuscleForm, { type MuscleFormData } from './MuscleForm';
-import { muscleApi } from '@/services/api';
+import RoutineForm, { type RoutineFormData } from './RoutineForm';
+import { routineApi } from '@/services/api';
 import useNotifications from '@/providers/useNotifications';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 
-export default function MuscleEdit() {
+export default function RoutineEdit() {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const notifications = useNotifications();
     const [loading, setLoading] = React.useState(true);
-    const [initialData, setInitialData] = React.useState<MuscleFormData | null>(null);
+    const [initialData, setInitialData] = React.useState<RoutineFormData | null>(null);
 
     React.useEffect(() => {
-        const fetchMuscle = async () => {
+        const fetchRoutine = async () => {
             if (!id) return;
             try {
-                const response = await muscleApi.getById(Number(id));
-                const muscle = (response.data as any).data || response.data;
+                const response = await routineApi.getById(Number(id));
+                const routine = (response.data as any).data || response.data;
                 setInitialData({
-                    name: muscle.name,
-                    description: muscle.description || '',
-                    function: muscle.function || '',
-                    originName: muscle.originName || '',
+                    name: routine.name,
+                    description: routine.description || '',
+                    note: routine.note || '',
                 });
             } catch (error) {
-                console.error('Failed to fetch muscle:', error);
-                notifications.show('Failed to fetch muscle details', { severity: 'error' });
-                navigate('/muscles');
+                console.error('Failed to fetch routine:', error);
+                notifications.show('Failed to fetch routine details', { severity: 'error' });
+                navigate('/routines');
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchMuscle();
+        fetchRoutine();
     }, [id, navigate, notifications]);
 
-    const handleSubmit = async (data: MuscleFormData) => {
+    const handleSubmit = async (data: RoutineFormData) => {
         if (!id) return;
         try {
-            await muscleApi.update(Number(id), data);
-            notifications.show('Muscle updated successfully', { severity: 'success' });
-            navigate('/muscles');
+            await routineApi.update(Number(id), data);
+            notifications.show('Routine updated successfully', { severity: 'success' });
+            navigate('/routines');
         } catch (error) {
-            console.error('Failed to update muscle:', error);
-            notifications.show('Failed to update muscle', { severity: 'error' });
+            console.error('Failed to update routine:', error);
+            notifications.show('Failed to update routine', { severity: 'error' });
             throw error;
         }
     };
@@ -61,18 +60,18 @@ export default function MuscleEdit() {
 
     return (
         <PageContainer
-            title="Edit Muscle"
+            title="Edit Routine"
             breadcrumbs={[
                 { title: 'Home', path: '/' },
-                { title: 'Muscles', path: '/muscles' },
+                { title: 'Routines', path: '/routines' },
                 { title: 'Edit' },
             ]}
         >
             {initialData && (
-                <MuscleForm
+                <RoutineForm
                     initialData={initialData}
                     onSubmit={handleSubmit}
-                    submitLabel="Update"
+                    submitLabel="Update Routine"
                 />
             )}
         </PageContainer>

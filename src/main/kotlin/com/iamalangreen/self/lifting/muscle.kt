@@ -9,20 +9,26 @@ import org.springframework.web.bind.annotation.*
 
 data class MuscleRequest(
     val name: String,
-    val description: String
+    val description: String?,
+    val function: String?,
+    val originName: String?
 )
 
 data class MuscleResponse(
     val id: Long,
     val name: String,
-    val description: String
+    val description: String?,
+    val function: String?,
+    val originName: String?
 )
 
 fun Muscle.toResponse(): MuscleResponse {
     return MuscleResponse(
         id!!,
         name,
-        description
+        description,
+        function,
+        originName
     )
 }
 
@@ -33,14 +39,14 @@ class MuscleController(private val muscleService: MuscleService) {
     @PostMapping
     fun createMuscle(@RequestBody request: MuscleRequest): Response {
         return success(
-            muscleService.create(request.name, request.description).toResponse()
+            muscleService.create(request.name, request.description, request.function, request.originName).toResponse()
         )
     }
 
     @PutMapping("/{id}")
     fun updateMuscle(@PathVariable id: Long, @RequestBody request: MuscleRequest): Response {
         return success(
-            muscleService.update(id, request.name, request.description).toResponse()
+            muscleService.update(id, request.name, request.description, request.function, request.originName).toResponse()
         )
     }
 
@@ -57,8 +63,8 @@ class MuscleController(private val muscleService: MuscleService) {
 
 
 interface MuscleService {
-    fun create(name: String, description: String): Muscle
-    fun update(id: Long, name: String, description: String): Muscle
+    fun create(name: String, description: String?, function: String?, originName: String?): Muscle
+    fun update(id: Long, name: String, description: String?, function: String?, originName: String?): Muscle
     fun getAll(): List<Muscle>
     fun getById(id: Long): Muscle
 }
@@ -66,14 +72,16 @@ interface MuscleService {
 @Service
 class DefaultMuscleRepository(private val muscleRepository: MuscleRepository) : MuscleService {
     
-    override fun create(name: String, description: String): Muscle {
-        return muscleRepository.save(Muscle(name = name, description = description))
+    override fun create(name: String, description: String?, function: String?, originName: String?): Muscle {
+        return muscleRepository.save(Muscle(name = name, description = description, function = function, originName = originName))
     }
 
-    override fun update(id: Long, name: String, description: String): Muscle {
+    override fun update(id: Long, name: String, description: String?, function: String?, originName: String?): Muscle {
         val muscle = getById(id)
         muscle.name = name
         muscle.description = description
+        muscle.function = function
+        muscle.originName = originName
         return muscleRepository.save(muscle)
     }
 
@@ -97,7 +105,11 @@ data class Muscle(
     @Column
     var name: String,
     @Column
-    var description: String,
+    var description: String?,
+    @Column
+    var function: String? = null,
+    @Column(name = "origin_name")
+    var originName: String? = null,
     @ManyToMany(mappedBy = "mainMuscles")
     var exercisesAsMain: MutableSet<Exercise> = mutableSetOf(),
     @ManyToMany(mappedBy = "supportMuscles")

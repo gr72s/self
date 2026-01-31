@@ -65,6 +65,11 @@ class ExerciseController(val exerciseService: ExerciseService) {
         )
         return success(exercise.toResponse())
     }
+
+    @GetMapping
+    fun getAllExercises(): Response {
+        return success(exerciseService.getAll().map { it.toResponse() })
+    }
 }
 
 interface ExerciseService {
@@ -84,6 +89,7 @@ interface ExerciseService {
         cues: List<String>
     ): Exercise
     fun getById(id: Long): Exercise
+    fun getAll(): List<Exercise>
 }
 
 @Service
@@ -137,6 +143,10 @@ class DefaultExerciseService(
 
     override fun getById(id: Long): Exercise {
         return exerciseRepository.findById(id).orElseThrow()
+    }
+
+    override fun getAll(): List<Exercise> {
+        return exerciseRepository.findAll()
     }
 }
 

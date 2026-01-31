@@ -254,6 +254,17 @@ class WorkoutControllerIntegrationTest : TestConfig() {
     }
 
     @Test
+    fun `findInProcessWorkout should return null when no in-process workout exists`() {
+        // 数据库中没有任何训练记录，或者只有过去的已结束训练
+
+         // 发送GET请求获取进行中的训练
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/lifting/workout/in-process"))
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.success").value(true))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.data").doesNotExist())
+    }
+
+    @Test
     fun `workoutService getById should return workout when it exists`() {
         // 创建测试数据
         val gym = gymRepository.save(Gym(name = "城市健身房", location = "市中心"))

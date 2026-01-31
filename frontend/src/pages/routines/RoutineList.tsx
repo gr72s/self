@@ -1,55 +1,53 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataGrid, type GridColDef, type GridRenderCellParams } from '@mui/x-data-grid';
+import { Button, IconButton, Stack } from '@mui/material';
+import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, Visibility as VisibilityIcon } from '@mui/icons-material';
+import { routineApi } from '@/services/api';
+import type { RoutineResponse } from '@/types';
+import { Link, useNavigate } from 'react-router-dom';
 import PageContainer from '@/components/dashboard/PageContainer';
-import { muscleApi } from '@/services/api';
 import useNotifications from '@/providers/useNotifications';
 import { useDialogs } from '@/providers/useDialogs';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
-import { Link, useNavigate } from 'react-router-dom';
-import Stack from '@mui/material/Stack';
 
-export default function MuscleList() {
-    const [rows, setRows] = React.useState<any[]>([]);
-    const [loading, setLoading] = React.useState(true);
+const RoutineList: React.FC = () => {
+    const [routines, setRoutines] = useState<RoutineResponse[]>([]);
+    const [loading, setLoading] = useState(true);
     const notifications = useNotifications();
     const dialogs = useDialogs();
     const navigate = useNavigate();
 
-    const fetchMuscles = React.useCallback(async () => {
+    const fetchRoutines = async () => {
         setLoading(true);
         try {
-            const response = await muscleApi.getAll();
-            const data = (response.data as any).data || response.data;
-            setRows(Array.isArray(data) ? data : []);
+            const response = await routineApi.getAll();
+            if (response.status === 200 && response.data) {
+                setRoutines((response.data as any).data || response.data);
+            }
         } catch (error) {
-            console.error('Failed to fetch muscles:', error);
-            notifications.show('Failed to fetch muscles', { severity: 'error' });
+            console.error('Failed to fetch routines:', error);
+            notifications.show('Failed to fetch routines', { severity: 'error' });
         } finally {
             setLoading(false);
         }
-    }, [notifications]);
+    };
 
-    React.useEffect(() => {
-        fetchMuscles();
-    }, [fetchMuscles]);
+    useEffect(() => {
+        fetchRoutines();
+    }, []);
 
     const handleDelete = async (id: number) => {
-        const confirmed = await dialogs.confirm('Are you sure you want to delete this muscle?', {
+        const confirmed = await dialogs.confirm('Are you sure you want to delete this routine?', {
             okText: 'Delete',
             severity: 'error',
         });
         if (confirmed) {
             try {
-                await muscleApi.delete(id);
-                notifications.show('Muscle deleted successfully', { severity: 'success' });
-                fetchMuscles();
+                await routineApi.delete(id);
+                notifications.show('Routine deleted successfully', { severity: 'success' });
+                fetchRoutines();
             } catch (error) {
-                console.error('Failed to delete muscle:', error);
-                notifications.show('Failed to delete muscle', { severity: 'error' });
+                console.error('Failed to delete routine:', error);
+                notifications.show('Failed to delete routine', { severity: 'error' });
             }
         }
     };
@@ -57,19 +55,27 @@ export default function MuscleList() {
     const columns: GridColDef[] = [
         { field: 'id', headerName: 'ID', width: 70 },
         { field: 'name', headerName: 'Name', width: 200 },
-        { field: 'originName', headerName: 'Origin Name', width: 200 },
-        { field: 'function', headerName: 'Function', width: 200 },
         { field: 'description', headerName: 'Description', width: 300, flex: 1 },
         {
             field: 'actions',
             headerName: 'Actions',
-            width: 120,
+            width: 150,
             renderCell: (params: GridRenderCellParams) => (
                 <Stack direction="row" spacing={1}>
                     <IconButton
                         size="small"
                         component={Link}
-                        to={`/muscles/${params.row.id}/edit`}
+                        to={`/routines/${params.row.id}`}
+                        title="View Details"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <VisibilityIcon fontSize="small" />
+                    </IconButton>
+                    <IconButton
+                        size="small"
+                        component={Link}
+                        to={`/routines/${params.row.id}/edit`}
+                        title="Edit"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <EditIcon fontSize="small" />
@@ -81,6 +87,7 @@ export default function MuscleList() {
                             e.stopPropagation();
                             handleDelete(params.row.id);
                         }}
+                        title="Delete"
                     >
                         <DeleteIcon fontSize="small" />
                     </IconButton>
@@ -91,24 +98,24 @@ export default function MuscleList() {
 
     return (
         <PageContainer
-            title="Muscles"
-            breadcrumbs={[{ title: 'Home', path: '/' }, { title: 'Muscles' }]}
+            title="Routines"
+            breadcrumbs={[{ title: 'Home', path: '/' }, { title: 'Routines' }]}
             actions={
                 <Button
                     variant="contained"
                     startIcon={<AddIcon />}
                     component={Link}
-                    to="/muscles/new"
+                    to="/routines/new"
                 >
-                    Add Muscle
+                    Create Routine
                 </Button>
             }
         >
             <DataGrid
-                rows={rows}
+                rows={routines}
                 columns={columns}
                 loading={loading}
-                onRowClick={(params) => navigate(`/muscles/${params.row.id}/edit`)}
+                onRowClick={(params) => navigate(`/routines/${params.row.id}`)}
                 initialState={{
                     pagination: { paginationModel: { pageSize: 10 } },
                 }}
@@ -118,4 +125,6 @@ export default function MuscleList() {
             />
         </PageContainer>
     );
-}
+};
+
+export default RoutineList;

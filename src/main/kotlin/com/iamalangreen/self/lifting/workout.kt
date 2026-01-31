@@ -110,7 +110,7 @@ class WorkoutController(val workoutService: WorkoutService, val gymService: GymS
 
     @GetMapping("/in-process")
     fun findInProcessWorkout(): Response {
-        return success(workoutService.findInProcessWorkout().toResponse())
+        return success(workoutService.findInProcessWorkout()?.toResponse())
     }
 
 }
@@ -134,7 +134,7 @@ interface WorkoutService {
         target: Set<Long>,
         note: String?
     ): Workout
-    fun findInProcessWorkout(): Workout
+    fun findInProcessWorkout(): Workout?
 }
 
 @Service
@@ -204,10 +204,10 @@ class DefaultWorkoutService(
         return savedWorkout
     }
 
-    override fun findInProcessWorkout(): Workout {
+    override fun findInProcessWorkout(): Workout? {
         val workouts = getAll()
         val today = LocalDate.now(ZoneId.of("Asia/Shanghai"))
-        val workout = workouts.first { it.startTime?.toLocalDate()?.equals(today) ?: false }
+        val workout = workouts.firstOrNull { it.startTime?.toLocalDate()?.equals(today) ?: false }
         return workout
     }
 }

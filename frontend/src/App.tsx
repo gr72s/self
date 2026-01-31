@@ -9,8 +9,7 @@ import {
 } from '@/theme/customizations';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import HomePage from '@/pages/HomePage';
-import WorkoutPage from '@/pages/WorkoutPage';
-import RoutinePage from '@/pages/RoutinePage';
+
 import ExerciseList from '@/pages/exercises/ExerciseList';
 import ExerciseCreate from '@/pages/exercises/ExerciseCreate';
 import ExerciseEdit from '@/pages/exercises/ExerciseEdit';
@@ -20,6 +19,12 @@ import GymEdit from '@/pages/gyms/GymEdit';
 import MuscleList from '@/pages/muscles/MuscleList';
 import MuscleCreate from '@/pages/muscles/MuscleCreate';
 import MuscleEdit from '@/pages/muscles/MuscleEdit';
+import WorkoutCreate from '@/pages/workouts/WorkoutCreate';
+import WorkoutList from '@/pages/workouts/WorkoutList';
+import WorkoutEdit from '@/pages/workouts/WorkoutEdit';
+import RoutineCreate from '@/pages/routines/RoutineCreate';
+import RoutineList from '@/pages/routines/RoutineList';
+import RoutineEdit from '@/pages/routines/RoutineEdit';
 import NotificationsProvider from '@/providers/NotificationsProvider';
 import DialogsProvider from '@/providers/DialogsProvider';
 import '@/App.css';
@@ -43,19 +48,19 @@ const router = createHashRouter([
       {
         path: 'workouts',
         children: [
-          { index: true, element: <WorkoutPage /> },
+          { index: true, element: <WorkoutList /> },
           { path: ':id', element: <div>训练详情</div> },
-          { path: 'new', element: <div>开始新训练</div> },
-          { path: ':id/edit', element: <div>编辑训练</div> },
+          { path: 'new', element: <WorkoutCreate /> },
+          { path: ':id/edit', element: <WorkoutEdit /> },
         ],
       },
       {
         path: 'routines',
         children: [
-          { index: true, element: <RoutinePage /> },
+          { index: true, element: <RoutineList /> },
           { path: ':id', element: <div>训练计划详情</div> },
-          { path: 'new', element: <div>创建新计划</div> },
-          { path: ':id/edit', element: <div>编辑训练计划</div> },
+          { path: 'new', element: <RoutineCreate /> },
+          { path: ':id/edit', element: <RoutineEdit /> },
         ],
       },
       {
