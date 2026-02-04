@@ -15,10 +15,34 @@ data class User(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
+    
+    @Column(unique = true, nullable = false)
+    val openid: String,  // WeChat openid (required)
+    
+    @Column(name = "session_key")
+    var sessionKey: String? = null,  // WeChat session_key
+    
+    @Column(name = "union_id")
+    var unionId: String? = null,  // WeChat unionid
+    
     @Column
-    var username: String,
+    var nickname: String? = null,  // Display name
+    
+    @Column(name = "avatar_url")
+    var avatarUrl: String? = null,  // Profile picture URL
+    
     @Column
-    var password: String,
+    var username: String? = null,  // Optional username
+    
     @Column
-    var email: String,
+    var password: String? = null,  // Optional password (not used for WeChat login)
+    
+    @Column
+    var email: String? = null,  // Optional email
+    
+    @Column(name = "created_at")
+    val createdAt: LocalDateTime = LocalDateTime.now(),
+    
+    @Column(name = "updated_at")
+    var updatedAt: LocalDateTime = LocalDateTime.now()
 )

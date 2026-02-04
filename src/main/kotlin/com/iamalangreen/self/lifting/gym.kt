@@ -3,19 +3,24 @@ package com.iamalangreen.self.lifting
 import com.iamalangreen.self.EntityAlreadyExistException
 import com.iamalangreen.self.IllegalRequestArgumentException
 import com.iamalangreen.self.Response
+import com.iamalangreen.self.common.PageResponse
+import com.iamalangreen.self.common.PaginationUtils
 import com.iamalangreen.self.success
 import jakarta.persistence.*
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import kotlin.jvm.optionals.getOrNull
 
 data class CreateGymRequest(
+    @field:jakarta.validation.constraints.NotBlank(message = "Gym name is required")
+    @field:jakarta.validation.constraints.Size(min = 2, max = 100)
     val name: String,
+    @field:jakarta.validation.constraints.NotBlank(message = "Location is required")
+    @field:jakarta.validation.constraints.Size(min = 2, max = 200)
     val location: String
 )
 
@@ -35,7 +40,7 @@ fun Gym.toResponse(): GymResponse {
 class GymController(private val gymService: GymService) {
 
     @PostMapping
-    fun createGym(@RequestBody request: CreateGymRequest): Response {
+    fun createGym(@jakarta.validation.Valid @RequestBody request: CreateGymRequest): Response {
         if (request.name.isBlank() || request.location.isBlank()) {
             throw IllegalRequestArgumentException()
         }
@@ -43,7 +48,7 @@ class GymController(private val gymService: GymService) {
     }
 
     @org.springframework.web.bind.annotation.PutMapping("/{id}")
-    fun updateGym(@org.springframework.web.bind.annotation.PathVariable id: Long, @RequestBody request: CreateGymRequest): Response {
+    fun updateGym(@org.springframework.web.bind.annotation.PathVariable id: Long, @jakarta.validation.Valid @RequestBody request: CreateGymRequest): Response {
         if (request.name.isBlank() || request.location.isBlank()) {
             throw IllegalRequestArgumentException()
         }
@@ -51,8 +56,16 @@ class GymController(private val gymService: GymService) {
     }
 
     @GetMapping
-    fun getAllGym(): Response {
-        return success(gymService.getAllGym().map { it.toResponse() })
+    fun getAllGym(
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "20") size: Int,
+        @RequestParam(defaultValue = "id,asc") sort: String,
+        @RequestParam(required = false) name: String?
+    ): Response {
+        val pageable = PageRequest.of(page, size, PaginationUtils.parseSort(sort))
+        val result = gymService.getAllGym(name, pageable)
+        val pageResponse = PageResponse.of(result.map { it.toResponse() })
+        return success(pageResponse)
     }
 
 }
@@ -60,7 +73,7 @@ class GymController(private val gymService: GymService) {
 interface GymService {
     fun createGym(name: String, location: String): Gym
     fun updateGym(id: Long, name: String, location: String): Gym
-    fun getAllGym(): List<Gym>
+    fun getAllGym(name: String?, pageable: Pageable): Page<Gym>
     fun findByName(name: String): Gym?
     fun findById(id: Long): Gym?
     fun getById(id: Long): Gym
@@ -83,8 +96,12 @@ class DefaultGymService(private val gymRepository: GymRepository) : GymService {
         return gymRepository.save(gym)
     }
 
-    override fun getAllGym(): List<Gym> {
-        return gymRepository.findAll(org.springframework.data.domain.Sort.by("id"))
+    override fun getAllGym(name: String?, pageable: Pageable): Page<Gym> {
+        return if (name != null) {
+            gymRepository.findByNameContainingIgnoreCase(name, pageable)
+        } else {
+            gymRepository.findAll(pageable)
+        }
     }
 
     override fun findByName(name: String): Gym? {
@@ -103,6 +120,7 @@ class DefaultGymService(private val gymRepository: GymRepository) : GymService {
 
 interface GymRepository : JpaRepository<Gym, Long> {
     fun findByName(name: String): Gym?
+    fun findByNameContainingIgnoreCase(name: String, pageable: Pageable): Page<Gym>
 }
 
 @Entity

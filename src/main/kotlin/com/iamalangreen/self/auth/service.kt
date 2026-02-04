@@ -1,11 +1,10 @@
 package com.iamalangreen.self.auth
 
-import com.iamalangreen.self.auth.UserResponse
 import org.springframework.stereotype.Service
-
 
 interface UserService {
     fun getUserByUsername(username: String): UserResponse
+    fun getUserById(id: Long): UserResponse
 }
 
 @Service
@@ -18,12 +17,18 @@ class DefaultUserService(
             .orElseThrow { RuntimeException("User not found with username: $username") }
         return convertToUserResponse(user)
     }
+    
+    override fun getUserById(id: Long): UserResponse {
+        val user = userRepository.findById(id)
+            .orElseThrow { RuntimeException("User not found with id: $id") }
+        return convertToUserResponse(user)
+    }
 
-    private fun convertToUserResponse(user: User): UserResponse {
+    private fun convertToUserResponse (user: User): UserResponse {
         return UserResponse(
             id = user.id,
-            username = user.username,
-            email = user.email,
+            username = user.nickname ?: user.username ?: "用户${user.id}",
+            email = user.email ?: "",
         )
     }
 }

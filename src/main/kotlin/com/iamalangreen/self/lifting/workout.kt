@@ -2,15 +2,16 @@ package com.iamalangreen.self.lifting
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.iamalangreen.self.Response
+import com.iamalangreen.self.common.PageResponse
+import com.iamalangreen.self.common.PaginationUtils
 import com.iamalangreen.self.success
 import jakarta.persistence.*
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -22,9 +23,13 @@ data class WorkoutRequest(
     val startTime: LocalDateTime?,
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     val endTime: LocalDateTime?,
+    @field:jakarta.validation.constraints.NotNull(message = "Gym is required")
+    @field:jakarta.validation.constraints.Positive(message = "Gym ID must be positive")
     val gym: Long,
     val routine: Long?,
+    @field:jakarta.validation.constraints.NotEmpty(message = "At least one target is required")
     val target: Set<Long> = setOf(),
+    @field:jakarta.validation.constraints.Size(max = 500, message = "Note must be less than 500 characters")
     val note: String?
 )
 
@@ -69,19 +74,28 @@ fun Workout.toResponse(): WorkoutResponse {
 class WorkoutController(val workoutService: WorkoutService, val gymService: GymService) {
 
     @PostMapping
-    fun createWorkout(@RequestBody request: WorkoutRequest): Response {
+    fun createWorkout(@jakarta.validation.Valid @RequestBody request: WorkoutRequest): Response {
         val workout =
             workoutService.create(request.startTime, request.gym, request.routine, request.target, request.note)
         return success(workout.toResponse())
     }
 
     @GetMapping
-    fun getAllWorkout(): Response {
-        return success(workoutService.getAll().map { it.toResponse() })
+    fun getAllWorkout(
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "20") size: Int,
+        @RequestParam(defaultValue = "startTime,desc") sort: String,
+        @RequestParam(required = false) startDate: LocalDateTime?,
+        @RequestParam(required = false) endDate: LocalDateTime?
+    ): Response {
+        val pageable = PageRequest.of(page, size, PaginationUtils.parseSort(sort))
+        val result = workoutService.getAll(startDate, endDate, pageable)
+        val pageResponse = PageResponse.of(result.map { it.toResponse() })
+        return success(pageResponse)
     }
 
     @org.springframework.web.bind.annotation.PutMapping("/{id}")
-    fun updateWorkout(@org.springframework.web.bind.annotation.PathVariable id: Long, @RequestBody request: WorkoutRequest): Response {
+    fun updateWorkout(@org.springframework.web.bind.annotation.PathVariable id: Long, @jakarta.validation.Valid @RequestBody request: WorkoutRequest): Response {
         val workout = workoutService.update(
             id,
             request.startTime,
@@ -95,7 +109,7 @@ class WorkoutController(val workoutService: WorkoutService, val gymService: GymS
     }
 
     @PostMapping("/stop")
-    fun stopWorkout(@RequestBody request: WorkoutRequest): Response {
+    fun stopWorkout(@jakarta.validation.Valid @RequestBody request: WorkoutRequest): Response {
         val workout = workoutService.update(
             request.id!!,
             request.startTime,
@@ -124,7 +138,11 @@ interface WorkoutService {
         note: String?
     ): Workout
     fun getById(id: Long): Workout
-    fun getAll(): List<Workout>
+    fun getAll(
+        startDate: LocalDateTime?,
+        endDate: LocalDateTime?,
+        pageable: Pageable
+    ): Page<Workout>
     fun update(
         id: Long,
         startTime: LocalDateTime?,
@@ -168,7 +186,20 @@ class DefaultWorkoutService(
         return workout
     }
 
-    override fun getAll(): List<Workout> {
+    override fun getAll(
+        startDate: LocalDateTime?,
+        endDate: LocalDateTime?,
+        pageable: Pageable
+    ): Page<Workout> {
+        return when {
+            startDate != null && endDate != null -> 
+                workoutRepository.findByStartTimeBetween(startDate, endDate, pageable)
+            else -> 
+                workoutRepository.findAll(pageable)
+        }
+    }
+    
+    fun getAllList(): List<Workout> {
         return workoutRepository.findAll()
     }
 
@@ -205,14 +236,20 @@ class DefaultWorkoutService(
     }
 
     override fun findInProcessWorkout(): Workout? {
-        val workouts = getAll()
+        val workouts = getAllList()
         val today = LocalDate.now(ZoneId.of("Asia/Shanghai"))
         val workout = workouts.firstOrNull { it.startTime?.toLocalDate()?.equals(today) ?: false }
         return workout
     }
 }
 
-interface WorkoutRepository : JpaRepository<Workout, Long> {}
+interface WorkoutRepository : JpaRepository<Workout, Long> {
+    fun findByStartTimeBetween(
+        start: LocalDateTime,
+        end: LocalDateTime,
+        pageable: Pageable
+    ): Page<Workout>
+}
 
 @Entity
 @Table(name = "lifting_workout")

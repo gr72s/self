@@ -1,23 +1,28 @@
-package com.iamalangreen.self.auth.config
+package com.iamalangreen.self.auth
 
-import com.iamalangreen.self.auth.User
-import com.iamalangreen.self.auth.UserRepository
 import org.springframework.boot.CommandLineRunner
 import org.springframework.stereotype.Component
 
+/**
+ * Seed test users for development
+ */
 @Component
 class UserSeeder(
     private val userRepository: UserRepository
 ) : CommandLineRunner {
-
+    
     override fun run(vararg args: String?) {
-        if (!userRepository.existsByUsername("alan green")) {
-            val user = User(
-                username = "alan green",
-                password = "123456",
-                email = "alangreen@example.com"
+        // Only seed if database is empty
+        if (userRepository.count() == 0L) {
+            // Create a test user with WeChat-style openid
+            val testUser = User(
+                openid = "test_openid_development_123",
+                nickname = "测试用户",
+                username = "testuser",
+                email = "test@example.com"
             )
-            userRepository.save(user)
+            userRepository.save(testUser)
+            println("✅ Seeded test user: ${testUser.nickname} (openid: ${testUser.openid})")
         }
     }
 }

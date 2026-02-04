@@ -1,16 +1,26 @@
 package com.iamalangreen.self.lifting
 
 import com.iamalangreen.self.Response
+import com.iamalangreen.self.common.PageResponse
+import com.iamalangreen.self.common.PaginationUtils
 import com.iamalangreen.self.success
 import jakarta.persistence.*
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.*
 
 data class MuscleRequest(
+    @field:jakarta.validation.constraints.NotBlank(message = "Muscle name is required")
+    @field:jakarta.validation.constraints.Size(min = 2, max = 100)
     val name: String,
+    @field:jakarta.validation.constraints.Size(max = 500)
     val description: String?,
+    @field:jakarta.validation.constraints.Size(max = 200)
     val function: String?,
+    @field:jakarta.validation.constraints.Size(max = 100)
     val originName: String?
 )
 
@@ -37,22 +47,30 @@ fun Muscle.toResponse(): MuscleResponse {
 class MuscleController(private val muscleService: MuscleService) {
 
     @PostMapping
-    fun createMuscle(@RequestBody request: MuscleRequest): Response {
+    fun createMuscle(@jakarta.validation.Valid @RequestBody request: MuscleRequest): Response {
         return success(
             muscleService.create(request.name, request.description, request.function, request.originName).toResponse()
         )
     }
 
     @PutMapping("/{id}")
-    fun updateMuscle(@PathVariable id: Long, @RequestBody request: MuscleRequest): Response {
+    fun updateMuscle(@PathVariable id: Long, @jakarta.validation.Valid @RequestBody request: MuscleRequest): Response {
         return success(
             muscleService.update(id, request.name, request.description, request.function, request.originName).toResponse()
         )
     }
 
     @GetMapping
-    fun getAllMuscle(): Response {
-        return success(muscleService.getAll().map { it.toResponse() })
+    fun getAllMuscle(
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "20") size: Int,
+        @RequestParam(defaultValue = "id,asc") sort: String,
+        @RequestParam(required = false) name: String?
+    ): Response {
+        val pageable = PageRequest.of(page, size, PaginationUtils.parseSort(sort))
+        val result = muscleService.getAll(name, pageable)
+        val pageResponse = PageResponse.of(result.map { it.toResponse() })
+        return success(pageResponse)
     }
 
     @GetMapping("/{id}")
@@ -65,7 +83,7 @@ class MuscleController(private val muscleService: MuscleService) {
 interface MuscleService {
     fun create(name: String, description: String?, function: String?, originName: String?): Muscle
     fun update(id: Long, name: String, description: String?, function: String?, originName: String?): Muscle
-    fun getAll(): List<Muscle>
+    fun getAll(name: String?, pageable: Pageable): Page<Muscle>
     fun getById(id: Long): Muscle
 }
 
@@ -85,8 +103,12 @@ class DefaultMuscleRepository(private val muscleRepository: MuscleRepository) : 
         return muscleRepository.save(muscle)
     }
 
-    override fun getAll(): List<Muscle> {
-        return muscleRepository.findAll()
+    override fun getAll(name: String?, pageable: Pageable): Page<Muscle> {
+        return if (name != null) {
+            muscleRepository.findByNameContainingIgnoreCase(name, pageable)
+        } else {
+            muscleRepository.findAll(pageable)
+        }
     }
 
     override fun getById(id: Long): Muscle {
@@ -94,7 +116,9 @@ class DefaultMuscleRepository(private val muscleRepository: MuscleRepository) : 
     }
 }
 
-interface MuscleRepository : JpaRepository<Muscle, Long>
+interface MuscleRepository : JpaRepository<Muscle, Long> {
+    fun findByNameContainingIgnoreCase(name: String, pageable: Pageable): Page<Muscle>
+}
 
 @Entity
 @Table(name = "lifting_muscle")

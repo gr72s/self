@@ -1,21 +1,25 @@
 package com.iamalangreen.self.lifting
 
 import com.iamalangreen.self.Response
+import com.iamalangreen.self.common.PageResponse
+import com.iamalangreen.self.common.PaginationUtils
 import com.iamalangreen.self.success
 import jakarta.persistence.*
 import org.hibernate.annotations.JdbcTypeCode
 import org.hibernate.type.SqlTypes
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 data class RoutineRequest(
     val id: Long?,
+    @field:jakarta.validation.constraints.NotBlank(message = "Name is required")
+    @field:jakarta.validation.constraints.Size(min = 2, max = 100, message = "Name must be 2-100 characters")
     val name: String,
+    @field:jakarta.validation.constraints.Size(max = 500, message = "Description too long")
     val description: String?,
     val workoutId: Long?,
     val targetIds: Set<Long> = setOf(),
@@ -76,7 +80,7 @@ class RoutineController(
 ) {
 
     @PostMapping
-    fun createRoutine(@RequestBody request: RoutineRequest): Response {
+    fun createRoutine(@jakarta.validation.Valid @RequestBody request: RoutineRequest): Response {
         require(request.workoutId != null)
         val routine = routineService.createRoutine(
             request.name,
@@ -90,7 +94,7 @@ class RoutineController(
     }
 
     @PostMapping("/template")
-    fun createRoutineTemplate(@RequestBody request: RoutineRequest): Response {
+    fun createRoutineTemplate(@jakarta.validation.Valid @RequestBody request: RoutineRequest): Response {
         val routine = routineService.createRoutineTemplate(
             request.name,
             request.description,
@@ -102,7 +106,7 @@ class RoutineController(
     }
 
     @org.springframework.web.bind.annotation.PutMapping("/{id}")
-    fun updateRoutine(@org.springframework.web.bind.annotation.PathVariable id: Long, @RequestBody request: RoutineRequest): Response {
+    fun updateRoutine(@org.springframework.web.bind.annotation.PathVariable id: Long, @jakarta.validation.Valid @RequestBody request: RoutineRequest): Response {
         val routine = routineService.updateRoutine(
             id,
             request.name,
@@ -115,8 +119,16 @@ class RoutineController(
     }
 
     @GetMapping
-    fun getAllRoutines(): Response {
-        return success(routineService.getAll().map { it.toResponse() })
+    fun getAllRoutines(
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "20") size: Int,
+        @RequestParam(defaultValue = "id,desc") sort: String,
+        @RequestParam(required = false) name: String?
+    ): Response {
+        val pageable = PageRequest.of(page, size, PaginationUtils.parseSort(sort))
+        val result = routineService.getAll(name, pageable)
+        val pageResponse = PageResponse.of(result.map { it.toResponse() })
+        return success(pageResponse)
     }
 
     @PostMapping("/exercise")
@@ -164,7 +176,7 @@ interface RoutineService {
         note: String?
     ): Routine
 
-    fun getAll(): List<Routine>
+    fun getAll(name: String?, pageable: Pageable): Page<Routine>
 
     fun getById(id: Long): Routine
 }
@@ -249,12 +261,18 @@ class DefaultRoutineService(
         return routineRepository.findById(id).orElseThrow()
     }
 
-    override fun getAll(): List<Routine> {
-        return routineRepository.findAll()
+    override fun getAll(name: String?, pageable: Pageable): Page<Routine> {
+        return if (name != null) {
+            routineRepository.findByNameContainingIgnoreCase(name, pageable)
+        } else {
+            routineRepository.findAll(pageable)
+        }
     }
 }
 
-interface RoutineRepository : JpaRepository<Routine, Long>
+interface RoutineRepository : JpaRepository<Routine, Long> {
+    fun findByNameContainingIgnoreCase(name: String, pageable: Pageable): Page<Routine>
+}
 
 @Entity
 @Table(name = "lifting_routine")

@@ -1,18 +1,27 @@
 package com.iamalangreen.self.lifting
 
 import com.iamalangreen.self.Response
+import com.iamalangreen.self.common.PageResponse
+import com.iamalangreen.self.common.PaginationUtils
 import com.iamalangreen.self.success
 import io.hypersistence.utils.hibernate.type.array.ListArrayType
 import jakarta.persistence.*
 import org.hibernate.annotations.Type
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.*
 
 data class ExerciseRequest(
     val id: Long?,
+    @field:jakarta.validation.constraints.NotBlank(message = "Exercise name is required")
+    @field:jakarta.validation.constraints.Size(min = 2, max = 100)
     val name: String,
+    @field:jakarta.validation.constraints.Size(max = 500)
     val description: String? = null,
+    @field:jakarta.validation.constraints.NotEmpty(message = "At least one main muscle is required")
     val mainMuscles: Set<Long> = setOf(),
     val supportMuscles: Set<Long> = setOf(),
     val cues: List<String> = listOf(),
@@ -42,7 +51,7 @@ fun Exercise.toResponse(): ExerciseResponse {
 @RequestMapping("/api/lifting/exercise")
 class ExerciseController(val exerciseService: ExerciseService) {
     @PostMapping
-    fun createExercise(@RequestBody request: ExerciseRequest): Response {
+    fun createExercise(@jakarta.validation.Valid @RequestBody request: ExerciseRequest): Response {
         val exercise = exerciseService.create(
             request.name,
             request.description,
@@ -54,7 +63,7 @@ class ExerciseController(val exerciseService: ExerciseService) {
     }
 
     @PutMapping("/{id}")
-    fun updateExercise(@PathVariable id: Long, @RequestBody request: ExerciseRequest): Response {
+    fun updateExercise(@PathVariable id: Long, @jakarta.validation.Valid @RequestBody request: ExerciseRequest): Response {
         val exercise = exerciseService.update(
             id,
             request.name,
@@ -67,8 +76,16 @@ class ExerciseController(val exerciseService: ExerciseService) {
     }
 
     @GetMapping
-    fun getAllExercises(): Response {
-        return success(exerciseService.getAll().map { it.toResponse() })
+    fun getAllExercises(
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "20") size: Int,
+        @RequestParam(defaultValue = "id,desc") sort: String,
+        @RequestParam(required = false) name: String?
+    ): Response {
+        val pageable = PageRequest.of(page, size, PaginationUtils.parseSort(sort))
+        val result = exerciseService.getAll(name, pageable)
+        val pageResponse = PageResponse.of(result.map { it.toResponse() })
+        return success(pageResponse)
     }
 }
 
@@ -89,7 +106,7 @@ interface ExerciseService {
         cues: List<String>
     ): Exercise
     fun getById(id: Long): Exercise
-    fun getAll(): List<Exercise>
+    fun getAll(name: String?, pageable: Pageable): Page<Exercise>
 }
 
 @Service
@@ -145,12 +162,18 @@ class DefaultExerciseService(
         return exerciseRepository.findById(id).orElseThrow()
     }
 
-    override fun getAll(): List<Exercise> {
-        return exerciseRepository.findAll()
+    override fun getAll(name: String?, pageable: Pageable): Page<Exercise> {
+        return if (name != null) {
+            exerciseRepository.findByNameContainingIgnoreCase(name, pageable)
+        } else {
+            exerciseRepository.findAll(pageable)
+        }
     }
 }
 
-interface ExerciseRepository : JpaRepository<Exercise, Long>
+interface ExerciseRepository : JpaRepository<Exercise, Long> {
+    fun findByNameContainingIgnoreCase(name: String, pageable: Pageable): Page<Exercise>
+}
 
 @Entity
 @Table(name = "lifting_exercise")
