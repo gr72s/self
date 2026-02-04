@@ -1,0 +1,43 @@
+{
+    "compilerOptions": {
+        "target": "ES2017",
+        "useDefineForClassFields": true,
+        "module": "CommonJS",
+        "removeComments": false,
+        "preserveConstEnums": true,
+        "moduleResolution": "Node",
+        "experimentalDecorators": true,
+        "noImplicitAny": false,
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "outDir": "lib",
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "strict": true,
+        "strictNullChecks": true,
+        "skipLibCheck": true,
+        "jsx": "react-jsx",
+        "jsxImportSource": "react",
+        "typeRoots": [
+            "./node_modules/@types"
+        ],
+        "baseUrl": ".",
+        "paths": {
+            "@/*": [
+                "../src/*"
+            ],
+            "@mini/*": [
+                "./src/*"
+            ]
+        }
+    },
+    "include": [
+        "src",
+        "../src"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist"
+    ],
+    "compileOnSave": false
+}

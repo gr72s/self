@@ -1,0 +1,45 @@
+// Convert shared colors to SCSS variables for Taro
+// This file is imported in app.scss
+
+// Brand colors
+$brand-50: hsl(210, 100%, 95%);
+$brand-100: hsl(210, 100%, 92%);
+$brand-200: hsl(210, 100%, 80%);
+$brand-300: hsl(210, 100%, 65%);
+$brand-400: hsl(210, 98%, 48%); // Primary
+$brand-500: hsl(210, 98%, 42%);
+$brand-600: hsl(210, 98%, 55%);
+$brand-700: hsl(210, 100%, 35%);
+$brand-800: hsl(210, 100%, 16%);
+$brand-900: hsl(210, 100%, 21%);
+
+// Gray colors
+$gray-50: hsl(220, 35%, 97%);
+$gray-100: hsl(220, 30%, 94%);
+$gray-200: hsl(220, 20%, 88%);
+$gray-300: hsl(220, 20%, 80%);
+$gray-400: hsl(220, 20%, 65%);
+$gray-500: hsl(220, 20%, 42%);
+$gray-600: hsl(220, 20%, 35%);
+$gray-700: hsl(220, 20%, 25%);
+$gray-800: hsl(220, 30%, 6%);
+$gray-900: hsl(220, 35%, 3%);
+
+// Semantic colors
+$success: hsl(120, 44%, 53%);
+$warning: hsl(45, 90%, 40%);
+$error: hsl(0, 90%, 40%);
+$info: hsl(210, 100%, 65%);
+
+// Primary color (brand)
+$primary: $brand-400;
+$primary-light: $brand-200;
+$primary-dark: $brand-700;
+
+// Background colors
+$bg-default: hsl(0, 0%, 99%);
+$bg-paper: hsl(220, 35%, 97%);
+
+// Text colors
+$text-primary: $gray-800;
+$text-secondary: $gray-600;

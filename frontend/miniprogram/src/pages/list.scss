@@ -1,0 +1,138 @@
+@import '@/theme/colors.scss';
+
+.list-page {
+    min-height: 100vh;
+    background-color: $bg-default;
+    padding: 32px;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.page-title {
+    font-size: 48px;
+    font-weight: bold;
+    color: $text-primary;
+}
+
+.add-button {
+    background-color: $primary;
+    color: white;
+    border-radius: 8px;
+    padding: 16px 32px;
+    font-size: 28px;
+}
+
+.loading,
+.empty {
+    padding: 128px 32px;
+    text-align: center;
+}
+
+.empty-text {
+    font-size: 32px;
+    color: $text-secondary;
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.item-card {
+    background: white;
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid $gray-200;
+}
+
+.item-name {
+    font-size: 36px;
+    font-weight: bold;
+    color: $text-primary;
+}
+
+.item-id {
+    font-size: 24px;
+    color: $text-secondary;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+}
+
+.label {
+    font-size: 28px;
+    color: $text-secondary;
+}
+
+.value {
+    font-size: 28px;
+    color: $text-primary;
+    font-weight: 500;
+}
+
+.note {
+    margin: 16px 0;
+    padding: 16px;
+    background-color: $gray-50;
+    border-radius: 8px;
+}
+
+.note-text {
+    font-size: 26px;
+    color: $text-secondary;
+    line-height: 1.5;
+}
+
+.card-actions {
+    display: flex;
+    gap: 16px;
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 2px solid $gray-200;
+}
+
+.action-button {
+    flex: 1;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+
+    text {
+        font-size: 28px;
+        font-weight: 500;
+    }
+
+    &.edit {
+        background-color: $primary;
+
+        text {
+            color: white;
+        }
+    }
+
+    &.delete {
+        background-color: $error;
+
+        text {
+            color: white;
+        }
+    }
+}
