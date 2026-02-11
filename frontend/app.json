@@ -17,6 +17,7 @@
     "pages/muscles/create/index",
     "pages/muscles/edit/index"
   ],
+  "lazyCodeLoading": "requiredComponents",
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#fff",
