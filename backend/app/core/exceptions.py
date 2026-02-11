@@ -50,6 +50,15 @@ class ForbiddenException(HTTPException):
         )
 
 
+class NotFoundWeChatConfig(HTTPException):
+    """微信配置未找到异常"""
+    def __init__(self, detail: str = "WeChat config not found"):
+        super().__init__(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=detail
+        )
+
+
 async def global_exception_handler(request: Request, exc: Exception):
     """全局异常处理器"""
     # 处理HTTP异常
