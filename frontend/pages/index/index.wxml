@@ -1,0 +1,96 @@
+<view class="home-page">
+  <!-- 欢迎 -->
+  <view class="welcome">
+    <text class="welcome-text">
+      {{'Welcome back' + (user && user.username ? ', ' + user.username : '')}}
+    </text>
+  </view>
+
+  <!-- 统计卡片 -->
+  <view class="stats-grid">
+    <view class="stat-card" bindtap="navigateToWorkouts">
+      <view class="stat-icon calendar">📅</view>
+      <view class="stat-content">
+        <text class="stat-label">Total Workouts</text>
+        <text class="stat-value">{{workouts.length}}</text>
+      </view>
+    </view>
+
+    <view class="stat-card" bindtap="navigateToRoutines">
+      <view class="stat-icon fitness">💪</view>
+      <view class="stat-content">
+        <text class="stat-label">Routines Used</text>
+        <text class="stat-value">{{uniqueRoutines}}</text>
+      </view>
+    </view>
+
+    <view class="stat-card">
+      <view class="stat-icon trend">📈</view>
+      <view class="stat-content">
+        <text class="stat-label">This Month</text>
+        <text class="stat-value">{{thisMonthCount}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 当前训练 -->
+  <view class="section">
+    <text class="section-title">Current Workout</text>
+    <view class="card">
+      <block wx:if="{{loading}}">
+        <view class="loading">
+          <text>Loading...</text>
+        </view>
+      </block>
+      <block wx:elif="{{currentWorkout}}">
+        <view class="current-workout">
+          <text class="workout-name">{{currentWorkout.routine && currentWorkout.routine.name ? currentWorkout.routine.name : 'Unnamed Workout'}}</text>
+          <text class="workout-time">
+            Started: {{formatDateTime(currentWorkout.startTime)}}
+          </text>
+          <view class="button primary" bindtap="navigateToWorkoutDetail">
+            <text class="button-text">View Details</text>
+          </view>
+        </view>
+      </block>
+      <block wx:else>
+        <text class="empty-text">No active workout</text>
+      </block>
+    </view>
+  </view>
+
+  <!-- 最近活动 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">Recent Activity</text>
+      <text class="link-text" bindtap="navigateToWorkouts">
+        View All
+      </text>
+    </view>
+    
+    <view class="card">
+      <block wx:if="{{loading}}">
+        <view class="loading">
+          <text>Loading...</text>
+        </view>
+      </block>
+      <block wx:elif="{{workouts.length === 0}}">
+        <text class="empty-text">No workout history</text>
+      </block>
+      <block wx:else>
+        <view class="workout-list">
+          <view wx:for="{{recentWorkouts}}" wx:key="{{item.id}}" class="workout-item">
+            <view class="workout-header">
+              <text class="workout-title">{{item.routine && item.routine.name ? item.routine.name : 'Unnamed Workout'}}</text>
+              <text class="workout-date">{{formatDate(item.startTime)}}</text>
+            </view>
+            <text class="workout-time">
+              {{formatTime(item.startTime)}} -
+              {{item.endTime ? formatTime(item.endTime) : 'In Progress'}}
+            </text>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+</view>

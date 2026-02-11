@@ -1,0 +1,181 @@
+/* 训练编辑页面样式 */
+.workout-edit-page {
+  padding: 16px;
+}
+
+/* 页面头部 */
+.page-header {
+  margin-bottom: 24px;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* 表单 */
+.workout-form {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 表单区块 */
+.form-section {
+  margin-bottom: 24px;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #333;
+}
+
+/* 表单项 */
+.form-item {
+  margin-bottom: 16px;
+}
+
+.form-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #666;
+}
+
+/* 选择容器 */
+.select-container {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.picker-view {
+  padding: 12px;
+  font-size: 16px;
+  color: #333;
+  background-color: #fff;
+}
+
+/* 目标选择 */
+.targets-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.target-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.target-checkbox {
+  width: 18px;
+  height: 18px;
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+}
+
+.target-checkbox.checked {
+  background-color: #1976d2;
+  border-color: #1976d2;
+}
+
+.checkbox-icon {
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.target-name {
+  font-size: 14px;
+  color: #333;
+}
+
+/* 文本域 */
+.form-textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* 表单操作 */
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+  justify-content: flex-end;
+}
+
+/* 按钮样式 */
+.cancel-button {
+  padding: 10px 20px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: #fff;
+  color: #333;
+  cursor: pointer;
+}
+
+.cancel-button:active {
+  background-color: #f5f5f5;
+}
+
+.submit-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: #1976d2;
+  color: #fff;
+  cursor: pointer;
+}
+
+.submit-button:active {
+  background-color: #1565c0;
+}
+
+.submit-button:disabled {
+  background-color: #90caf9;
+  cursor: not-allowed;
+}
+
+/* 响应式调整 */
+@media (max-width: 375px) {
+  .form-actions {
+    flex-direction: column;
+  }
+  
+  .cancel-button,
+  .submit-button {
+    width: 100%;
+  }
+  
+  .targets-container {
+    flex-direction: column;
+  }
+  
+  .target-item {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}

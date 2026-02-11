@@ -1,0 +1,194 @@
+/* 计划列表页面样式 */
+.routine-list-page {
+  padding: 16px;
+}
+
+/* 页面头部 */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+}
+
+.header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.primary-button {
+  background-color: #1976d2;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+}
+
+.primary-button:active {
+  background-color: #1565c0;
+}
+
+/* 列表容器 */
+.list-container {
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 加载状态 */
+.loading {
+  padding: 60px 0;
+  text-align: center;
+  color: #999;
+}
+
+/* 空状态 */
+.empty {
+  padding: 60px 0;
+  text-align: center;
+  color: #999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.empty-text {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+/* 计划项 */
+.routine-items {
+  padding: 8px 0;
+}
+
+.routine-item {
+  padding: 16px;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.routine-item:last-child {
+  border-bottom: none;
+}
+
+/* 计划信息 */
+.routine-info {
+  flex: 1;
+}
+
+.routine-header {
+  margin-bottom: 8px;
+}
+
+.routine-name {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+}
+
+.routine-details {
+  margin-bottom: 12px;
+}
+
+.routine-description {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.4;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.routine-stats {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.stat-item {
+  font-size: 12px;
+  color: #999;
+}
+
+/* 计划清单 */
+.routine-checklist {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.checklist-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: #666;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.checklist-items {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.checklist-item {
+  font-size: 12px;
+  color: #999;
+  line-height: 1.3;
+}
+
+/* 计划操作 */
+.routine-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  justify-content: flex-end;
+}
+
+.action-button {
+  padding: 6px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 12px;
+  background-color: #fff;
+  color: #333;
+  cursor: pointer;
+}
+
+.action-button:active {
+  background-color: #f5f5f5;
+}
+
+.action-button.delete {
+  border-color: #f44336;
+  color: #f44336;
+}
+
+.action-button.delete:active {
+  background-color: #ffebee;
+}
+
+/* 响应式调整 */
+@media (max-width: 375px) {
+  .routine-actions {
+    flex-direction: column;
+  }
+  
+  .action-button {
+    width: 100%;
+    text-align: center;
+  }
+}

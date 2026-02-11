@@ -31,4 +31,5 @@ out/
 *.txt
 *.log
 logs/
+.trae
 node_modules/

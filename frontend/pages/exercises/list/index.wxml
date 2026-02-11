@@ -1,0 +1,62 @@
+<view class="exercise-list-page">
+  <!-- 页面头部 -->
+  <view class="page-header">
+    <text class="page-title">Exercises</text>
+    <view class="header-actions">
+      <button class="primary-button" bindtap="navigateToCreate">
+        + Create
+      </button>
+    </view>
+  </view>
+
+  <!-- 动作列表 -->
+  <view class="list-container">
+    <block wx:if="{{loading}}">
+      <view class="loading">
+        <text>Loading...</text>
+      </view>
+    </block>
+    <block wx:elif="{{exercises.length === 0}}">
+      <view class="empty">
+        <text class="empty-text">No exercises yet</text>
+        <button class="primary-button" bindtap="navigateToCreate">
+          Create First Exercise
+        </button>
+      </view>
+    </block>
+    <block wx:else>
+      <view class="exercise-items">
+        <view wx:for="{{exercises}}" wx:key="{{item.id}}" class="exercise-item">
+          <view class="exercise-info">
+            <view class="exercise-header">
+              <text class="exercise-name">{{item.name}}</text>
+            </view>
+            <view class="exercise-details">
+              <text class="exercise-description">{{item.description || 'No description'}}</text>
+              <view class="exercise-muscles" wx:if="{{item.mainMuscles || item.supportMuscles}}">
+                <text class="muscles-label">Muscles:</text>
+                <text class="muscles-list">{{getMusclesList(item)}}</text>
+              </view>
+              <view class="exercise-cues" wx:if="{{item.cues && item.cues.length > 0}}">
+                <text class="cues-label">Cues:</text>
+                <view class="cues-list">
+                  <text wx:for="{{item.cues}}" wx:key="{{index}}" class="cue-item">
+                    • {{item}}
+                  </text>
+                </view>
+              </view>
+            </view>
+          </view>
+          <view class="exercise-actions">
+            <button class="action-button" bindtap="navigateToEdit" data-id="{{item.id}}">
+              Edit
+            </button>
+            <button class="action-button delete" bindtap="confirmDelete" data-id="{{item.id}}">
+              Delete
+            </button>
+          </view>
+        </view>
+      </view>
+    </block>
+  </view>
+</view>

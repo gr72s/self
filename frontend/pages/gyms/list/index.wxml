@@ -1,0 +1,55 @@
+<view class="gym-list-container">
+  <view class="page-header">
+    <text class="page-title">健身房列表</text>
+    <button class="add-button" bindtap="handleAddGym">
+      <text class="add-button-text">+ 添加健身房</text>
+    </button>
+  </view>
+
+  <!-- 加载状态 -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 错误状态 -->
+  <view wx:if="{{error}}" class="error-container">
+    <text class="error-text">{{error}}</text>
+    <button class="retry-button" bindtap="loadGyms">重试</button>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:if="{{!loading && !error && gyms.length === 0}}" class="empty-container">
+    <text class="empty-text">暂无健身房</text>
+    <button class="add-first-button" bindtap="handleAddGym">添加第一个健身房</button>
+  </view>
+
+  <!-- 健身房列表 -->
+  <view wx:if="{{!loading && !error && gyms.length > 0}}" class="gym-list">
+    <view wx:for="{{gyms}}" wx:key="{{item.id}}" class="gym-item">
+      <view class="gym-info">
+        <text class="gym-name">{{item.name}}</text>
+        <text class="gym-address">{{item.address}}</text>
+      </view>
+      <view class="gym-actions">
+        <button class="edit-button" bindtap="handleEditGym" data-id="{{item.id}}">
+          <text class="edit-button-text">编辑</text>
+        </button>
+        <button class="delete-button" bindtap="handleDeleteGym" data-id="{{item.id}}">
+          <text class="delete-button-text">删除</text>
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 删除确认对话框 -->
+  <view wx:if="{{showDeleteConfirm}}" class="modal-overlay">
+    <view class="modal-content">
+      <text class="modal-title">确认删除</text>
+      <text class="modal-message">确定要删除这个健身房吗？</text>
+      <view class="modal-buttons">
+        <button class="cancel-button" bindtap="cancelDelete">取消</button>
+        <button class="confirm-button" bindtap="confirmDelete">删除</button>
+      </view>
+    </view>
+  </view>
+</view>

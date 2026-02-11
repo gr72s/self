@@ -1,0 +1,55 @@
+<view class="muscle-edit-container">
+  <view class="page-header">
+    <text class="page-title">编辑肌肉</text>
+    <button class="back-button" bindtap="handleBack">
+      <text class="back-button-text">返回</text>
+    </button>
+  </view>
+
+  <!-- 加载状态 -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 错误状态 -->
+  <view wx:if="{{error}}" class="error-container">
+    <text class="error-text">{{error}}</text>
+    <button class="retry-button" bindtap="loadMuscleData">重试</button>
+  </view>
+
+  <!-- 表单 -->
+  <view wx:if="{{!loading && !error}}" class="form-container">
+    <!-- 肌肉名称 -->
+    <view class="form-item">
+      <text class="form-label">肌肉名称</text>
+      <input 
+        class="form-input" 
+        placeholder="请输入肌肉名称" 
+        value="{{name}}" 
+        bindinput="handleNameChange"
+      />
+      <text wx:if="{{errors.name}}" class="error-message">{{errors.name}}</text>
+    </view>
+
+    <!-- 肌肉分组 -->
+    <view class="form-item">
+      <text class="form-label">肌肉分组</text>
+      <input 
+        class="form-input" 
+        placeholder="请输入肌肉分组（如：胸部、背部等）" 
+        value="{{group}}" 
+        bindinput="handleGroupChange"
+      />
+      <text wx:if="{{errors.group}}" class="error-message">{{errors.group}}</text>
+    </view>
+
+    <!-- 提交按钮 -->
+    <button 
+      class="submit-button" 
+      bindtap="handleSubmit" 
+      disabled="{{submitting}}"
+    >
+      <text class="submit-button-text">{{submitting ? '提交中...' : '保存'}}</text>
+    </button>
+  </view>
+</view>

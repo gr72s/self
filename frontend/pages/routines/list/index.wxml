@@ -1,0 +1,62 @@
+<view class="routine-list-page">
+  <!-- 页面头部 -->
+  <view class="page-header">
+    <text class="page-title">Routines</text>
+    <view class="header-actions">
+      <button class="primary-button" bindtap="navigateToCreate">
+        + Create
+      </button>
+    </view>
+  </view>
+
+  <!-- 计划列表 -->
+  <view class="list-container">
+    <block wx:if="{{loading}}">
+      <view class="loading">
+        <text>Loading...</text>
+      </view>
+    </block>
+    <block wx:elif="{{routines.length === 0}}">
+      <view class="empty">
+        <text class="empty-text">No routines yet</text>
+        <button class="primary-button" bindtap="navigateToCreate">
+          Create First Routine
+        </button>
+      </view>
+    </block>
+    <block wx:else>
+      <view class="routine-items">
+        <view wx:for="{{routines}}" wx:key="{{item.id}}" class="routine-item">
+          <view class="routine-info">
+            <view class="routine-header">
+              <text class="routine-name">{{item.name}}</text>
+            </view>
+            <view class="routine-details">
+              <text class="routine-description">{{item.description || 'No description'}}</text>
+              <view class="routine-stats">
+                <text class="stat-item">{{item.slots && item.slots.size ? item.slots.size : 0}} exercises</text>
+                <text class="stat-item">{{item.targets && item.targets.size ? item.targets.size : 0}} targets</text>
+              </view>
+            </view>
+            <view class="routine-checklist" wx:if="{{item.checklist && item.checklist.length > 0}}">
+              <text class="checklist-title">Checklist:</text>
+              <view class="checklist-items">
+                <text wx:for="{{item.checklist}}" wx:key="{{index}}" class="checklist-item">
+                  • {{item.name}}
+                </text>
+              </view>
+            </view>
+          </view>
+          <view class="routine-actions">
+            <button class="action-button" bindtap="navigateToEdit" data-id="{{item.id}}">
+              Edit
+            </button>
+            <button class="action-button delete" bindtap="confirmDelete" data-id="{{item.id}}">
+              Delete
+            </button>
+          </view>
+        </view>
+      </view>
+    </block>
+  </view>
+</view>

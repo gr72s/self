@@ -1,0 +1,55 @@
+<view class="muscle-list-container">
+  <view class="page-header">
+    <text class="page-title">肌肉列表</text>
+    <button class="add-button" bindtap="handleAddMuscle">
+      <text class="add-button-text">+ 添加肌肉</text>
+    </button>
+  </view>
+
+  <!-- 加载状态 -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 错误状态 -->
+  <view wx:if="{{error}}" class="error-container">
+    <text class="error-text">{{error}}</text>
+    <button class="retry-button" bindtap="loadMuscles">重试</button>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:if="{{!loading && !error && muscles.length === 0}}" class="empty-container">
+    <text class="empty-text">暂无肌肉</text>
+    <button class="add-first-button" bindtap="handleAddMuscle">添加第一个肌肉</button>
+  </view>
+
+  <!-- 肌肉列表 -->
+  <view wx:if="{{!loading && !error && muscles.length > 0}}" class="muscle-list">
+    <view wx:for="{{muscles}}" wx:key="{{item.id}}" class="muscle-item">
+      <view class="muscle-info">
+        <text class="muscle-name">{{item.name}}</text>
+        <text class="muscle-group">{{item.group}}</text>
+      </view>
+      <view class="muscle-actions">
+        <button class="edit-button" bindtap="handleEditMuscle" data-id="{{item.id}}">
+          <text class="edit-button-text">编辑</text>
+        </button>
+        <button class="delete-button" bindtap="handleDeleteMuscle" data-id="{{item.id}}">
+          <text class="delete-button-text">删除</text>
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 删除确认对话框 -->
+  <view wx:if="{{showDeleteConfirm}}" class="modal-overlay">
+    <view class="modal-content">
+      <text class="modal-title">确认删除</text>
+      <text class="modal-message">确定要删除这个肌肉吗？</text>
+      <view class="modal-buttons">
+        <button class="cancel-button" bindtap="cancelDelete">取消</button>
+        <button class="confirm-button" bindtap="confirmDelete">删除</button>
+      </view>
+    </view>
+  </view>
+</view>

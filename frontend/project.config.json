@@ -1,0 +1,105 @@
+{
+  "description": "健身追踪微信小程序",
+  "packOptions": {
+    "ignore": [],
+    "include": []
+  },
+  "setting": {
+    "urlCheck": true,
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "preloadBackgroundData": false,
+    "minified": true,
+    "newFeature": false,
+    "coverView": true,
+    "nodeModules": false,
+    "autoAudits": false,
+    "showShadowRootInWxmlPanel": true,
+    "scopeDataCheck": false,
+    "uglifyFileName": false,
+    "checkInvalidKey": true,
+    "checkSiteMap": true,
+    "uploadWithSourceMap": true,
+    "compileHotReLoad": false,
+    "lazyloadPlaceholderEnable": false,
+    "packNpmManually": false,
+    "packNpmRelationList": [],
+    "minifyWXSS": true,
+    "minifyWXML": true,
+    "showES6CompileOption": false,
+    "useMultiFrameRuntime": true,
+    "useApiHook": true,
+    "useApiHostProcess": true,
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    },
+    "enableEngineNative": false,
+    "enableEngineNativeWatcher": false,
+    "useCompilerPlugins": false,
+    "userConfirmedBundleSwitch": false,
+    "packMainProcessLib": false,
+    "dedupDependencies": false,
+    "disableUseStrict": false,
+    "minifyType": "terser",
+    "showInsecurePages": false,
+    "showShadowDom": false,
+    "showCanvas": false,
+    "debugOptions": {
+      "hidedInDevtools": []
+    },
+    "scripts": {},
+    "worker": {
+      "compilerOptions": {
+        "typeCheck": false
+      }
+    },
+    "autoOrderComponent": false,
+    "typescript": true,
+    "componentCompilerOptions": {
+      "skipConfigValidation": false,
+      "defaultLang": "zh-CN",
+      "generateNpmREL": false,
+      "packNpmManually": false,
+      "packNpmRelationList": [],
+      "independentFiles": [],
+      "customWatchFiles": []
+    },
+    "condition": false,
+    "useMultiFrameRuntimeInternal": true,
+    "enableAsyncEntry": true,
+    "compileWorklet": false,
+    "localPlugins": false,
+    "swc": false,
+    "disableSWC": true
+  },
+  "compileType": "miniprogram",
+  "libVersion": "2.19.4",
+  "appid": "wx1224e96bce831bb5",
+  "projectname": "健身追踪",
+  "isGameTourist": false,
+  "condition": {
+    "search": {
+      "list": []
+    },
+    "conversation": {
+      "list": []
+    },
+    "game": {
+      "list": []
+    },
+    "plugin": {
+      "list": []
+    },
+    "gamePlugin": {
+      "list": []
+    },
+    "miniprogram": {
+      "list": []
+    }
+  },
+  "simulatorPluginLibVersion": {},
+  "editorSetting": {}
+}

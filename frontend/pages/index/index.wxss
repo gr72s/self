@@ -1,0 +1,166 @@
+/* 首页样式 */
+.home-page {
+  padding: 16px;
+}
+
+/* 欢迎 */
+.welcome {
+  margin-bottom: 24px;
+}
+
+.welcome-text {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* 统计卡片网格 */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+/* 统计卡片 */
+.stat-card {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.stat-card:active {
+  transform: scale(0.98);
+}
+
+.stat-icon {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.stat-content {
+  text-align: center;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.stat-value {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* 区块标题 */
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+/* 区块头部 */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.link-text {
+  color: #1976d2;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* 当前训练 */
+.current-workout {
+  padding: 8px 0;
+}
+
+.workout-name {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.workout-time {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 16px;
+  display: block;
+}
+
+/* 最近活动 */
+.workout-list {
+  padding: 8px 0;
+}
+
+.workout-item {
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.workout-item:last-child {
+  border-bottom: none;
+}
+
+.workout-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.workout-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.workout-date {
+  font-size: 12px;
+  color: #999;
+}
+
+/* 加载状态 */
+.loading {
+  padding: 40px 0;
+  text-align: center;
+  color: #999;
+}
+
+/* 空状态 */
+.empty-text {
+  padding: 40px 0;
+  text-align: center;
+  color: #999;
+  font-size: 14px;
+}
+
+/* 响应式调整 */
+@media (max-width: 375px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .stat-card {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  
+  .stat-icon {
+    margin-bottom: 0;
+  }
+}
