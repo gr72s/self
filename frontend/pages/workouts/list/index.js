@@ -107,7 +107,7 @@ Page({
     const id = e.currentTarget?.dataset?.id;
     if (id) {
       wx.navigateTo({
-        url: `/pages/workouts/detail/index?id=${id}`
+        url: `/pages/workouts/edit/index?id=${id}`
       });
     }
   },

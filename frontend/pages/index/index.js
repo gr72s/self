@@ -141,7 +141,7 @@ Page({
     const workoutId = e?.currentTarget?.dataset?.id || this.data.currentWorkout?.id;
     if (workoutId) {
       wx.navigateTo({
-        url: `/pages/workouts/detail/index?id=${workoutId}`
+        url: `/pages/workouts/list/index?id=${workoutId}`
       });
     }
   },

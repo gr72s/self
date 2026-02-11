@@ -76,7 +76,7 @@
     "disableSWC": true
   },
   "compileType": "miniprogram",
-  "libVersion": "2.19.4",
+  "libVersion": "3.14.2",
   "appid": "wx1224e96bce831bb5",
   "projectname": "健身追踪",
   "isGameTourist": false,
