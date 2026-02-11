@@ -8,7 +8,7 @@ class ExerciseRequest(BaseModel):
     id: Optional[int] = None
     name: str = Field(..., min_length=2, max_length=100, description="练习名称")
     description: Optional[str] = Field(None, max_length=500, description="练习描述")
-    main_muscles: Set[int] = Field(..., min_items=1, description="主肌肉ID集合")
+    main_muscles: Set[int] = Field(..., min_length=1, description="主肌肉ID集合")
     support_muscles: Set[int] = Field(default_factory=set, description="辅助肌肉ID集合")
     cues: List[str] = Field(default_factory=list, description="练习提示列表")
 
