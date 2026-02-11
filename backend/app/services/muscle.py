@@ -9,12 +9,11 @@ class MuscleService:
     """肌肉服务"""
     
     @staticmethod
-    def create(db: Session, name: str, description: Optional[str] = None, 
-               function: Optional[str] = None, origin_name: Optional[str] = None) -> Muscle:
+    def create(db: Session, name: str, function: Optional[str] = None, 
+               origin_name: Optional[str] = None) -> Muscle:
         """创建肌肉"""
         muscle = Muscle(
             name=name,
-            description=description,
             function=function,
             origin_name=origin_name
         )
@@ -24,12 +23,11 @@ class MuscleService:
         return muscle
     
     @staticmethod
-    def update(db: Session, muscle_id: int, name: str, description: Optional[str] = None, 
-               function: Optional[str] = None, origin_name: Optional[str] = None) -> Muscle:
+    def update(db: Session, muscle_id: int, name: str, function: Optional[str] = None, 
+               origin_name: Optional[str] = None) -> Muscle:
         """更新肌肉"""
         muscle = MuscleService.get_by_id(db, muscle_id)
         muscle.name = name
-        muscle.description = description
         muscle.function = function
         muscle.origin_name = origin_name
         db.commit()

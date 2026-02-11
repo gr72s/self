@@ -15,7 +15,6 @@ async def create_muscle(request: MuscleRequest, db: Session = Depends(get_db)):
     muscle = MuscleService.create(
         db,
         name=request.name,
-        description=request.description,
         function=request.function,
         origin_name=request.origin_name
     )
@@ -29,7 +28,6 @@ async def update_muscle(muscle_id: int, request: MuscleRequest, db: Session = De
         db,
         muscle_id=muscle_id,
         name=request.name,
-        description=request.description,
         function=request.function,
         origin_name=request.origin_name
     )

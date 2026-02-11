@@ -5,7 +5,6 @@ def test_create_muscle_success(client):
         "/api/lifting/muscle",
         json={
             "name": "测试肌肉",
-            "description": "这是一块测试肌肉",
             "function": "测试功能",
             "origin_name": "测试起点"
         }
@@ -27,7 +26,6 @@ def test_update_muscle_success(client):
         "/api/lifting/muscle",
         json={
             "name": "测试肌肉",
-            "description": "这是一块测试肌肉",
             "function": "测试功能",
             "origin_name": "测试起点"
         }
@@ -39,7 +37,6 @@ def test_update_muscle_success(client):
         f"/api/lifting/muscle/{muscle_id}",
         json={
             "name": "更新后的肌肉",
-            "description": "这是一块更新后的测试肌肉",
             "function": "更新后的测试功能",
             "origin_name": "更新后的测试起点"
         }
@@ -62,7 +59,6 @@ def test_get_all_muscles(client):
             "/api/lifting/muscle",
             json={
                 "name": f"测试肌肉{i}",
-                "description": f"这是一块测试肌肉{i}",
                 "function": f"测试功能{i}",
                 "origin_name": f"测试起点{i}"
             }
@@ -89,7 +85,6 @@ def test_get_muscle_by_id(client):
         "/api/lifting/muscle",
         json={
             "name": "测试肌肉",
-            "description": "这是一块测试肌肉",
             "function": "测试功能",
             "origin_name": "测试起点"
         }
