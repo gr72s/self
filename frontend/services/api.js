@@ -163,3 +163,14 @@ module.exports = {
   // 用户 API
   getCurrentUser: userApi.getCurrent
 };
+
+// 额外导出 ES 模块格式，以兼容不同的导入方式
+if (typeof module !== 'undefined' && module.exports) {
+  // 保持 CommonJS 导出
+} else if (typeof window !== 'undefined') {
+  // 在浏览器环境中导出到全局对象
+  window.Api = module.exports;
+} else if (typeof self !== 'undefined') {
+  // 在 Worker 环境中导出
+  self.Api = module.exports;
+}

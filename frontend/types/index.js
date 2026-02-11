@@ -1,40 +1,155 @@
-// 类型定义文件
-// 虽然微信小程序原生使用 JavaScript，但保留类型定义结构便于参考
+/**
+ * 类型定义文件
+ * 虽然微信小程序原生使用 JavaScript，但保留类型定义结构便于参考
+ */
 
-// 肌肉类型
-export const MuscleResponse = {
-  id: Number,
+/**
+ * 训练记录类型
+ */
+export const Workout = {
+  id: String,
   name: String,
-  description: String
+  startTime: String,
+  endTime: String,
+  duration: Number,
+  routineId: String,
+  routineName: String,
+  gymId: String,
+  gymName: String,
+  exercises: Array,
+  status: String
 };
 
-// 动作类型
-export const ExerciseResponse = {
-  id: Number,
+/**
+ * 训练记录中的动作类型
+ */
+export const WorkoutExercise = {
+  id: String,
+  exerciseId: String,
+  exerciseName: String,
+  sets: Array
+};
+
+/**
+ * 训练记录中的组数类型
+ */
+export const WorkoutSet = {
+  id: String,
+  setNumber: Number,
+  weight: Number,
+  reps: Number,
+  completed: Boolean
+};
+
+/**
+ * 训练计划类型
+ */
+export const Routine = {
+  id: String,
   name: String,
-  originName: String,
   description: String,
-  mainMuscles: Set,
-  supportMuscles: Set,
-  cues: Array
+  exercises: Array,
+  createdAt: String,
+  updatedAt: String
 };
 
-// 训练计划目标
-export const TargetResponse = {
-  id: Number,
-  name: String,
-  description: String
+/**
+ * 训练计划中的动作类型
+ */
+export const RoutineExercise = {
+  id: String,
+  exerciseId: String,
+  exerciseName: String,
+  sets: Number,
+  reps: Number,
+  weight: Number,
+  order: Number
 };
 
-// 健身场所
-export const GymResponse = {
-  id: Number,
+/**
+ * 动作类型
+ */
+export const Exercise = {
+  id: String,
   name: String,
   description: String,
-  location: String
+  muscleId: String,
+  muscleName: String,
+  cues: Array,
+  createdAt: String,
+  updatedAt: String
 };
 
-// 动作分类
+/**
+ * 健身房类型
+ */
+export const Gym = {
+  id: String,
+  name: String,
+  address: String,
+  createdAt: String,
+  updatedAt: String
+};
+
+/**
+ * 肌肉类型
+ */
+export const Muscle = {
+  id: String,
+  name: String,
+  group: String,
+  createdAt: String,
+  updatedAt: String
+};
+
+/**
+ * API响应类型
+ */
+export const ApiResponse = {
+  success: Boolean,
+  data: Object,
+  message: String
+};
+
+/**
+ * 表单错误类型
+ */
+export const FormErrors = {};
+
+/**
+ * 页面数据类型
+ */
+export const PageData = {
+  loading: Boolean,
+  error: String,
+  data: Object
+};
+
+/**
+ * 微信小程序事件类型
+ */
+export const WxEvent = {
+  detail: {
+    value: String
+  },
+  currentTarget: {
+    dataset: {}
+  }
+};
+
+/**
+ * 导航选项类型
+ */
+export const NavigateOptions = {
+  url: String,
+  success: Function,
+  fail: Function,
+  complete: Function
+};
+
+/**
+ * 动作分类
+ */
 export const Category = {
   Mobility: 'Mobility',
   WarmUp: 'WarmUp',
@@ -43,54 +158,4 @@ export const Category = {
   Corrective: 'Corrective',
   Aerobic: 'Aerobic',
   CoolDown: 'CoolDown'
-};
-
-// 检查项
-export const ChecklistItem = {
-  name: String,
-  isOptional: Boolean
-};
-
-// 训练计划
-export const RoutineResponse = {
-  id: Number,
-  name: String,
-  description: String,
-  workout: Object,
-  targets: Set,
-  slots: Set,
-  checklist: Array,
-  note: String
-};
-
-// 训练记录
-export const WorkoutResponse = {
-  id: Number,
-  startTime: String,
-  endTime: String,
-  gym: Object,
-  routine: Object,
-  target: Set,
-  note: String
-};
-
-// 动作具体信息
-export const SlotResponse = {
-  id: Number,
-  routine: Object,
-  exercise: Object,
-  stars: Number,
-  category: String,
-  setNumber: Number,
-  weight: Number,
-  reps: Number,
-  duration: Number,
-  sequence: Number
-};
-
-// 通用响应类型
-export const Response = {
-  success: Boolean,
-  data: Object,
-  message: String
 };
