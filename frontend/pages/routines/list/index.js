@@ -1,14 +1,14 @@
 // 计划列表逻辑
 const { routineApi } = require('../../../services/api');
 
-
 Page({
   /**
    * 页面的初始数据
    */
   data: {
     routines: [],
-    loading: true
+    loading: true,
+    menuOpen: false
   },
 
   /**
@@ -45,6 +45,15 @@ Page({
       });
     } finally {
       this.setData({ loading: false });
+    }
+  },
+
+  /**
+   * 处理刷新
+   */
+  handleRefresh() {
+    if (!this.data.loading) {
+      this.fetchRoutines();
     }
   },
 
@@ -108,5 +117,12 @@ Page({
         icon: 'none'
       });
     }
+  },
+
+  /**
+   * 处理菜单切换
+   */
+  handleMenuToggle(e) {
+    this.setData({ menuOpen: e.detail.open });
   }
 });

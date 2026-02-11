@@ -8,7 +8,8 @@ Page({
    */
   data: {
     exercises: [],
-    loading: true
+    loading: true,
+    menuOpen: false
   },
 
   /**
@@ -45,6 +46,15 @@ Page({
       });
     } finally {
       this.setData({ loading: false });
+    }
+  },
+
+  /**
+   * 处理刷新
+   */
+  handleRefresh() {
+    if (!this.data.loading) {
+      this.fetchExercises();
     }
   },
 
@@ -125,5 +135,12 @@ Page({
       return `${supportMuscles} (Support)`;
     }
     return '';
+  },
+
+  /**
+   * 处理菜单切换
+   */
+  handleMenuToggle(e) {
+    this.setData({ menuOpen: e.detail.open });
   }
 });

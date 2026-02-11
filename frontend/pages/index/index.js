@@ -29,7 +29,9 @@ Page({
     user: null,
     thisMonthCount: 0,
     uniqueRoutines: 0,
-    recentWorkouts: []
+    totalExercises: 0,
+    recentWorkouts: [],
+    menuOpen: false
   },
 
   /**
@@ -106,7 +108,12 @@ Page({
     // 计算使用过的训练计划数量
     const uniqueRoutines = new Set(workouts.map(w => w.routineId)).size;
 
-    this.setData({ thisMonthCount, uniqueRoutines });
+    // 计算总训练动作数
+    const totalExercises = workouts.reduce((sum, workout) => {
+      return sum + (workout.exercises?.length || 0);
+    }, 0);
+
+    this.setData({ thisMonthCount, uniqueRoutines, totalExercises });
   },
 
   /**
@@ -130,12 +137,29 @@ Page({
   /**
    * 导航到训练详情
    */
-  navigateToWorkoutDetail() {
-    if (this.data.currentWorkout) {
+  navigateToWorkoutDetail(e) {
+    const workoutId = e?.currentTarget?.dataset?.id || this.data.currentWorkout?.id;
+    if (workoutId) {
       wx.navigateTo({
-        url: `/pages/workouts/detail/index?id=${this.data.currentWorkout.id}`
+        url: `/pages/workouts/detail/index?id=${workoutId}`
       });
     }
+  },
+
+  /**
+   * 开始新训练
+   */
+  startNewWorkout() {
+    wx.navigateTo({
+      url: '/pages/workouts/create/index'
+    });
+  },
+
+  /**
+   * 处理菜单切换
+   */
+  handleMenuToggle(e) {
+    this.setData({ menuOpen: e.detail.open });
   },
 
   /**

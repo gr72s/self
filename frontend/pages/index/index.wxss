@@ -1,47 +1,56 @@
 /* 首页样式 */
-.home-page {
-  padding: 16px;
+.page-container {
+  min-height: 100vh;
+  background-color: var(--background-light);
 }
 
-/* 欢迎 */
-.welcome {
-  margin-bottom: 24px;
+/* 欢迎区域 */
+.welcome-section {
+  margin-bottom: 40rpx;
 }
 
 .welcome-text {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
+  margin-bottom: 8rpx;
+  display: block;
+}
+
+.welcome-subtext {
+  font-size: 16px;
+  color: var(--text-secondary);
 }
 
 /* 统计卡片网格 */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-bottom: 24px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24rpx;
+  margin-bottom: 40rpx;
 }
 
 /* 统计卡片 */
 .stat-card {
-  background-color: #fff;
+  background-color: var(--background-white);
   border-radius: 8px;
-  padding: 16px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 24rpx;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   align-items: center;
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .stat-card:active {
-  transform: scale(0.98);
+  transform: translateY(2rpx);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .stat-icon {
-  font-size: 24px;
-  margin-bottom: 8px;
+  font-size: 40rpx;
+  margin-bottom: 16rpx;
 }
 
 .stat-content {
@@ -49,108 +58,76 @@
 }
 
 .stat-label {
-  font-size: 12px;
-  color: #666;
-  margin-bottom: 4px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 8rpx;
   display: block;
 }
 
 .stat-value {
-  font-size: 18px;
+  font-size: 24px;
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
 }
 
 /* 区块标题 */
 .section-title {
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 12px;
-  color: #333;
+  margin-bottom: 16rpx;
 }
 
-/* 区块头部 */
-.section-header {
+.section-actions {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
-}
-
-.link-text {
-  color: #1976d2;
-  font-size: 14px;
-  cursor: pointer;
+  gap: 12rpx;
 }
 
 /* 当前训练 */
 .current-workout {
-  padding: 8px 0;
+  padding: 16rpx 0;
 }
 
 .workout-name {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 500;
-  margin-bottom: 8px;
+  margin-bottom: 12rpx;
   display: block;
+  color: var(--text-primary);
 }
 
 .workout-time {
   font-size: 14px;
-  color: #666;
-  margin-bottom: 16px;
+  color: var(--text-secondary);
+  margin-bottom: 24rpx;
   display: block;
 }
 
-/* 最近活动 */
-.workout-list {
-  padding: 8px 0;
-}
-
-.workout-item {
-  padding: 12px 0;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.workout-item:last-child {
-  border-bottom: none;
-}
-
-.workout-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 4px;
+/* 工作区信息 */
+.workout-info {
+  flex: 1;
 }
 
 .workout-title {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
-  color: #333;
+  color: var(--text-primary);
+  margin-bottom: 4rpx;
+  display: block;
 }
 
-.workout-date {
-  font-size: 12px;
-  color: #999;
-}
-
-/* 加载状态 */
-.loading {
-  padding: 40px 0;
-  text-align: center;
-  color: #999;
-}
-
-/* 空状态 */
-.empty-text {
-  padding: 40px 0;
-  text-align: center;
-  color: #999;
-  font-size: 14px;
+.workout-actions {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
 }
 
 /* 响应式调整 */
-@media (max-width: 375px) {
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
   .stats-grid {
     grid-template-columns: 1fr;
   }
@@ -158,9 +135,14 @@
   .stat-card {
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
   }
   
   .stat-icon {
     margin-bottom: 0;
+  }
+  
+  .stat-content {
+    text-align: right;
   }
 }

@@ -29,7 +29,8 @@ Page({
    */
   data: {
     workouts: [],
-    loading: true
+    loading: true,
+    menuOpen: false
   },
 
   /**
@@ -70,6 +71,15 @@ Page({
   },
 
   /**
+   * 处理刷新
+   */
+  handleRefresh() {
+    if (!this.data.loading) {
+      this.fetchWorkouts();
+    }
+  },
+
+  /**
    * 导航到创建页面
    */
   navigateToCreate() {
@@ -86,6 +96,18 @@ Page({
     if (id) {
       wx.navigateTo({
         url: `/pages/workouts/edit/index?id=${id}`
+      });
+    }
+  },
+
+  /**
+   * 导航到详情页面
+   */
+  navigateToDetail(e) {
+    const id = e.currentTarget?.dataset?.id;
+    if (id) {
+      wx.navigateTo({
+        url: `/pages/workouts/detail/index?id=${id}`
       });
     }
   },
@@ -129,6 +151,13 @@ Page({
         icon: 'none'
       });
     }
+  },
+
+  /**
+   * 处理菜单切换
+   */
+  handleMenuToggle(e) {
+    this.setData({ menuOpen: e.detail.open });
   },
 
   /**

@@ -1,0 +1,17 @@
+<view class="navbar">
+  <view class="navbar-left">
+    <view class="menu-button" bindtap="handleMenuToggle">
+      <view class="menu-icon" style="transform: rotate({{menuOpen ? 90 : 0}}deg);">
+        <text class="icon">☰</text>
+      </view>
+    </view>
+    <view class="logo-container">
+      <text class="logo-text">Fitness Tracker</text>
+    </view>
+  </view>
+  <view class="navbar-right">
+    <view class="theme-switcher">
+      <text class="theme-icon">🌙</text>
+    </view>
+  </view>
+</view>

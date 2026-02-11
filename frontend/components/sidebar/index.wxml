@@ -1,0 +1,60 @@
+<view class="sidebar" style="width: {{expanded ? '240rpx' : '80rpx'}}; opacity: {{expanded ? 1 : 0.8}};">
+  <view class="sidebar-header">
+    <view class="sidebar-logo" wx:if="{{expanded}}">
+      <text class="logo-text">Fitness</text>
+    </view>
+  </view>
+  <view class="sidebar-content">
+    <view class="sidebar-section">
+      <text class="sidebar-section-title" wx:if="{{expanded}}">Main Items</text>
+      <view class="sidebar-item {{selectedItem === 'home' ? 'active' : ''}}" bindtap="handleItemClick" data-id="home" data-url="/pages/index/index">
+        <view class="sidebar-item-icon">
+          <text>🏠</text>
+        </view>
+        <text class="sidebar-item-text" wx:if="{{expanded}}">Home</text>
+      </view>
+      <view class="sidebar-item {{selectedItem === 'workouts' ? 'active' : ''}}" bindtap="handleItemClick" data-id="workouts" data-url="/pages/workouts/list/index">
+        <view class="sidebar-item-icon">
+          <text>🏋️</text>
+        </view>
+        <text class="sidebar-item-text" wx:if="{{expanded}}">Workouts</text>
+      </view>
+      <view class="sidebar-item {{selectedItem === 'exercises' ? 'active' : ''}}" bindtap="handleItemClick" data-id="exercises" data-url="/pages/exercises/list/index">
+        <view class="sidebar-item-icon">
+          <text>💪</text>
+        </view>
+        <text class="sidebar-item-text" wx:if="{{expanded}}">Exercises</text>
+      </view>
+      <view class="sidebar-item {{selectedItem === 'routines' ? 'active' : ''}}" bindtap="handleItemClick" data-id="routines" data-url="/pages/routines/list/index">
+        <view class="sidebar-item-icon">
+          <text>📋</text>
+        </view>
+        <text class="sidebar-item-text" wx:if="{{expanded}}">Routines</text>
+      </view>
+    </view>
+    <view class="sidebar-divider" wx:if="{{expanded}}"></view>
+    <view class="sidebar-section">
+      <text class="sidebar-section-title" wx:if="{{expanded}}">Settings</text>
+      <view class="sidebar-item {{selectedItem === 'gyms' ? 'active' : ''}}" bindtap="handleItemClick" data-id="gyms" data-url="/pages/gyms/list/index">
+        <view class="sidebar-item-icon">
+          <text>🏟️</text>
+        </view>
+        <text class="sidebar-item-text" wx:if="{{expanded}}">Gyms</text>
+      </view>
+      <view class="sidebar-item {{selectedItem === 'muscles' ? 'active' : ''}}" bindtap="handleItemClick" data-id="muscles" data-url="/pages/muscles/list/index">
+        <view class="sidebar-item-icon">
+          <text>💪</text>
+        </view>
+        <text class="sidebar-item-text" wx:if="{{expanded}}">Muscles</text>
+      </view>
+    </view>
+  </view>
+  <view class="sidebar-footer" wx:if="{{expanded}}">
+    <view class="sidebar-item" bindtap="handleCollapse">
+      <view class="sidebar-item-icon">
+        <text>📏</text>
+      </view>
+      <text class="sidebar-item-text">Collapse</text>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,78 @@
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64rpx;
+  padding: 0 24rpx;
+  background-color: #ffffff;
+  border-bottom: 1rpx solid #e0e0e0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+}
+
+.menu-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48rpx;
+  height: 48rpx;
+  margin-right: 16rpx;
+  border-radius: 8rpx;
+  transition: background-color 0.2s;
+}
+
+.menu-button:active {
+  background-color: #f0f0f0;
+}
+
+.menu-icon {
+  transition: transform 0.3s ease;
+}
+
+.icon {
+  font-size: 32rpx;
+  line-height: 48rpx;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.logo-text {
+  font-size: 24rpx;
+  font-weight: 700;
+  color: #1976d2;
+  white-space: nowrap;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+}
+
+.theme-switcher {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 8rpx;
+  transition: background-color 0.2s;
+}
+
+.theme-switcher:active {
+  background-color: #f0f0f0;
+}
+
+.theme-icon {
+  font-size: 28rpx;
+}

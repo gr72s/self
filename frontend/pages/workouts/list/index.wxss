@@ -1,192 +1,83 @@
 /* 训练列表页面样式 */
-.workout-list-page {
-  padding: 16px;
+.page-container {
+  min-height: 100vh;
+  background-color: var(--background-light);
 }
 
-/* 页面头部 */
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-}
-
-.page-title {
-  font-size: 24px;
-  font-weight: 600;
-  color: #333;
-}
-
-.header-actions {
-  display: flex;
-  gap: 8px;
-}
-
-.primary-button {
-  background-color: #1976d2;
-  color: #fff;
-  padding: 8px 16px;
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: 500;
-  border: none;
-  cursor: pointer;
-}
-
-.primary-button:active {
-  background-color: #1565c0;
-}
-
-/* 列表容器 */
-.list-container {
-  background-color: #fff;
+/* 表格样式 */
+.table {
+  background-color: var(--background-white);
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-top: 24rpx;
 }
 
-/* 加载状态 */
-.loading {
-  padding: 60px 0;
-  text-align: center;
-  color: #999;
+.table-body {
+  max-height: 600px;
+  overflow-y: auto;
 }
 
-/* 空状态 */
-.empty {
-  padding: 60px 0;
-  text-align: center;
-  color: #999;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-}
-
-.empty-text {
-  font-size: 16px;
-  margin-bottom: 8px;
-}
-
-/* 训练项 */
-.workout-items {
-  padding: 8px 0;
-}
-
-.workout-item {
-  padding: 16px;
-  border-bottom: 1px solid #f0f0f0;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.workout-item:last-child {
-  border-bottom: none;
-}
-
-/* 训练信息 */
-.workout-info {
-  flex: 1;
-}
-
-.workout-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 8px;
-}
-
+/* 训练名称 */
 .workout-name {
-  font-size: 16px;
   font-weight: 500;
-  color: #333;
-  flex: 1;
-  margin-right: 12px;
+  color: var(--text-primary);
 }
 
-.workout-date {
+/* 状态标签 */
+.status {
   font-size: 12px;
-  color: #999;
-  white-space: nowrap;
-}
-
-.workout-details {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-bottom: 8px;
-}
-
-.workout-time {
-  font-size: 14px;
-  color: #666;
-}
-
-.workout-gym {
-  font-size: 13px;
-  color: #999;
-}
-
-.workout-stats {
-  margin-top: 4px;
-}
-
-.workout-duration {
-  font-size: 12px;
-  color: #1976d2;
   font-weight: 500;
+  padding: 4rpx 8rpx;
+  border-radius: 12rpx;
+  display: inline-block;
 }
 
-/* 训练操作 */
-.workout-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 8px;
-  justify-content: flex-end;
+.status.completed {
+  background-color: #e8f5e8;
+  color: #2e7d32;
 }
 
-.action-button {
-  padding: 6px 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 12px;
-  background-color: #fff;
-  color: #333;
-  cursor: pointer;
+.status.in-progress {
+  background-color: #fff3e0;
+  color: #ef6c00;
 }
 
-.action-button:active {
-  background-color: #f5f5f5;
-}
-
-.action-button.delete {
-  border-color: #f44336;
-  color: #f44336;
-}
-
-.action-button.delete:active {
+/* 删除按钮 */
+.button.icon-button.delete:active {
   background-color: #ffebee;
 }
 
 /* 响应式调整 */
-@media (max-width: 375px) {
-  .workout-header {
+@media (max-width: 768px) {
+  .table-header {
+    display: none;
+  }
+  
+  .table-row {
     flex-direction: column;
     align-items: flex-start;
-    gap: 4px;
+    padding: 24rpx;
+    border-bottom: 1rpx solid var(--border-color);
   }
   
-  .workout-date {
-    white-space: normal;
-  }
-  
-  .workout-actions {
-    flex-direction: column;
-  }
-  
-  .action-button {
+  .table-cell {
     width: 100%;
-    text-align: center;
+    padding: 8rpx 0;
+    border-bottom: none;
+  }
+  
+  .table-cell::before {
+    content: attr(data-label);
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-right: 8rpx;
+  }
+  
+  .table-actions {
+    margin-top: 16rpx;
+    width: 100%;
+    justify-content: flex-end;
   }
 }

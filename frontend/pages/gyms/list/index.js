@@ -7,7 +7,8 @@ Page({
     loading: true,
     error: '',
     showDeleteConfirm: false,
-    gymIdToDelete: null
+    gymIdToDelete: null,
+    menuOpen: false
   },
 
   onLoad() {
@@ -35,6 +36,13 @@ Page({
           loading: false 
         });
       });
+  },
+
+  // 处理刷新
+  handleRefresh() {
+    if (!this.data.loading) {
+      this.loadGyms();
+    }
   },
 
   // 跳转到添加健身房页面
@@ -96,5 +104,10 @@ Page({
           icon: 'none'
         });
       });
+  },
+
+  // 处理菜单切换
+  handleMenuToggle(e) {
+    this.setData({ menuOpen: e.detail.open });
   }
 });

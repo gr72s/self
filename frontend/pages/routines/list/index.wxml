@@ -1,62 +1,78 @@
-<view class="routine-list-page">
-  <!-- 页面头部 -->
-  <view class="page-header">
-    <text class="page-title">Routines</text>
-    <view class="header-actions">
-      <button class="primary-button" bindtap="navigateToCreate">
-        + Create
-      </button>
-    </view>
-  </view>
-
-  <!-- 计划列表 -->
-  <view class="list-container">
-    <block wx:if="{{loading}}">
-      <view class="loading">
-        <text>Loading...</text>
-      </view>
-    </block>
-    <block wx:elif="{{routines.length === 0}}">
-      <view class="empty">
-        <text class="empty-text">No routines yet</text>
-        <button class="primary-button" bindtap="navigateToCreate">
-          Create First Routine
-        </button>
-      </view>
-    </block>
-    <block wx:else>
-      <view class="routine-items">
-        <view wx:for="{{routines}}" wx:key="{{item.id}}" class="routine-item">
-          <view class="routine-info">
-            <view class="routine-header">
-              <text class="routine-name">{{item.name}}</text>
-            </view>
-            <view class="routine-details">
-              <text class="routine-description">{{item.description || 'No description'}}</text>
-              <view class="routine-stats">
-                <text class="stat-item">{{item.slots && item.slots.size ? item.slots.size : 0}} exercises</text>
-                <text class="stat-item">{{item.targets && item.targets.size ? item.targets.size : 0}} targets</text>
-              </view>
-            </view>
-            <view class="routine-checklist" wx:if="{{item.checklist && item.checklist.length > 0}}">
-              <text class="checklist-title">Checklist:</text>
-              <view class="checklist-items">
-                <text wx:for="{{item.checklist}}" wx:key="{{index}}" class="checklist-item">
-                  • {{item.name}}
-                </text>
-              </view>
-            </view>
-          </view>
-          <view class="routine-actions">
-            <button class="action-button" bindtap="navigateToEdit" data-id="{{item.id}}">
-              Edit
-            </button>
-            <button class="action-button delete" bindtap="confirmDelete" data-id="{{item.id}}">
-              Delete
-            </button>
-          </view>
+<view class="page-container">
+  <!-- 顶部导航栏 -->
+  <navbar 
+    menuOpen="{{menuOpen}}" 
+    bind:toggleMenu="handleMenuToggle"
+  />
+  
+  <!-- 主内容区 -->
+  <view class="main-container">
+    <!-- 页面头部 -->
+    <view class="section-title">
+      <text>Routines</text>
+      <view class="toolbar-right">
+        <view class="button icon-button" bindtap="handleRefresh">
+          <text>🔄</text>
+        </view>
+        <view class="button primary" bindtap="navigateToCreate">
+          <text class="button-text">+ Create</text>
         </view>
       </view>
-    </block>
+    </view>
+
+    <!-- 计划列表 -->
+    <view class="table">
+      <block wx:if="{{loading}}">
+        <view class="loading">
+          <view class="loading-spinner"></view>
+          <text>Loading...</text>
+        </view>
+      </block>
+      <block wx:elif="{{routines.length === 0}}">
+        <view class="empty">
+          <text class="empty-icon">📋</text>
+          <text class="empty-text">No routines yet</text>
+          <text class="empty-subtext">Create your first routine to get started</text>
+          <view class="button primary" bindtap="navigateToCreate">
+            <text class="button-text">Create First Routine</text>
+          </view>
+        </view>
+      </block>
+      <block wx:else>
+        <view class="table-header">
+          <view class="table-header-cell">Routine</view>
+          <view class="table-header-cell">Exercises</view>
+          <view class="table-header-cell">Targets</view>
+          <view class="table-header-cell">Description</view>
+          <view class="table-header-cell" style="text-align: right;">Actions</view>
+        </view>
+        <view class="table-body">
+          <view wx:for="{{routines}}" wx:key="{{item.id}}" class="table-row">
+            <view class="table-cell">
+              <text class="routine-name">{{item.name}}</text>
+            </view>
+            <view class="table-cell">
+              <text>{{item.slots && item.slots.size ? item.slots.size : 0}}</text>
+            </view>
+            <view class="table-cell">
+              <text>{{item.targets && item.targets.size ? item.targets.size : 0}}</text>
+            </view>
+            <view class="table-cell">
+              <text class="routine-description">{{item.description || 'No description'}}</text>
+            </view>
+            <view class="table-cell" style="text-align: right;">
+              <view class="table-actions">
+                <view class="button icon-button" bindtap="navigateToEdit" data-id="{{item.id}}">
+                  <text>✏️</text>
+                </view>
+                <view class="button icon-button delete" bindtap="confirmDelete" data-id="{{item.id}}">
+                  <text>🗑️</text>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
   </view>
 </view>

@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "navbar": "../../../components/navbar/index",
+    "sidebar": "../../../components/sidebar/index"
+  },
+  "navigationBarTitleText": "Routines"
+}
