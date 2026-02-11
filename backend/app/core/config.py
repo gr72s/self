@@ -9,14 +9,41 @@ class Settings(BaseSettings):
     APP_NAME: str = "Self API"
     DEBUG: bool = True
     
+    # 环境配置
+    SELF_ENV: str = "development"
+    
+    @property
+    def ENVIRONMENT(self) -> str:
+        return self.SELF_ENV
+    
     # 数据库配置
     @property
     def DATABASE_URL(self) -> str:
-        user_home = os.path.expanduser("~")
-        db_dir = os.path.join(user_home, ".self")
-        os.makedirs(db_dir, exist_ok=True)
-        db_path = os.path.join(db_dir, "self.db")
+        # 获取工程目录
+        project_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        
+        # 根据环境选择数据库文件
+        if self.ENVIRONMENT == "testing":
+            db_name = "self.test.db"
+        elif self.ENVIRONMENT == "development":
+            db_name = "self.dev.db"
+        else:  # production
+            db_name = "self.db"
+        
+        db_path = os.path.join(project_dir, db_name)
         return f"sqlite:///{db_path}"
+    
+    def cleanup_development_db(self):
+        """清理开发环境数据库文件"""
+        if self.ENVIRONMENT == "development":
+            project_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            db_path = os.path.join(project_dir, "self.dev.db")
+            if os.path.exists(db_path):
+                try:
+                    os.remove(db_path)
+                    print(f"Removed development database: {db_path}")
+                except Exception as e:
+                    print(f"Error removing development database: {e}")
     
     # JWT配置
     SECRET_KEY: str = "7f3a9b2c8e1d4f6a5b9c8e7d1a3f4b6c8e9d2a5f7c1b3e8d4a6f9c2b5e8a1d4f7b"

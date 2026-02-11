@@ -27,6 +27,9 @@ def get_db():
 
 def init_db():
     """初始化数据库并添加种子数据"""
+    # 清理开发环境数据库文件
+    settings.cleanup_development_db()
+    
     from app.models import User, Muscle, Target, Gym, Exercise, Routine, Slot, Workout
     from app.services.auth import AuthService
     from app.services.muscle import MuscleService
@@ -43,16 +46,6 @@ def init_db():
     db = SessionLocal()
     
     try:
-        # 添加默认用户
-        if not db.query(User).first():
-            # 使用简短的密码
-            AuthService.create_user(
-                db,
-                username="admin",
-                password="admin",
-                nickname="Admin"
-            )
-        
         # 执行SQL文件
         sql_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "data")
         if os.path.exists(sql_dir):

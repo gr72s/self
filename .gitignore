@@ -34,4 +34,5 @@ logs/
 .trae
 node_modules/
 __pycache__
-test.db
+*.db
+.pytest_cache
