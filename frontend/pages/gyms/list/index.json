@@ -1,7 +1,6 @@
 {
   "usingComponents": {
-    "navbar": "../../../components/navbar/index",
-    "sidebar": "../../../components/sidebar/index"
+    "navbar": "../../../components/navbar/index"
   },
   "navigationBarTitleText": "Gyms"
 }

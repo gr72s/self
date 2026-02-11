@@ -59,7 +59,7 @@ Page({
       // 获取用户信息
       try {
         const userResponse = await userApi.getCurrent();
-        const userData = userResponse.data?.data || userResponse.data;
+        const userData = (userResponse.data && userResponse.data.data) || userResponse.data;
         this.setData({ user: userData });
       } catch (error) {
         console.error('Failed to fetch user:', error);
@@ -68,7 +68,7 @@ Page({
       // 获取训练记录
       try {
         const workoutResponse = await workoutApi.getAll();
-        const workoutData = workoutResponse.data?.data || workoutResponse.data || [];
+        const workoutData = (workoutResponse.data && workoutResponse.data.data) || workoutResponse.data || [];
         const workouts = Array.isArray(workoutData) ? workoutData : [];
         this.setData({ workouts });
         
@@ -84,7 +84,7 @@ Page({
       // 获取当前训练
       try {
         const currentResponse = await workoutApi.getInProcess();
-        const currentData = currentResponse.data?.data || currentResponse.data;
+        const currentData = (currentResponse.data && currentResponse.data.data) || currentResponse.data;
         this.setData({ currentWorkout: currentData });
       } catch (error) {
         console.error('Failed to fetch current workout:', error);
@@ -110,7 +110,7 @@ Page({
 
     // 计算总训练动作数
     const totalExercises = workouts.reduce((sum, workout) => {
-      return sum + (workout.exercises?.length || 0);
+      return sum + ((workout.exercises && workout.exercises.length) || 0);
     }, 0);
 
     this.setData({ thisMonthCount, uniqueRoutines, totalExercises });
@@ -138,7 +138,7 @@ Page({
    * 导航到训练详情
    */
   navigateToWorkoutDetail(e) {
-    const workoutId = e?.currentTarget?.dataset?.id || this.data.currentWorkout?.id;
+    const workoutId = (e && e.currentTarget && e.currentTarget.dataset && e.currentTarget.dataset.id) || (this.data.currentWorkout && this.data.currentWorkout.id);
     if (workoutId) {
       wx.navigateTo({
         url: `/pages/workouts/list/index?id=${workoutId}`

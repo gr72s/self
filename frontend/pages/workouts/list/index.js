@@ -56,7 +56,7 @@ Page({
     this.setData({ loading: true });
     try {
       const response = await workoutApi.getAll();
-      const data = response.data?.data || response.data || [];
+      const data = (response.data && response.data.data) || response.data || [];
       const workouts = Array.isArray(data) ? data : [];
       this.setData({ workouts });
     } catch (error) {
@@ -92,7 +92,7 @@ Page({
    * 导航到编辑页面
    */
   navigateToEdit(e) {
-    const id = e.currentTarget?.dataset?.id;
+    const id = e && e.currentTarget && e.currentTarget.dataset && e.currentTarget.dataset.id;
     if (id) {
       wx.navigateTo({
         url: `/pages/workouts/edit/index?id=${id}`
@@ -104,7 +104,7 @@ Page({
    * 导航到详情页面
    */
   navigateToDetail(e) {
-    const id = e.currentTarget?.dataset?.id;
+    const id = e && e.currentTarget && e.currentTarget.dataset && e.currentTarget.dataset.id;
     if (id) {
       wx.navigateTo({
         url: `/pages/workouts/edit/index?id=${id}`
@@ -116,7 +116,7 @@ Page({
    * 确认删除
    */
   confirmDelete(e) {
-    const id = e.currentTarget?.dataset?.id;
+    const id = e && e.currentTarget && e.currentTarget.dataset && e.currentTarget.dataset.id;
     if (id) {
       wx.showModal({
         title: 'Delete Workout',

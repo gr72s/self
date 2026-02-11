@@ -50,17 +50,17 @@ Page({
       
       // 获取训练详情
       const workoutResponse = await workoutApi.getById(workoutId);
-      const workout = workoutResponse.data?.data || workoutResponse.data;
+      const workout = (workoutResponse.data && workoutResponse.data.data) || workoutResponse.data;
       this.setData({ workout });
       
       // 获取训练计划列表
       const routineResponse = await routineApi.getAll();
-      const routines = routineResponse.data?.data || routineResponse.data || [];
+      const routines = (routineResponse.data && routineResponse.data.data) || routineResponse.data || [];
       this.setData({ routines });
       
       // 获取健身房列表
       const gymResponse = await gymApi.getAll();
-      const gyms = gymResponse.data?.data || gymResponse.data || [];
+      const gyms = (gymResponse.data && gymResponse.data.data) || gymResponse.data || [];
       this.setData({ gyms });
       
       // 模拟目标数据（实际应该从 API 获取）
@@ -133,7 +133,7 @@ Page({
    * 切换目标选择
    */
   toggleTarget(e) {
-    const targetId = e.currentTarget?.dataset?.id;
+    const targetId = e && e.currentTarget && e.currentTarget.dataset && e.currentTarget.dataset.id;
     if (typeof targetId === 'number') {
       const selectedTargets = [...this.data.selectedTargets];
       
