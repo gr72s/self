@@ -13,7 +13,7 @@ Component({
   },
   methods: {
     handleMenuToggle() {
-      this.triggerEvent('toggleMenu', { open: !this.properties.menuOpen });
+      this.triggerEvent('toggleMenu', { open: !this.data.menuOpen });
     }
   }
 });
