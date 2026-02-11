@@ -1,5 +1,5 @@
 from typing import Optional, TYPE_CHECKING
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from app.schemas.exercise import ExerciseResponse
 from app.models.slot import Category
 
@@ -35,8 +35,9 @@ class SlotResponse(BaseModel):
     duration: Optional[int] = None
     sequence: int
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(
+        from_attributes=True
+    )
 
 
 class SlotSummaryResponse(BaseModel):
@@ -51,8 +52,9 @@ class SlotSummaryResponse(BaseModel):
     duration: Optional[int] = None
     sequence: int
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(
+        from_attributes=True
+    )
 
 
 # 解决循环导入问题

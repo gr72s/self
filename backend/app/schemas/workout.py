@@ -1,6 +1,6 @@
 from typing import Optional, Set, List, TYPE_CHECKING
 from datetime import datetime
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from app.schemas.gym import GymResponse
 from app.schemas.target import TargetResponse
 
@@ -30,8 +30,9 @@ class WorkoutResponse(BaseModel):
     target: List[TargetResponse] = Field(default_factory=list)
     note: Optional[str] = None
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(
+        from_attributes=True
+    )
 
 
 class WorkoutSummaryResponse(BaseModel):
@@ -43,8 +44,9 @@ class WorkoutSummaryResponse(BaseModel):
     target: List[TargetResponse] = Field(default_factory=list)
     note: Optional[str] = None
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(
+        from_attributes=True
+    )
 
 
 # 解决循环导入问题

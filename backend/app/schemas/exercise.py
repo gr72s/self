@@ -1,5 +1,5 @@
 from typing import Optional, List, Set
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from app.schemas.muscle import MuscleResponse
 
 
@@ -22,5 +22,6 @@ class ExerciseResponse(BaseModel):
     support_muscles: List[MuscleResponse] = Field(default_factory=list)
     cues: List[str] = Field(default_factory=list)
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(
+        from_attributes=True
+    )
