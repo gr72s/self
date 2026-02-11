@@ -2,10 +2,17 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.services.target import TargetService
-from app.schemas.target import TargetResponse
+from app.schemas.target import TargetRequest, TargetResponse
 from app.schemas.response import Response, PageResponse
 
 router = APIRouter()
+
+
+@router.post("", response_model=Response)
+async def create_target(request: TargetRequest, db: Session = Depends(get_db)):
+    """创建目标"""
+    target = TargetService.create(db, name=request.name)
+    return Response(data=TargetResponse.model_validate(target))
 
 
 @router.get("", response_model=Response)

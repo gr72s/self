@@ -31,8 +31,8 @@ async def create_exercise(request: ExerciseRequest, db: Session = Depends(get_db
         id=exercise.id,
         name=exercise.name,
         description=exercise.description,
-        main_muscles=set(main_muscles),
-        support_muscles=set(support_muscles),
+        main_muscles=main_muscles,
+        support_muscles=support_muscles,
         cues=cues
     )
     
@@ -61,8 +61,8 @@ async def update_exercise(exercise_id: int, request: ExerciseRequest, db: Sessio
         id=exercise.id,
         name=exercise.name,
         description=exercise.description,
-        main_muscles=set(main_muscles),
-        support_muscles=set(support_muscles),
+        main_muscles=main_muscles,
+        support_muscles=support_muscles,
         cues=cues
     )
     
@@ -91,8 +91,8 @@ async def get_all_exercises(
             id=exercise.id,
             name=exercise.name,
             description=exercise.description,
-            main_muscles=set(main_muscles),
-            support_muscles=set(support_muscles),
+            main_muscles=main_muscles,
+            support_muscles=support_muscles,
             cues=cues
         )
         items.append(item)
@@ -105,3 +105,25 @@ async def get_all_exercises(
     )
     
     return Response(data=page_response)
+
+
+@router.get("/{exercise_id}", response_model=Response)
+async def get_exercise(exercise_id: int, db: Session = Depends(get_db)):
+    """根据ID获取练习"""
+    exercise = ExerciseService.get_by_id(db, exercise_id)
+    
+    # 构建响应
+    main_muscles = [MuscleResponse.model_validate(muscle) for muscle in exercise.main_muscles]
+    support_muscles = [MuscleResponse.model_validate(muscle) for muscle in exercise.support_muscles]
+    cues = ExerciseService.get_cues_list(exercise)
+    
+    response_data = ExerciseResponse(
+        id=exercise.id,
+        name=exercise.name,
+        description=exercise.description,
+        main_muscles=main_muscles,
+        support_muscles=support_muscles,
+        cues=cues
+    )
+    
+    return Response(data=response_data)

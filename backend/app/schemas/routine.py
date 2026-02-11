@@ -31,8 +31,8 @@ class RoutineResponse(BaseModel):
     name: str
     description: Optional[str] = None
     workout: Optional['WorkoutResponse'] = None
-    targets: Set[TargetResponse] = Field(default_factory=set)
-    slots: Set['SlotResponse'] = Field(default_factory=set)
+    targets: List[TargetResponse] = Field(default_factory=list)
+    slots: List['SlotResponse'] = Field(default_factory=list)
     checklist: List[ChecklistItem] = Field(default_factory=list)
     note: Optional[str] = None
     
@@ -45,7 +45,7 @@ class RoutineSummaryResponse(BaseModel):
     id: int
     name: str
     description: Optional[str] = None
-    targets: Set[TargetResponse] = Field(default_factory=set)
+    targets: List[TargetResponse] = Field(default_factory=list)
     
     class Config:
         from_attributes = True

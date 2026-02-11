@@ -40,7 +40,7 @@ async def create_workout(request: WorkoutRequest, db: Session = Depends(get_db))
         end_time=workout.end_time,
         gym=gym_response,
         routine=None,
-        target=set(targets),
+        target=targets,
         note=workout.note
     )
     
@@ -86,7 +86,7 @@ async def update_workout(workout_id: int, request: WorkoutRequest, db: Session =
         end_time=workout.end_time,
         gym=gym_response,
         routine=routine_response,
-        target=set(targets),
+        target=targets,
         note=workout.note
     )
     
@@ -132,7 +132,7 @@ async def stop_workout(request: WorkoutRequest, db: Session = Depends(get_db)):
         end_time=workout.end_time,
         gym=gym_response,
         routine=routine_response,
-        target=set(targets),
+        target=targets,
         note=workout.note
     )
     
@@ -168,7 +168,7 @@ async def get_all_workouts(
             end_time=workout.end_time,
             gym=gym_response,
             routine=None,
-            target=set(targets),
+            target=targets,
             note=workout.note
         )
         items.append(item)
@@ -216,7 +216,7 @@ async def find_in_process_workout(db: Session = Depends(get_db)):
         end_time=workout.end_time,
         gym=gym_response,
         routine=routine_response,
-        target=set(targets),
+        target=targets,
         note=workout.note
     )
     

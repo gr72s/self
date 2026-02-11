@@ -53,3 +53,10 @@ async def get_all_gyms(
     )
     
     return Response(data=page_response)
+
+
+@router.get("/{gym_id}", response_model=Response)
+async def get_gym(gym_id: int, db: Session = Depends(get_db)):
+    """根据ID获取健身房"""
+    gym = GymService.get_by_id(db, gym_id)
+    return Response(data=GymResponse.model_validate(gym))

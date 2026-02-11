@@ -18,8 +18,8 @@ class ExerciseResponse(BaseModel):
     id: int
     name: str
     description: Optional[str] = None
-    main_muscles: Set[MuscleResponse] = Field(default_factory=set)
-    support_muscles: Set[MuscleResponse] = Field(default_factory=set)
+    main_muscles: List[MuscleResponse] = Field(default_factory=list)
+    support_muscles: List[MuscleResponse] = Field(default_factory=list)
     cues: List[str] = Field(default_factory=list)
     
     class Config:

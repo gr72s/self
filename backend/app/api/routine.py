@@ -21,15 +21,19 @@ async def create_routine(request: RoutineRequest, db: Session = Depends(get_db))
     # 转换checklist为字典列表
     checklist_data = [item.model_dump() for item in request.checklist]
     
-    routine = RoutineService.create(
-        db,
-        name=request.name,
-        description=request.description,
-        workout_id=request.workout_id,
-        target_ids=request.target_ids,
-        checklist=checklist_data,
-        note=request.note
-    )
+    try:
+        routine = RoutineService.create(
+            db,
+            name=request.name,
+            description=request.description,
+            workout_id=request.workout_id,
+            target_ids=request.target_ids,
+            checklist=checklist_data,
+            note=request.note
+        )
+    except Exception as e:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=500, detail=str(e))
     
     # 构建响应
     targets = [TargetResponse.model_validate(target) for target in routine.targets]
@@ -40,8 +44,8 @@ async def create_routine(request: RoutineRequest, db: Session = Depends(get_db))
         name=routine.name,
         description=routine.description,
         workout=None,
-        targets=set(targets),
-        slots=set(),
+        targets=targets,
+        slots=[],
         checklist=checklist,
         note=routine.note
     )
@@ -74,8 +78,8 @@ async def create_routine_template(request: RoutineRequest, db: Session = Depends
         name=routine.name,
         description=routine.description,
         workout=None,
-        targets=set(targets),
-        slots=set(),
+        targets=targets,
+        slots=[],
         checklist=checklist,
         note=routine.note
     )
@@ -150,8 +154,8 @@ async def update_routine(routine_id: int, request: RoutineRequest, db: Session =
         name=routine.name,
         description=routine.description,
         workout=workout_response,
-        targets=set(targets),
-        slots=set(slots),
+        targets=targets,
+        slots=slots,
         checklist=checklist,
         note=routine.note
     )
@@ -181,8 +185,8 @@ async def get_all_routines(
             name=routine.name,
             description=routine.description,
             workout=None,
-            targets=set(targets),
-            slots=set(),
+            targets=targets,
+            slots=[],
             checklist=checklist,
             note=routine.note
         )
@@ -219,7 +223,7 @@ async def add_exercise(request: SlotRequest, db: Session = Depends(get_db)):
         id=slot.routine.id,
         name=slot.routine.name,
         description=slot.routine.description,
-        targets=set()
+        targets=[]
     )
     
     exercise_response = ExerciseResponse(
