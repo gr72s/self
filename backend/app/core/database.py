@@ -27,12 +27,14 @@ def get_db():
 
 def init_db():
     """初始化数据库并添加种子数据"""
-    from app.models import User, Muscle, Target, Gym, Exercise
+    from app.models import User, Muscle, Target, Gym, Exercise, Routine, Slot, Workout
     from app.services.auth import AuthService
     from app.services.muscle import MuscleService
     from app.services.target import TargetService
     from app.services.gym import GymService
     from app.services.exercise import ExerciseService
+    import os
+    from sqlalchemy import text
     
     # 创建所有表
     Base.metadata.create_all(bind=engine)
@@ -51,68 +53,25 @@ def init_db():
                 nickname="Admin"
             )
         
-        # 添加默认肌肉
-        if not db.query(Muscle).first():
-            default_muscles = [
-                {"name": "胸肌", "description": "胸部肌肉", "function": "推挤动作", "origin_name": "胸骨"},
-                {"name": "背肌", "description": "背部肌肉", "function": "拉动动作", "origin_name": "脊柱"},
-                {"name": "手臂", "description": "手臂肌肉", "function": "弯曲和伸展", "origin_name": "肱骨"},
-                {"name": "腿部", "description": "腿部肌肉", "function": "行走和跳跃", "origin_name": "骨盆"},
-                {"name": "肩部", "description": "肩部肌肉", "function": "抬起和旋转", "origin_name": "肩胛骨"}
-            ]
-            for muscle_data in default_muscles:
-                MuscleService.create(
-                    db,
-                    name=muscle_data["name"],
-                    description=muscle_data["description"],
-                    function=muscle_data["function"],
-                    origin_name=muscle_data["origin_name"]
-                )
-        
-        # 添加默认目标
-        if not db.query(Target).first():
-            default_targets = ["增肌", "减脂", "耐力", "力量", "灵活性"]
-            for target_name in default_targets:
-                TargetService.create(db, name=target_name)
-        
-        # 添加默认健身房
-        if not db.query(Gym).first():
-            default_gyms = [
-                {"name": "健身中心", "location": "市中心"},
-                {"name": "运动俱乐部", "location": "郊区"}
-            ]
-            for gym_data in default_gyms:
-                GymService.create(
-                    db,
-                    name=gym_data["name"],
-                    location=gym_data["location"]
-                )
-        
-        # 添加默认练习
-        if not db.query(Exercise).first():
-            # 获取肌肉和目标
-            chest_muscle = db.query(Muscle).filter(Muscle.name == "胸肌").first()
-            back_muscle = db.query(Muscle).filter(Muscle.name == "背肌").first()
-            
-            if chest_muscle:
-                ExerciseService.create(
-                    db,
-                    name="卧推",
-                    description="胸部推挤练习",
-                    main_muscle_ids={chest_muscle.id},
-                    support_muscle_ids=set(),
-                    cues=["保持核心稳定", "控制下降速度"]
-                )
-            
-            if back_muscle:
-                ExerciseService.create(
-                    db,
-                    name="引体向上",
-                    description="背部拉动练习",
-                    main_muscle_ids={back_muscle.id},
-                    support_muscle_ids=set(),
-                    cues=["保持身体挺直", "用背部发力"]
-                )
+        # 执行SQL文件
+        sql_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "data")
+        if os.path.exists(sql_dir):
+            sql_files = [f for f in os.listdir(sql_dir) if f.endswith(".sql")]
+            for sql_file in sql_files:
+                sql_path = os.path.join(sql_dir, sql_file)
+                print(f"执行SQL文件: {sql_file}")
+                try:
+                    with open(sql_path, "r", encoding="utf-8") as f:
+                        sql_content = f.read()
+                        # 分割SQL语句并逐个执行
+                        statements = sql_content.split(';')
+                        for statement in statements:
+                            statement = statement.strip()
+                            if statement and not statement.startswith('--'):
+                                db.execute(text(statement))
+                    print(f"成功执行SQL文件: {sql_file}")
+                except Exception as e:
+                    print(f"执行SQL文件 {sql_file} 失败: {e}")
         
         # 提交所有更改
         db.commit()
