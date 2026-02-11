@@ -28,3 +28,8 @@ class TargetService:
         db.commit()
         db.refresh(target)
         return target
+    
+    @staticmethod
+    def get_total_count(db: Session) -> int:
+        """获取目标总数"""
+        return db.query(Target).count()

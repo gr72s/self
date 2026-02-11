@@ -1,19 +1,32 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.services.target import TargetService
 from app.schemas.target import TargetResponse
-from app.schemas.response import Response
+from app.schemas.response import Response, PageResponse
 
 router = APIRouter()
 
 
 @router.get("", response_model=Response)
-async def get_all_targets(db: Session = Depends(get_db)):
+async def get_all_targets(
+    page: int = Query(0, ge=0, description="页码"),
+    size: int = Query(20, ge=1, le=100, description="每页大小"),
+    db: Session = Depends(get_db)
+):
     """获取所有目标"""
-    targets = TargetService.get_all(db)
+    skip = page * size
+    targets = TargetService.get_all(db, skip=skip, limit=size)
+    total = TargetService.get_total_count(db)
+    
     items = [TargetResponse.model_validate(target) for target in targets]
-    return Response(data=items)
+    page_response = PageResponse(
+        total=total,
+        page=page,
+        size=size,
+        items=items
+    )
+    return Response(data=page_response)
 
 
 @router.get("/{target_id}", response_model=Response)

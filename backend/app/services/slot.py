@@ -47,9 +47,17 @@ class SlotService:
         return slot
     
     @staticmethod
-    def get_by_routine(db: Session, routine_id: int) -> list[Slot]:
+    def get_by_routine(db: Session, routine_id: int, skip: int = 0, limit: int = 100) -> list[Slot]:
         """根据训练计划获取训练槽"""
         # 验证训练计划是否存在
         RoutineService.get_by_id(db, routine_id)
         
-        return db.query(Slot).filter(Slot.routine_id == routine_id).order_by(Slot.sequence).all()
+        return db.query(Slot).filter(Slot.routine_id == routine_id).order_by(Slot.sequence).offset(skip).limit(limit).all()
+    
+    @staticmethod
+    def get_total_count_by_routine(db: Session, routine_id: int) -> int:
+        """根据训练计划获取训练槽总数"""
+        # 验证训练计划是否存在
+        RoutineService.get_by_id(db, routine_id)
+        
+        return db.query(Slot).filter(Slot.routine_id == routine_id).count()

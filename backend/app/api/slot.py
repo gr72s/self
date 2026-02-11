@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.services.slot import SlotService
 from app.schemas.slot import SlotResponse
 from app.schemas.routine import RoutineSummaryResponse
 from app.schemas.exercise import ExerciseResponse
-from app.schemas.response import Response
+from app.schemas.response import Response, PageResponse
 
 router = APIRouter()
 
@@ -49,9 +49,16 @@ async def get_slot(slot_id: int, db: Session = Depends(get_db)):
 
 
 @router.get("/routine/{routine_id}", response_model=Response)
-async def get_slots_by_routine(routine_id: int, db: Session = Depends(get_db)):
+async def get_slots_by_routine(
+    routine_id: int,
+    page: int = Query(0, ge=0, description="页码"),
+    size: int = Query(20, ge=1, le=100, description="每页大小"),
+    db: Session = Depends(get_db)
+):
     """根据训练计划获取训练槽"""
-    slots = SlotService.get_by_routine(db, routine_id)
+    skip = page * size
+    slots = SlotService.get_by_routine(db, routine_id, skip=skip, limit=size)
+    total = SlotService.get_total_count_by_routine(db, routine_id)
     
     items = []
     for slot in slots:
@@ -85,4 +92,11 @@ async def get_slots_by_routine(routine_id: int, db: Session = Depends(get_db)):
         )
         items.append(slot_response)
     
-    return Response(data=items)
+    page_response = PageResponse(
+        total=total,
+        page=page,
+        size=size,
+        items=items
+    )
+    
+    return Response(data=page_response)
