@@ -33,3 +33,4 @@ out/
 logs/
 .trae
 node_modules/
+__pycache__
