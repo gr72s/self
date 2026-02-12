@@ -1,6 +1,6 @@
 .vscode/
 .DS_Store
-*.txt
+/*.txt
 *.log
 logs/
 .trae
