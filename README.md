@@ -7,7 +7,7 @@
 在项目根目录执行以下命令构建Docker镜像：
 
 ```bash
-docker-compose build
+docker compose build
 ```
 
 ### 启动服务
@@ -15,7 +15,7 @@ docker-compose build
 启动所有服务（包括前端和后端）：
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 ### 停止服务
@@ -23,7 +23,7 @@ docker-compose up -d
 停止所有服务：
 
 ```bash
-docker-compose down
+docker compose down
 ```
 
 ### 查看服务状态
@@ -31,7 +31,7 @@ docker-compose down
 查看服务运行状态：
 
 ```bash
-docker-compose ps
+docker compose ps
 ```
 
 ### 查看服务日志
@@ -39,7 +39,7 @@ docker-compose ps
 查看后端服务日志：
 
 ```bash
-docker-compose logs backend
+docker compose logs backend
 ```
 
 ## 后端服务
