@@ -61,6 +61,14 @@ class NotFoundWeChatConfig(HTTPException):
 
 async def global_exception_handler(request: Request, exc: Exception):
     """全局异常处理器"""
+    from app.core.logger import logger
+    import traceback
+    
+    # 记录异常信息
+    error_message = f"Unhandled exception: {str(exc)}"
+    error_traceback = traceback.format_exc()
+    logger.error(f"{error_message}\n{error_traceback}")
+    
     # 处理HTTP异常
     if isinstance(exc, HTTPException):
         return JSONResponse(
