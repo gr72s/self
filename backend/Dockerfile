@@ -5,7 +5,7 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 RUN python init_db.py
-RUN mkdir -p ~/.self
-VOLUME ["~/.self"]
+RUN mkdir -p /root/.self
+VOLUME ["/root/.self"]
 EXPOSE 8000
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

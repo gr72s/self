@@ -7,8 +7,11 @@ services:
       - "8000:8000"
     volumes:
       - ./backend:/app
-      - ~/.self:~/.self
+      - self_config:/root/.self
     environment:
       - PYTHONUNBUFFERED=1
       - SELF_ENV=production
     restart: unless-stopped
+
+volumes:
+  self_config:
