@@ -22,33 +22,26 @@ jobs:
       - name: Deploy to Server
         run: |
           ssh -tt -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} -p ${{ secrets.SERVER_PORT }} << 'EOF'
-            # 进入项目目录
             cd ${{ secrets.PROJECT_PATH }}
             
-            # 拉取最新代码
             git pull origin ${{ github.ref_name }}
             
-            # 停止并移除旧容器
             echo "Stopping and removing old containers..."
-            docker compose down
+            sudo docker compose down
             
-            # 构建新镜像
             echo "Building new images..."
-            docker compose build
+            sudo docker compose build
             
-            # 检查构建结果
             if [ $? -ne 0 ]; then
-              echo "Build failed! Aborting deployment."
+              echo "Build failed!"
               exit 1
             fi
             
-            # 启动新容器
             echo "Starting new containers..."
-            docker compose up -d
+            sudo docker compose up -d
             
-            # 检查启动结果
             if [ $? -ne 0 ]; then
-              echo "Startup failed! Aborting deployment."
+              echo "Startup failed!"
               exit 1
             fi
             
