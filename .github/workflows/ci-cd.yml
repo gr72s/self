@@ -30,11 +30,11 @@ jobs:
             
             # 停止并移除旧容器
             echo "Stopping and removing old containers..."
-            docker-compose down
+            docker compose down
             
             # 构建新镜像
             echo "Building new images..."
-            docker-compose build
+            docker compose build
             
             # 检查构建结果
             if [ $? -ne 0 ]; then
@@ -44,7 +44,7 @@ jobs:
             
             # 启动新容器
             echo "Starting new containers..."
-            docker-compose up -d
+            docker compose up -d
             
             # 检查启动结果
             if [ $? -ne 0 ]; then
