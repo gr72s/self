@@ -19,25 +19,31 @@ class Settings(BaseSettings):
     # 数据库配置
     @property
     def DATABASE_URL(self) -> str:
-        # 获取工程目录
-        project_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-        
-        # 根据环境选择数据库文件
-        if self.ENVIRONMENT == "testing":
-            db_name = "self.test.db"
-        elif self.ENVIRONMENT == "development":
-            db_name = "self.dev.db"
-        else:  # production
+        # 根据环境选择数据库文件位置
+        if self.ENVIRONMENT == "production":
+            # Production环境：使用~/.self目录
+            user_home = os.path.expanduser("~")
+            self_dir = os.path.join(user_home, ".self")
+            os.makedirs(self_dir, exist_ok=True)
             db_name = "self.db"
+            db_path = os.path.join(self_dir, db_name)
+        else:
+            # 其他环境：使用项目目录
+            project_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            if self.ENVIRONMENT == "testing":
+                db_name = "self.test.db"
+            else:  # development
+                db_name = "self.dev.db"
+            db_path = os.path.join(project_dir, db_name)
         
-        db_path = os.path.join(project_dir, db_name)
         return f"sqlite:///{db_path}"
     
     def cleanup_development_db(self):
         """清理开发环境数据库文件"""
         if self.ENVIRONMENT == "development":
-            project_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-            db_path = os.path.join(project_dir, "self.dev.db")
+            user_home = os.path.expanduser("~")
+            self_dir = os.path.join(user_home, ".self")
+            db_path = os.path.join(self_dir, "self.dev.db")
             if os.path.exists(db_path):
                 try:
                     os.remove(db_path)
