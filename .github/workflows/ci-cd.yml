@@ -21,7 +21,7 @@ jobs:
           
       - name: Deploy to Server
         run: |
-          ssh -tt -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
+          ssh -tt -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} -p ${{ secrets.SERVER_PORT }} << 'EOF'
             # 进入项目目录
             cd ${{ secrets.PROJECT_PATH }}
             
