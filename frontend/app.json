@@ -1,5 +1,6 @@
 {
   "pages": [
+    "pages/login/index/index",
     "pages/index/index",
     "pages/workouts/list/index",
     "pages/workouts/create/index",

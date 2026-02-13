@@ -1,0 +1,29 @@
+<view class="login-container">
+  <view class="login-header">
+    <image src="/images/logo.png" class="logo" mode="aspectFill" />
+    <text class="app-name">健身追踪</text>
+    <text class="slogan">记录每一次进步</text>
+  </view>
+  
+  <view class="login-body">
+    <view class="login-tips">
+      <text>登录后使用完整功能</text>
+    </view>
+    
+    <button 
+      class="login-button" 
+      bindtap="login"
+      type="primary"
+      size="default"
+    >
+      微信登录
+    </button>
+    
+    <view class="login-info">
+      <text>登录即表示您同意</text>
+      <navigator url="/pages/login/privacy/index" class="privacy-link">隐私政策</navigator>
+      <text>和</text>
+      <navigator url="/pages/login/terms/index" class="terms-link">用户协议</navigator>
+    </view>
+  </view>
+</view>
