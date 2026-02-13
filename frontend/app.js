@@ -16,11 +16,5 @@ App({
   onHide() {
     // 小程序隐藏时执行
     console.log('App hide');
-  },
-  
-  globalData: {
-    // 全局数据
-    userInfo: null,
-    apiBaseUrl: 'https://api.example.com' // 替换为实际的 API 基础地址
   }
 });
