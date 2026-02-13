@@ -1,42 +1,38 @@
 # Self
 
-## Docker 相关命令
+## Bootstrap
 
-### 构建镜像
-
-在项目根目录执行以下命令构建Docker镜像：
+- build 
 
 ```bash
 docker compose build
 ```
 
-### 启动服务
-
-启动所有服务（包括前端和后端）：
+- run
 
 ```bash
 docker compose up -d
 ```
 
-### 停止服务
+- run && build
 
-停止所有服务：
+```bash
+docker compose up -d --build
+```
+
+- stop
 
 ```bash
 docker compose down
 ```
 
-### 查看服务状态
-
-查看服务运行状态：
+- check status
 
 ```bash
 docker compose ps
 ```
 
-### 查看服务日志
-
-查看后端服务日志：
+- check logs
 
 ```bash
 docker compose logs backend
