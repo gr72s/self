@@ -12,17 +12,44 @@ const API_BASE_URL = 'https://www.alanareen.com:8443/'; // 替换为实际的 AP
  */
 const request = (url, method, data = {}) => {
   return new Promise((resolve, reject) => {
+    // 获取本地存储的token
+    const token = wx.getStorageSync('token');
+    
+    // 当token为null时，直接跳转到登录页面
+    if (!token) {
+      console.log('token为null，跳转到登录页面');
+      const app = getApp();
+      if (app && app.showLoginModal) {
+        app.showLoginModal();
+      }
+      reject(new Error('未登录，请先登录'));
+      return;
+    }
+    
     wx.request({
       url: `${API_BASE_URL}${url}`,
       method,
       data,
       header: {
         'Content-Type': 'application/json',
-        // 可以在这里添加认证 token 等
+        // 添加认证 token
+        'Authorization': `Bearer ${token}`
       },
       success: (res) => {
         if (res.statusCode === 200) {
           resolve(res.data);
+        } else if (res.statusCode === 401) {
+          // 未授权，清除登录状态
+          wx.removeStorageSync('userInfo');
+          wx.removeStorageSync('token');
+          
+          // 显示登录窗口
+          const app = getApp();
+          if (app && app.showLoginModal) {
+            app.showLoginModal();
+          }
+          
+          reject(new Error('登录已过期，请重新登录'));
         } else {
           reject(new Error(`请求失败: ${res.statusCode}`));
         }
@@ -111,6 +138,13 @@ const userApi = {
 };
 
 /**
+ * 微信登录 API
+ */
+const wechatApi = {
+  login: (code) => apiClient.post('/api/auth/wechat', { code })
+};
+
+/**
  * 统一导出的 API 对象
  */
 module.exports = {
@@ -120,6 +154,7 @@ module.exports = {
   gymApi,
   muscleApi,
   userApi,
+  wechatApi,
   
   // 训练记录 API
   getWorkouts: workoutApi.getAll,
@@ -161,7 +196,10 @@ module.exports = {
   deleteMuscle: muscleApi.delete,
   
   // 用户 API
-  getCurrentUser: userApi.getCurrent
+  getCurrentUser: userApi.getCurrent,
+  
+  // 微信登录 API
+  wechatLogin: wechatApi.login
 };
 
 // 额外导出 ES 模块格式，以兼容不同的导入方式
