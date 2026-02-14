@@ -46,7 +46,8 @@ const request = (url, method, data = {}) => {
       header: {
         'Content-Type': 'application/json',
         // 添加认证 token
-        'Authorization': `Bearer ${
+        'Authorization': `Bearer ${token}`
+      },
       success: (res) => {
         if (res.statusCode === 200) {
           resolve(res.data);
