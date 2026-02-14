@@ -142,15 +142,17 @@ Page({
             });
           })
           .catch((err) => {
-            console.error('微信登录失败', err);
-            wx.showToast({
-              title: '登录失败，请重试',
-              icon: 'none'
-            });
-          })
-          .finally(() => {
-            this.setData({ loading: false });
-          });
+                console.error('微信登录失败', err);
+                wx.showToast({
+                  title: '登录失败，请重试',
+                  icon: 'none'
+                });
+                // 登录失败时，不清空头像与昵称
+              })
+              .finally(() => {
+                this.setData({ loading: false });
+                // 登录失败时，不清空头像与昵称
+              });
       },
       fail: (err) => {
         console.error('获取登录凭证失败', err);
@@ -159,6 +161,7 @@ Page({
           icon: 'none'
         });
         this.setData({ loading: false });
+        // 登录失败时，不清空头像与昵称
       }
     });
   }
