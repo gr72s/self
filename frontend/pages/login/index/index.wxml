@@ -17,14 +17,14 @@
         <button 
           class="avatar-button" 
           open-type="chooseAvatar"
-          bind:chooseavatar="onChooseAvatar"
+          bindchooseavatar="onChooseAvatar"
         >
           <image 
             src="{{ avatarUrl }}" 
             class="avatar" 
             mode="aspectFill" 
           />
-          <view class="avatar-placeholder" wx:if="!avatarUrl">
+          <view class="avatar-placeholder" wx:if="{{ showAvatarPlaceholder }}">
             <text class="avatar-placeholder-text">选择头像</text>
           </view>
         </button>

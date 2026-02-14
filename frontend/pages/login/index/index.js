@@ -11,7 +11,8 @@ Page({
   data: {
     loading: false,
     avatarUrl: defaultAvatarUrl,
-    nickname: ''
+    nickname: '',
+    showAvatarPlaceholder: true
   },
 
   /**
@@ -35,7 +36,10 @@ Page({
     console.log('选择头像', e);
     const { avatarUrl } = e.detail;
     console.log('获取到头像URL:', avatarUrl);
-    this.setData({ avatarUrl });
+    this.setData({ 
+      avatarUrl,
+      showAvatarPlaceholder: false
+    });
     console.log('设置头像URL后的数据:', this.data);
   },
 
