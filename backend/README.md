@@ -30,26 +30,76 @@ backend/
 
 ## 安装和运行
 
-### 1. 安装依赖
+### 方法一：直接安装依赖
+
+#### 1. 安装依赖
 
 ```bash
 cd backend
 pip install -r requirements.txt
 ```
 
-### 2. 初始化数据库
+#### 2. 初始化数据库
 
 ```bash
 python init_db.py
 ```
 
-### 3. 启动应用
+#### 3. 启动应用
 
 ```bash
 uvicorn main:app --reload
 ```
 
 应用将在 `http://localhost:8000` 运行。
+
+### 方法二：使用setuptools安装（推荐）
+
+#### 1. 安装包
+
+```bash
+cd backend
+pip install -e .
+```
+
+#### 2. 初始化数据库
+
+```bash
+self run python init_db.py
+```
+
+#### 3. 启动应用
+
+```bash
+self start
+```
+
+应用将在 `http://localhost:8000` 运行。
+
+## CLI命令
+
+安装后，可以使用以下 `self` 命令：
+
+### 启动应用
+```bash
+self start
+```
+
+### 停止应用
+```bash
+self stop
+```
+
+### 执行自定义命令
+```bash
+self run <command>
+```
+
+例如：
+```bash
+self run ls -la
+self run python --version
+```
 
 ## API 文档
 

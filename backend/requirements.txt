@@ -10,3 +10,4 @@ pydantic-settings
 python-jose[cryptography]
 passlib[pbkdf2_sha256]
 python-multipart
+click
