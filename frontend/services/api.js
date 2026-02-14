@@ -163,7 +163,7 @@ const muscleApi = {
  * 用户 API
  */
 const userApi = {
-  getCurrent: () => apiClient.get('users/current')
+  getCurrent: () => apiClient.get('api/auth/current')
 };
 
 /**
