@@ -18,9 +18,18 @@ App({
     // 小程序显示时执行
     console.log('App show', options);
     
-    // 立即检查登录状态，不延迟
-    console.log('onShow: 开始检查登录状态');
-    this.checkLoginStatus();
+    // 检查当前页面是否为登录页面
+    const pages = getCurrentPages();
+    const currentPage = pages[pages.length - 1];
+    const isLoginPage = currentPage && currentPage.route === 'pages/login/index/index';
+    
+    // 如果不是登录页面，则检查登录状态
+    if (!isLoginPage) {
+      console.log('onShow: 开始检查登录状态');
+      this.checkLoginStatus();
+    } else {
+      console.log('当前页面是登录页面，跳过登录状态检查');
+    }
   },
   
   onHide() {
