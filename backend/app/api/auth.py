@@ -6,7 +6,9 @@ from app.core.database import get_db
 from app.core.security import create_access_token
 from app.core.config import settings
 from app.services.auth import AuthService
+from app.services.wechat import WeChatService
 from app.schemas.auth import UserResponse, TokenResponse
+from app.schemas.wechat import WeChatLoginRequest
 
 router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
@@ -59,3 +61,60 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
 async def get_current_user_info(current_user = Depends(get_current_user)):
     """获取当前用户信息"""
     return UserResponse.model_validate(current_user)
+
+
+@router.post("/wechat", response_model=TokenResponse)
+async def wechat_login(request: WeChatLoginRequest, db: Session = Depends(get_db)):
+    """微信登录"""
+    import logging
+    logger = logging.getLogger(__name__)
+    
+    try:
+        logger.info(f"微信登录请求开始，code: {request.code[:10]}...")  # 只记录code的前10位，避免安全问题
+        
+        # 获取微信访问令牌
+        logger.info("调用WeChatService.get_access_token")
+        token_response = await WeChatService.get_access_token(request.code)
+        
+        if not token_response:
+            logger.error("获取微信访问令牌失败")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Failed to get WeChat access token",
+            )
+        
+        logger.info(f"获取微信访问令牌成功，openid: {token_response.openid[:10]}...")
+        
+        # 创建或更新用户
+        logger.info("创建或更新微信用户")
+        user = AuthService.create_or_update_wechat_user(
+            db,
+            openid=token_response.openid,
+            wechat_unionid=token_response.unionid,
+            nickname="微信用户",  # 默认昵称
+            avatar=""  # 默认头像
+        )
+        
+        logger.info(f"用户创建/更新成功，user_id: {user.id}")
+        
+        # 生成访问令牌
+        logger.info("生成访问令牌")
+        access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+        access_token = create_access_token(
+            data={"sub": str(user.id)},
+            expires_delta=access_token_expires
+        )
+        
+        logger.info("访问令牌生成成功")
+        
+        response = TokenResponse(
+            access_token=access_token,
+            token_type="bearer",
+            user=UserResponse.model_validate(user)
+        )
+        
+        logger.info("微信登录请求完成")
+        return response
+    except Exception as e:
+        logger.error(f"微信登录失败: {str(e)}", exc_info=True)
+        raise

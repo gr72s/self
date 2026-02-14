@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api import auth, wechat, exercise, gym, muscle, routine, slot, target, workout
+from app.api import auth, exercise, gym, muscle, routine, slot, target, workout
 from app.core.config import settings
 from app.core.database import engine, Base
 from app.core.exceptions import global_exception_handler
@@ -32,8 +32,7 @@ app.exception_handler(Exception)(global_exception_handler)
 
 # 注册路由
 logger.info("Registering routes...")
-app.include_router(auth.router, prefix="/api/users", tags=["users"])
-app.include_router(wechat.router, prefix="/api/auth", tags=["auth"])
+app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
 app.include_router(exercise.router, prefix="/api/lifting/exercise", tags=["exercise"])
 app.include_router(gym.router, prefix="/api/lifting/gym", tags=["gym"])
 app.include_router(muscle.router, prefix="/api/lifting/muscle", tags=["muscle"])

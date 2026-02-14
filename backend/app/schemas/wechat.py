@@ -8,11 +8,8 @@ class WeChatLoginRequest(BaseModel):
 
 class WeChatTokenResponse(BaseModel):
     """微信令牌响应模型"""
-    access_token: str
-    expires_in: int
-    refresh_token: str
+    session_key: str
     openid: str
-    scope: str
     unionid: str = None
 
 
