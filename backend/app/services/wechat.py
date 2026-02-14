@@ -21,7 +21,7 @@ class WeChatService:
             
             params = {
                 "appid": settings.WECHAT_APPID,
-                "secret": settings.WECHAT_SECRET,
+                "secret": settings.WECHAT_APPSECRET,
                 "js_code": code,
                 "grant_type": "authorization_code"
             }

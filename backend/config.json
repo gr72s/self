@@ -3,6 +3,7 @@
   "DEBUG": true,
   "BOOT_ENV": "development",
   "PROJECT_PATH": "/home/green/.self/",
+  "WECHAT_APP_CONFIG": "~/.self-app",
   "DB_NAME": {
     "default": "self.db",
     "development": "self.dev.db",

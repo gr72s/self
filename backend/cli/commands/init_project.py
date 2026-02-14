@@ -94,6 +94,71 @@ def init_project_command(boot_env, project_path):
                 json.dump(config_data, f, indent=2, ensure_ascii=False)
             click.echo(f"创建默认配置文件: {config_file}")
         
+        # 检查微信小程序配置文件
+        click.echo("\n开始检查微信小程序配置文件...")
+        
+        # 获取WECHAT_APP_CONFIG目录
+        wechat_config_dir = config_data.get("WECHAT_APP_CONFIG", "~/.self-app")
+        wechat_config_dir = os.path.expanduser(wechat_config_dir)
+        
+        # 检查目录是否存在
+        if not os.path.exists(wechat_config_dir):
+            click.echo(f"微信小程序配置目录不存在: {wechat_config_dir}", err=True)
+            logger.error(f"WeChat config directory does not exist: {wechat_config_dir}")
+            raise Exception(f"微信小程序配置目录不存在: {wechat_config_dir}")
+        
+        # 检查appid文件是否存在
+        appid_file = os.path.join(wechat_config_dir, "appid")
+        if not os.path.exists(appid_file):
+            click.echo(f"微信小程序appid文件不存在: {appid_file}", err=True)
+            logger.error(f"WeChat appid file does not exist: {appid_file}")
+            raise Exception(f"微信小程序appid文件不存在: {appid_file}")
+        
+        # 检查appsecret文件是否存在
+        appsecret_file = os.path.join(wechat_config_dir, "appsecret")
+        if not os.path.exists(appsecret_file):
+            click.echo(f"微信小程序appsecret文件不存在: {appsecret_file}", err=True)
+            logger.error(f"WeChat appsecret file does not exist: {appsecret_file}")
+            raise Exception(f"微信小程序appsecret文件不存在: {appsecret_file}")
+        
+        # 检查文件是否为空
+        if os.path.getsize(appid_file) == 0:
+            click.echo(f"微信小程序appid文件为空: {appid_file}", err=True)
+            logger.error(f"WeChat appid file is empty: {appid_file}")
+            raise Exception(f"微信小程序appid文件为空: {appid_file}")
+        
+        if os.path.getsize(appsecret_file) == 0:
+            click.echo(f"微信小程序appsecret文件为空: {appsecret_file}", err=True)
+            logger.error(f"WeChat appsecret file is empty: {appsecret_file}")
+            raise Exception(f"微信小程序appsecret文件为空: {appsecret_file}")
+        
+        # 复制文件到PROJECT_PATH目录
+        project_path = config_data.get("PROJECT_PATH", "~/.self/")
+        project_path = os.path.expanduser(project_path)
+        
+        # 复制appid文件
+        dest_appid_file = os.path.join(project_path, "appid")
+        import shutil
+        try:
+            shutil.copy2(appid_file, dest_appid_file)
+            click.echo(f"复制微信小程序appid文件: {appid_file} -> {dest_appid_file}")
+            logger.info(f"Copied WeChat appid file: {appid_file} -> {dest_appid_file}")
+        except Exception as e:
+            click.echo(f"复制微信小程序appid文件失败: {e}", err=True)
+            logger.error(f"Failed to copy WeChat appid file: {e}")
+            raise
+        
+        # 复制appsecret文件
+        dest_appsecret_file = os.path.join(project_path, "appsecret")
+        try:
+            shutil.copy2(appsecret_file, dest_appsecret_file)
+            click.echo(f"复制微信小程序appsecret文件: {appsecret_file} -> {dest_appsecret_file}")
+            logger.info(f"Copied WeChat appsecret file: {appsecret_file} -> {dest_appsecret_file}")
+        except Exception as e:
+            click.echo(f"复制微信小程序appsecret文件失败: {e}", err=True)
+            logger.error(f"Failed to copy WeChat appsecret file: {e}")
+            raise
+        
         # 初始化数据库
         click.echo("\n开始初始化数据库结构...")
         

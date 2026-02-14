@@ -77,33 +77,63 @@ class Settings(BaseSettings):
     # 微信配置
     @property
     def WECHAT_APPID(self) -> str:
+        # 从配置文件中获取PROJECT_PATH
         config = self._load_config()
-        appid = config.get("WECHAT_APPID")
+        project_path_template = config.get("PROJECT_PATH", "~/.self/")
+        project_path = os.path.expanduser(project_path_template)
         
-        if appid is None:
-            import os
-            appid = os.environ.get("WECHAT_APPID")
+        # 构建appid文件路径
+        appid_file = os.path.join(project_path, "appid")
         
-        if appid is None:
+        # 检查文件是否存在
+        if not os.path.exists(appid_file):
             from app.core.exceptions import NotFoundWeChatConfig
-            raise NotFoundWeChatConfig("WECHAT_APPID not found")
+            raise NotFoundWeChatConfig(f"appid file not found at {appid_file}")
+        
+        # 读取文件内容
+        try:
+            with open(appid_file, "r", encoding="utf-8") as f:
+                appid = f.read().strip()
+        except Exception as e:
+            from app.core.exceptions import NotFoundWeChatConfig
+            raise NotFoundWeChatConfig(f"Failed to read appid file: {e}")
+        
+        # 检查文件是否为空
+        if not appid:
+            from app.core.exceptions import NotFoundWeChatConfig
+            raise NotFoundWeChatConfig(f"appid file is empty at {appid_file}")
         
         return appid
     
     @property
-    def WECHAT_SECRET(self) -> str:
+    def WECHAT_APPSECRET(self) -> str:
+        # 从配置文件中获取PROJECT_PATH
         config = self._load_config()
-        secret = config.get("WECHAT_APPSECRET")
+        project_path_template = config.get("PROJECT_PATH", "~/.self/")
+        project_path = os.path.expanduser(project_path_template)
         
-        if secret is None:
-            import os
-            secret = os.environ.get("WECHAT_APPSECRET")
+        # 构建appsecret文件路径
+        appsecret_file = os.path.join(project_path, "appsecret")
         
-        if secret is None:
+        # 检查文件是否存在
+        if not os.path.exists(appsecret_file):
             from app.core.exceptions import NotFoundWeChatConfig
-            raise NotFoundWeChatConfig("WECHAT_SECRET not found")
+            raise NotFoundWeChatConfig(f"appsecret file not found at {appsecret_file}")
         
-        return secret
+        # 读取文件内容
+        try:
+            with open(appsecret_file, "r", encoding="utf-8") as f:
+                appsecret = f.read().strip()
+        except Exception as e:
+            from app.core.exceptions import NotFoundWeChatConfig
+            raise NotFoundWeChatConfig(f"Failed to read appsecret file: {e}")
+        
+        # 检查文件是否为空
+        if not appsecret:
+            from app.core.exceptions import NotFoundWeChatConfig
+            raise NotFoundWeChatConfig(f"appsecret file is empty at {appsecret_file}")
+        
+        return appsecret
     
     def _load_config(self) -> dict:
         """从配置文件加载配置"""
