@@ -16,11 +16,11 @@
       <view class="avatar-container">
         <button 
           class="avatar-button" 
-          bindtap="chooseAvatar"
           open-type="chooseAvatar"
+          bind:chooseavatar="onChooseAvatar"
         >
           <image 
-            src="{{ avatarUrl || '/images/default-avatar.png' }}" 
+            src="{{ avatarUrl }}" 
             class="avatar" 
             mode="aspectFill" 
           />
@@ -34,20 +34,13 @@
     <!-- 昵称输入 -->
     <view class="nickname-section">
       <text class="section-title">昵称</text>
-      <view class="nickname-container">
-        <input 
-          class="nickname-input" 
-          placeholder="请输入昵称" 
-          value="{{ nickname }}" 
-          bindinput="onNicknameInput" 
-        />
-        <button 
-          class="nickname-button" 
-          bindtap="chooseWechatNickname"
-        >
-          使用微信昵称
-        </button>
-      </view>
+      <input 
+        type="nickname" 
+        class="nickname-input" 
+        placeholder="请输入昵称" 
+        value="{{ nickname }}" 
+        bindinput="onNicknameInput" 
+      />
     </view>
     
     <button 

@@ -1,13 +1,16 @@
 // 登录页面逻辑
 const api = require('../../../services/api');
 
+// 默认头像URL
+const defaultAvatarUrl = 'https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna4a2F2t24Lcia07jQodd2FJGIYQfGOLIAJGFxM4FbnQP6yF1kxMBgJ0F3Y/';
+
 Page({
   /**
    * 页面的初始数据
    */
   data: {
     loading: false,
-    avatarUrl: '',
+    avatarUrl: defaultAvatarUrl,
     nickname: ''
   },
 
@@ -28,13 +31,12 @@ Page({
   /**
    * 选择头像
    */
-  chooseAvatar(e) {
+  onChooseAvatar(e) {
     console.log('选择头像', e);
-    if (e.detail.avatarUrl) {
-      console.log('获取到头像URL:', e.detail.avatarUrl);
-      this.setData({ avatarUrl: e.detail.avatarUrl });
-      console.log('设置头像URL后的数据:', this.data);
-    }
+    const { avatarUrl } = e.detail;
+    console.log('获取到头像URL:', avatarUrl);
+    this.setData({ avatarUrl });
+    console.log('设置头像URL后的数据:', this.data);
   },
 
   /**
@@ -42,25 +44,6 @@ Page({
    */
   onNicknameInput(e) {
     this.setData({ nickname: e.detail.value });
-  },
-
-  /**
-   * 选择微信昵称
-   */
-  chooseWechatNickname() {
-    // 这里可以使用wx.getUserProfile获取微信昵称，但需要注意微信版本限制
-    console.log('选择微信昵称');
-    wx.getUserProfile({
-      desc: '用于完善用户资料',
-      lang: 'zh_CN',
-      success: (res) => {
-        console.log('获取微信昵称成功', res.userInfo.nickName);
-        this.setData({ nickname: res.userInfo.nickName });
-      },
-      fail: (err) => {
-        console.error('获取微信昵称失败', err);
-      }
-    });
   },
 
   /**
