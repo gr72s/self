@@ -4,6 +4,8 @@ from pydantic import BaseModel
 class WeChatLoginRequest(BaseModel):
     """微信登录请求模型"""
     code: str
+    nickname: str = None
+    avatar: str = None
 
 
 class WeChatTokenResponse(BaseModel):

@@ -91,8 +91,8 @@ async def wechat_login(request: WeChatLoginRequest, db: Session = Depends(get_db
             db,
             openid=token_response.openid,
             wechat_unionid=token_response.unionid,
-            nickname="微信用户",  # 默认昵称
-            avatar=""  # 默认头像
+            nickname=request.nickname or "微信用户",  # 使用前端提供的昵称，或默认昵称
+            avatar=request.avatar or ""  # 使用前端提供的头像，或默认头像
         )
         
         logger.info(f"用户创建/更新成功，user_id: {user.id}")

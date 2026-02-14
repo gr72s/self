@@ -47,30 +47,46 @@ class AuthService:
     @staticmethod
     def create_or_update_wechat_user(db: Session, openid: str, **kwargs) -> User:
         """创建或更新微信用户"""
-        # 查找现有用户
-        user = AuthService.get_user_by_wechat_openid(db, openid)
+        import logging
+        logger = logging.getLogger(__name__)
         
-        if user:
-            # 更新现有用户
-            for key, value in kwargs.items():
-                if hasattr(user, key):
-                    setattr(user, key, value)
-            db.commit()
-            db.refresh(user)
-        else:
-            # 创建新用户，确保密码长度不超过72字节
-            password = openid[:72]  # 截断密码，确保不超过72字节
-            user = User(
-                username=f"wechat_{openid[:8]}",
-                password_hash=get_password_hash(password),  # 使用截断后的openid作为临时密码
-                wechat_openid=openid,
-                **kwargs
-            )
-            db.add(user)
-            db.commit()
-            db.refresh(user)
-        
-        return user
+        try:
+            logger.info(f"开始创建或更新微信用户，openid: {openid[:10]}...")
+            
+            # 查找现有用户
+            logger.info("查找现有微信用户")
+            user = AuthService.get_user_by_wechat_openid(db, openid)
+            
+            if user:
+                # 更新现有用户
+                logger.info(f"找到现有用户，user_id: {user.id}，开始更新用户信息")
+                for key, value in kwargs.items():
+                    if hasattr(user, key):
+                        setattr(user, key, value)
+                        logger.debug(f"更新用户字段: {key} = {value}")
+                db.commit()
+                db.refresh(user)
+                logger.info(f"更新用户成功，user_id: {user.id}, nickname: {user.nickname}")
+            else:
+                # 创建新用户，确保密码长度不超过72字节
+                logger.info("未找到现有用户，开始创建新用户")
+                password = openid[:72]  # 截断密码，确保不超过72字节
+                user = User(
+                    username=f"wechat_{openid[:8]}",
+                    password_hash=get_password_hash(password),  # 使用截断后的openid作为临时密码
+                    wechat_openid=openid,
+                    **kwargs
+                )
+                db.add(user)
+                db.commit()
+                db.refresh(user)
+                logger.info(f"创建新用户成功，user_id: {user.id}, username: {user.username}, nickname: {user.nickname}")
+            
+            logger.info(f"创建或更新微信用户完成，user_id: {user.id}")
+            return user
+        except Exception as e:
+            logger.error(f"创建或更新微信用户失败: {str(e)}", exc_info=True)
+            raise
     
     @staticmethod
     def get_user_by_id(db: Session, user_id: int) -> User:

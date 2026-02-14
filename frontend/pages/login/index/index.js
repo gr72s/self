@@ -105,7 +105,7 @@ Page({
         
         // 2. 调用后端微信登录接口
         console.log('准备调用后端微信登录接口');
-        api.wechatLogin(loginRes.code)
+        api.wechatLogin(loginRes.code, nickname, avatarUrl)
           .then((response) => {
             console.log('微信登录成功', response);
             

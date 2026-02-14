@@ -170,7 +170,7 @@ const userApi = {
  * 微信登录 API
  */
 const wechatApi = {
-  login: (code) => apiClient.post('api/auth/wechat', { code })
+  login: (code, nickname, avatar) => apiClient.post('api/auth/wechat', { code, nickname, avatar })
 };
 
 /**
