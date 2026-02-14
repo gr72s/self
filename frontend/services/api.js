@@ -36,7 +36,21 @@ const request = (url, method, data = {}) => {
     }
     
     // 构建 URL，确保只有一个斜杠
-    const fullUrl = `${API_BASE_URL}${url}`.replace(/(?<!:)\/+|(\/)+$/g, '/');
+    let fullUrl = `${API_BASE_URL}${url}`;
+    // 分离协议部分和路径部分
+    const protocolMatch = fullUrl.match(/^(https?:\/\/)/i);
+    if (protocolMatch) {
+      const protocol = protocolMatch[1];
+      const path = fullUrl.substring(protocol.length);
+      // 处理路径中的重复斜杠
+      const normalizedPath = path.replace(/\/+\//g, '/');
+      // 处理末尾的斜杠
+      const trimmedPath = normalizedPath.replace(/\/+$/, '');
+      fullUrl = protocol + trimmedPath;
+    } else {
+      // 没有协议，直接处理所有重复斜杠
+      fullUrl = fullUrl.replace(/\/+\//g, '/').replace(/\/+$/, '');
+    }
     console.log('构建的完整URL:', fullUrl);
     
     wx.request({
@@ -45,8 +59,8 @@ const request = (url, method, data = {}) => {
       data,
       header: {
         'Content-Type': 'application/json',
-        // 添加认证 token
-        'Authorization': `Bearer ${token}`
+        // 只有当 token 存在时才添加认证头
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
       },
       success: (res) => {
         if (res.statusCode === 200) {
