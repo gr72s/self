@@ -104,59 +104,59 @@ const apiClient = {
  * 训练记录 API
  */
 const workoutApi = {
-  getAll: () => apiClient.get('lifting/workout'),
-  create: (data) => apiClient.post('lifting/workout', data),
-  stop: (data) => apiClient.post('lifting/workout/stop', data),
-  getInProcess: () => apiClient.get('lifting/workout/in-process'),
-  getById: (id) => apiClient.get(`lifting/workout/${id}`),
-  update: (id, data) => apiClient.put(`lifting/workout/${id}`, data),
-  delete: (id) => apiClient.delete(`lifting/workout/${id}`)
+  getAll: () => apiClient.get('api/lifting/workout'),
+  create: (data) => apiClient.post('api/lifting/workout', data),
+  stop: (data) => apiClient.post('api/lifting/workout/stop', data),
+  getInProcess: () => apiClient.get('api/lifting/workout/in-process'),
+  getById: (id) => apiClient.get(`api/lifting/workout/${id}`),
+  update: (id, data) => apiClient.put(`api/lifting/workout/${id}`, data),
+  delete: (id) => apiClient.delete(`api/lifting/workout/${id}`)
 };
 
 /**
  * 训练计划 API
  */
 const routineApi = {
-  getAll: () => apiClient.get('lifting/routine'),
-  create: (data) => apiClient.post('lifting/routine', data),
-  createTemplate: (data) => apiClient.post('lifting/routine/template', data),
-  addExercise: (data) => apiClient.post('lifting/routine/exercise', data),
-  getById: (id) => apiClient.get(`lifting/routine/${id}`),
-  update: (id, data) => apiClient.put(`lifting/routine/${id}`, data),
-  delete: (id) => apiClient.delete(`lifting/routine/${id}`)
+  getAll: () => apiClient.get('api/lifting/routine'),
+  create: (data) => apiClient.post('api/lifting/routine', data),
+  createTemplate: (data) => apiClient.post('api/lifting/routine/template', data),
+  addExercise: (data) => apiClient.post('api/lifting/routine/exercise', data),
+  getById: (id) => apiClient.get(`api/lifting/routine/${id}`),
+  update: (id, data) => apiClient.put(`api/lifting/routine/${id}`, data),
+  delete: (id) => apiClient.delete(`api/lifting/routine/${id}`)
 };
 
 /**
  * 动作 API
  */
 const exerciseApi = {
-  getAll: () => apiClient.get('lifting/exercise'),
-  create: (data) => apiClient.post('lifting/exercise', data),
-  update: (id, data) => apiClient.put(`lifting/exercise/${id}`, data),
-  getById: (id) => apiClient.get(`lifting/exercise/${id}`),
-  delete: (id) => apiClient.delete(`lifting/exercise/${id}`)
+  getAll: () => apiClient.get('api/lifting/exercise'),
+  create: (data) => apiClient.post('api/lifting/exercise', data),
+  update: (id, data) => apiClient.put(`api/lifting/exercise/${id}`, data),
+  getById: (id) => apiClient.get(`api/lifting/exercise/${id}`),
+  delete: (id) => apiClient.delete(`api/lifting/exercise/${id}`)
 };
 
 /**
  * 健身房 API
  */
 const gymApi = {
-  getAll: () => apiClient.get('lifting/gym'),
-  create: (data) => apiClient.post('lifting/gym', data),
-  update: (id, data) => apiClient.put(`lifting/gym/${id}`, data),
-  getById: (id) => apiClient.get(`lifting/gym/${id}`),
-  delete: (id) => apiClient.delete(`lifting/gym/${id}`)
+  getAll: () => apiClient.get('api/lifting/gym'),
+  create: (data) => apiClient.post('api/lifting/gym', data),
+  update: (id, data) => apiClient.put(`api/lifting/gym/${id}`, data),
+  getById: (id) => apiClient.get(`api/lifting/gym/${id}`),
+  delete: (id) => apiClient.delete(`api/lifting/gym/${id}`)
 };
 
 /**
  * 肌肉 API
  */
 const muscleApi = {
-  getAll: () => apiClient.get('lifting/muscle'),
-  create: (data) => apiClient.post('lifting/muscle', data),
-  update: (id, data) => apiClient.put(`lifting/muscle/${id}`, data),
-  getById: (id) => apiClient.get(`lifting/muscle/${id}`),
-  delete: (id) => apiClient.delete(`lifting/muscle/${id}`)
+  getAll: () => apiClient.get('api/lifting/muscle'),
+  create: (data) => apiClient.post('api/lifting/muscle', data),
+  update: (id, data) => apiClient.put(`api/lifting/muscle/${id}`, data),
+  getById: (id) => apiClient.get(`api/lifting/muscle/${id}`),
+  delete: (id) => apiClient.delete(`api/lifting/muscle/${id}`)
 };
 
 /**
