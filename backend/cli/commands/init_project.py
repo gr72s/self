@@ -111,21 +111,24 @@ def init_project_command(boot_env, project_path):
             logger.error(f"Failed to import database models: {e}")
             raise
         
-        # 创建所有表
-        logger.info("Creating all database tables using SQLAlchemy API...")
-        try:
-            # 使用SQLAlchemy的API创建所有表结构
-            Base.metadata.create_all(bind=engine)
-            click.echo("数据库表结构创建完成！")
-            logger.info("Database tables created successfully using SQLAlchemy API")
-        except Exception as e:
-            click.echo(f"创建数据库表结构失败: {e}", err=True)
-            logger.error(f"Failed to create database tables: {e}")
-            raise
-        
         # 根据环境执行不同的逻辑
         if settings.ENVIRONMENT != "production":
-            # 开发和测试环境：执行SQL文件导入数据
+            # 开发和测试环境：创建表结构并导入数据
+            click.echo("\n开始创建数据库表结构...")
+            
+            # 创建所有表
+            logger.info("Creating all database tables using SQLAlchemy API...")
+            try:
+                # 使用SQLAlchemy的API创建所有表结构
+                Base.metadata.create_all(bind=engine)
+                click.echo("数据库表结构创建完成！")
+                logger.info("Database tables created successfully using SQLAlchemy API")
+            except Exception as e:
+                click.echo(f"创建数据库表结构失败: {e}", err=True)
+                logger.error(f"Failed to create database tables: {e}")
+                raise
+            
+            # 导入种子数据
             click.echo("\n开始导入种子数据...")
             
             # 创建数据库会话
@@ -169,6 +172,20 @@ def init_project_command(boot_env, project_path):
                 db.close()
         else:
             # 生产环境：只创建表结构，不导入数据
+            click.echo("\n开始创建数据库表结构...")
+            
+            # 创建所有表
+            logger.info("Creating all database tables using SQLAlchemy API...")
+            try:
+                # 使用SQLAlchemy的API创建所有表结构
+                Base.metadata.create_all(bind=engine)
+                click.echo("数据库表结构创建完成！")
+                logger.info("Database tables created successfully using SQLAlchemy API")
+            except Exception as e:
+                click.echo(f"创建数据库表结构失败: {e}", err=True)
+                logger.error(f"Failed to create database tables: {e}")
+                raise
+            
             click.echo("生产环境：只创建表结构，跳过数据导入")
             logger.info("Production environment: skipping data import, only created table structure using SQLAlchemy API")
         
