@@ -15,13 +15,15 @@ const request = (url, method, data = {}) => {
     // 获取本地存储的token
     const token = wx.getStorageSync('token');
     
-    // 当token为null时，检查当前页面是否为登录页面
-    // 如果是登录页面，则不跳转到登录页面，允许发起登录请求
+    // 当token为null时，跳转到登录页面
+    // 但是允许登录页面发起的登录请求
     if (!token) {
       const pages = getCurrentPages();
       const currentPage = pages[pages.length - 1];
-      const isLoginPage = currentPage.route === 'pages/login/index/index';
+      const isLoginPage = currentPage && currentPage.route === 'pages/login/index/index';
       
+      // 只有当不是登录页面时，才跳转到登录页面
+      // 登录页面发起的登录请求允许执行，即使token为null
       if (!isLoginPage) {
         console.log('token为null，跳转到登录页面');
         const app = getApp();
