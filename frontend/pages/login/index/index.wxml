@@ -10,11 +10,44 @@
       <text>登录后使用完整功能</text>
     </view>
     
+    <!-- 头像选择 -->
+    <view class="avatar-section">
+      <text class="section-title">头像</text>
+      <view class="avatar-container">
+        <button 
+          class="avatar-button" 
+          bindtap="chooseAvatar"
+          open-type="chooseAvatar"
+        >
+          <image 
+            src="{{ avatarUrl || '/images/default-avatar.png' }}" 
+            class="avatar" 
+            mode="aspectFill" 
+          />
+          <view class="avatar-placeholder" wx:if="!avatarUrl">
+            <text class="avatar-placeholder-text">选择头像</text>
+          </view>
+        </button>
+      </view>
+    </view>
+    
+    <!-- 昵称输入 -->
+    <view class="nickname-section">
+      <text class="section-title">昵称</text>
+      <input 
+        class="nickname-input" 
+        placeholder="请输入昵称" 
+        value="{{ nickname }}" 
+        bindinput="onNicknameInput" 
+      />
+    </view>
+    
     <button 
       class="login-button" 
       bindtap="login"
       type="primary"
       size="default"
+      disabled="{{ !nickname || !avatarUrl }}"
     >
       微信登录
     </button>

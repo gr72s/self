@@ -7,7 +7,7 @@ from app.schemas.wechat import WeChatTokenResponse, WeChatUserInfoResponse
 class WeChatService:
     """微信服务"""
     
-    WECHAT_TOKEN_URL = "https://api.weixin.qq.com/sns/oauth2/access_token"
+    WECHAT_TOKEN_URL = "https://api.weixin.qq.com/sns/jscode2session"
     WECHAT_USER_INFO_URL = "https://api.weixin.qq.com/sns/userinfo"
     
     @staticmethod
@@ -16,7 +16,7 @@ class WeChatService:
         params = {
             "appid": settings.WECHAT_APPID,
             "secret": settings.WECHAT_SECRET,
-            "code": code,
+            "js_code": code,
             "grant_type": "authorization_code"
         }
         
