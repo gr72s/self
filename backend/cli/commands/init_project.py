@@ -102,13 +102,26 @@ def init_project_command(boot_env, project_path):
         from sqlalchemy import text
         
         # 导入所有模型，确保Base.metadata包含所有表定义
-        from app.models import User, Muscle, Target, Gym, Exercise, Routine, Slot, Workout
+        logger.info("Importing all database models...")
+        try:
+            from app.models import User, Muscle, Target, Gym, Exercise, Routine, Slot, Workout
+            logger.info("Successfully imported all database models")
+        except Exception as e:
+            click.echo(f"导入模型失败: {e}", err=True)
+            logger.error(f"Failed to import database models: {e}")
+            raise
         
         # 创建所有表
-        logger.info("Creating all database tables...")
-        Base.metadata.create_all(bind=engine)
-        click.echo("数据库表结构创建完成！")
-        logger.info("Database tables created successfully")
+        logger.info("Creating all database tables using SQLAlchemy API...")
+        try:
+            # 使用SQLAlchemy的API创建所有表结构
+            Base.metadata.create_all(bind=engine)
+            click.echo("数据库表结构创建完成！")
+            logger.info("Database tables created successfully using SQLAlchemy API")
+        except Exception as e:
+            click.echo(f"创建数据库表结构失败: {e}", err=True)
+            logger.error(f"Failed to create database tables: {e}")
+            raise
         
         # 根据环境执行不同的逻辑
         if settings.ENVIRONMENT != "production":
@@ -145,18 +158,19 @@ def init_project_command(boot_env, project_path):
                     # 提交所有更改
                     db.commit()
                     click.echo("种子数据导入完成！")
-                    logger.info("Database initialization completed")
+                    logger.info("Database initialization completed with seed data")
                     
             except Exception as e:
                 click.echo(f"数据库初始化失败: {e}", err=True)
                 logger.error(f"Database initialization failed: {e}")
                 db.rollback()
+                raise
             finally:
                 db.close()
         else:
             # 生产环境：只创建表结构，不导入数据
             click.echo("生产环境：只创建表结构，跳过数据导入")
-            logger.info("Production environment: skipping data import, only created table structure")
+            logger.info("Production environment: skipping data import, only created table structure using SQLAlchemy API")
         
         # 获取数据库文件路径
         db_url = settings.DATABASE_URL
@@ -170,6 +184,7 @@ def init_project_command(boot_env, project_path):
         click.echo("\n项目目录结构初始化完成！")
         click.echo(f"配置文件位置: {config_file}")
         click.echo(f"日志文件位置: {log_file}")
+        click.echo(f"当前环境: {settings.ENVIRONMENT}")
         
         logger.info("项目目录结构初始化完成！")
         
@@ -177,6 +192,7 @@ def init_project_command(boot_env, project_path):
         # 打印错误信息
         click.echo(f"初始化失败: {e}", err=True)
         logger.error(f"初始化失败: {e}")
+        raise
 
 # 为了与命令名称匹配，使用init-project作为命令名
 init_project_command.name = "init-project"
