@@ -34,12 +34,20 @@
     <!-- 昵称输入 -->
     <view class="nickname-section">
       <text class="section-title">昵称</text>
-      <input 
-        class="nickname-input" 
-        placeholder="请输入昵称" 
-        value="{{ nickname }}" 
-        bindinput="onNicknameInput" 
-      />
+      <view class="nickname-container">
+        <input 
+          class="nickname-input" 
+          placeholder="请输入昵称" 
+          value="{{ nickname }}" 
+          bindinput="onNicknameInput" 
+        />
+        <button 
+          class="nickname-button" 
+          bindtap="chooseWechatNickname"
+        >
+          使用微信昵称
+        </button>
+      </view>
     </view>
     
     <button 

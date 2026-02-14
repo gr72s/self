@@ -110,6 +110,12 @@
   margin-bottom: 48rpx;
 }
 
+.nickname-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
 .nickname-input {
   width: 100%;
   height: 80rpx;
@@ -123,6 +129,24 @@
 
 .nickname-input::placeholder {
   color: #999;
+}
+
+.nickname-button {
+  width: 100%;
+  height: 64rpx;
+  background-color: #f0f0f0;
+  border-radius: 32rpx;
+  font-size: 22rpx;
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+}
+
+.nickname-button:hover {
+  background-color: #e0e0e0;
 }
 
 /* 登录按钮 */

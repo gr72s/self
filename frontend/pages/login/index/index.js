@@ -31,7 +31,9 @@ Page({
   chooseAvatar(e) {
     console.log('选择头像', e);
     if (e.detail.avatarUrl) {
+      console.log('获取到头像URL:', e.detail.avatarUrl);
       this.setData({ avatarUrl: e.detail.avatarUrl });
+      console.log('设置头像URL后的数据:', this.data);
     }
   },
 
@@ -40,6 +42,25 @@ Page({
    */
   onNicknameInput(e) {
     this.setData({ nickname: e.detail.value });
+  },
+
+  /**
+   * 选择微信昵称
+   */
+  chooseWechatNickname() {
+    // 这里可以使用wx.getUserProfile获取微信昵称，但需要注意微信版本限制
+    console.log('选择微信昵称');
+    wx.getUserProfile({
+      desc: '用于完善用户资料',
+      lang: 'zh_CN',
+      success: (res) => {
+        console.log('获取微信昵称成功', res.userInfo.nickName);
+        this.setData({ nickname: res.userInfo.nickName });
+      },
+      fail: (err) => {
+        console.error('获取微信昵称失败', err);
+      }
+    });
   },
 
   /**
