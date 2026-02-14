@@ -12,4 +12,6 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
       - SELF_ENV=production
+      - WECHAT_APPID=${WECHAT_APPID}
+      - WECHAT_APPSECRET=${WECHAT_APPSECRET}
     restart: unless-stopped
