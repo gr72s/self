@@ -27,6 +27,7 @@ Page({
     loading: true,
     currentWorkout: null,
     user: null,
+    userInfo: null,
     thisMonthCount: 0,
     uniqueRoutines: 0,
     totalExercises: 0,
@@ -56,6 +57,16 @@ Page({
   async fetchData() {
     this.setData({ loading: true });
     try {
+      // 从本地存储中获取用户信息
+      try {
+        const storedUserInfo = wx.getStorageSync('userInfo');
+        if (storedUserInfo) {
+          this.setData({ userInfo: storedUserInfo });
+        }
+      } catch (error) {
+        console.error('Failed to get stored user info:', error);
+      }
+      
       // 获取用户信息
       try {
         const userResponse = await userApi.getCurrent();

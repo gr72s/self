@@ -59,6 +59,30 @@
   align-items: center;
 }
 
+.user-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  margin-right: 16rpx;
+  overflow: hidden;
+}
+
+.avatar-image {
+  width: 100%;
+  height: 100%;
+}
+
+.user-avatar.placeholder {
+  background-color: #f0f0f0;
+}
+
+.avatar-placeholder {
+  font-size: 24rpx;
+}
+
 .theme-switcher {
   display: flex;
   align-items: center;

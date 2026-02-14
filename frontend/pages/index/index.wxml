@@ -3,6 +3,7 @@
   <navbar 
     menuOpen="{{menuOpen}}" 
     bind:toggleMenu="handleMenuToggle"
+    userInfo="{{userInfo}}"
   />
   
   <!-- 主内容区 -->

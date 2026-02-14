@@ -7,6 +7,10 @@ Component({
     title: {
       type: String,
       value: 'Fitness Tracker'
+    },
+    userInfo: {
+      type: Object,
+      value: null
     }
   },
   data: {
