@@ -1,7 +1,7 @@
 // 微信小程序原生 API 服务
 // 使用 wx.request 实现网络请求
 
-const API_BASE_URL = 'https://www.alanareen.com:8443/'; // 替换为实际的 API 基础地址
+const API_BASE_URL = 'https://8.137.33.126:8443/'; // 替换为实际的 API 基础地址
 
 /**
  * 通用请求方法
