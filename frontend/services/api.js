@@ -15,7 +15,7 @@ const request = (url, method, data = {}) => {
     // 获取本地存储的token
     const token = wx.getStorageSync('token');
     
-    // 当token为null时，跳转到登录页面
+    // 当token为null或undefined时，跳转到登录页面
     // 但是允许登录页面发起的登录请求
     if (!token) {
       const pages = getCurrentPages();
@@ -23,9 +23,9 @@ const request = (url, method, data = {}) => {
       const isLoginPage = currentPage && currentPage.route === 'pages/login/index/index';
       
       // 只有当不是登录页面时，才跳转到登录页面
-      // 登录页面发起的登录请求允许执行，即使token为null
+      // 登录页面发起的登录请求允许执行，即使token为null或undefined
       if (!isLoginPage) {
-        console.log('token为null，跳转到登录页面');
+        console.log('token为null或undefined，跳转到登录页面');
         const app = getApp();
         if (app && app.showLoginModal) {
           app.showLoginModal();
@@ -34,6 +34,8 @@ const request = (url, method, data = {}) => {
         return;
       }
     }
+    
+    console.log('token值:', token);
     
     // 构建 URL，确保只有一个斜杠
     let fullUrl = `${API_BASE_URL}${url}`;
@@ -59,7 +61,7 @@ const request = (url, method, data = {}) => {
       data,
       header: {
         'Content-Type': 'application/json',
-        // 只有当 token 存在时才添加认证头
+        // 只有当 token 存在且不是 undefined 时才添加认证头
         ...(token ? { 'Authorization': `Bearer ${token}` } : {})
       },
       success: (res) => {

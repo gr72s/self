@@ -8,6 +8,7 @@ services:
     volumes:
       - ./backend:/app
       - ${SELF_HOME:-~/.self}:/root/.self:rw
+      - ${SELF_HOME:-~/.self}/logs:/root/.self/logs:rw
     environment:
       - PYTHONUNBUFFERED=1
       - SELF_ENV=production

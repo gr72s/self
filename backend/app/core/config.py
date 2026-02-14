@@ -78,11 +78,7 @@ class Settings(BaseSettings):
     @property
     def WECHAT_SECRET(self) -> str:
         config = self._load_config()
-        secret = config.get("WECHAT_SECRET")
-        
-        if secret is None:
-            import os
-            secret = os.environ.get("WECHAT_SECRET")
+        secret = config.get("WECHAT_APPSECRET")
         
         if secret is None:
             from app.core.exceptions import NotFoundWeChatConfig
