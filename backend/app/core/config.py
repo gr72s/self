@@ -10,44 +10,59 @@ class Settings(BaseSettings):
     DEBUG: bool = True
     
     # 环境配置
-    SELF_ENV: str = "development"
+    BOOT_ENV: str = "development"
     
     @property
     def ENVIRONMENT(self) -> str:
-        return self.SELF_ENV
+        return self.BOOT_ENV
     
     # 数据库配置
     @property
     def DATABASE_URL(self) -> str:
-        # 根据环境选择数据库文件位置
-        if self.ENVIRONMENT == "production":
-            # Production环境：使用~/.self目录
-            user_home = os.path.expanduser("~")
-            self_dir = os.path.join(user_home, ".self")
-            os.makedirs(self_dir, exist_ok=True)
-            db_name = "self.db"
-            db_path = os.path.join(self_dir, db_name)
-        else:
-            # 其他环境：使用项目目录
-            project_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-            if self.ENVIRONMENT == "testing":
-                db_name = "self.test.db"
-            else:  # development
-                db_name = "self.dev.db"
-            db_path = os.path.join(project_dir, db_name)
+        # 从配置文件中获取数据库路径和名称
+        config = self._load_config()
         
-        return f"sqlite:///{db_path}"
+        # 获取PROJECT_PATH，如果不存在则使用默认值
+        db_path_template = config.get("PROJECT_PATH", "~/.self/")
+        # 扩展~为用户主目录
+        db_path = os.path.expanduser(db_path_template)
+        
+        # 获取DB_NAME，如果不存在则使用默认值
+        db_name_config = config.get("DB_NAME", {})
+        # 根据环境获取数据库名称
+        db_name = db_name_config.get(self.ENVIRONMENT, db_name_config.get("default", "self.db"))
+        
+        # 确保目录存在
+        os.makedirs(db_path, exist_ok=True)
+        
+        # 构建数据库文件路径
+        db_file_path = os.path.join(db_path, db_name)
+        
+        return f"sqlite:///{db_file_path}"
     
     def cleanup_development_db(self):
         """清理开发环境数据库文件"""
         if self.ENVIRONMENT == "development":
-            user_home = os.path.expanduser("~")
-            self_dir = os.path.join(user_home, ".self")
-            db_path = os.path.join(self_dir, "self.dev.db")
-            if os.path.exists(db_path):
+            # 从配置文件中获取数据库路径和名称
+            config = self._load_config()
+            
+            # 获取PROJECT_PATH，如果不存在则使用默认值
+            db_path_template = config.get("PROJECT_PATH", "~/.self/")
+            # 扩展~为用户主目录
+            db_path = os.path.expanduser(db_path_template)
+            
+            # 获取DB_NAME，如果不存在则使用默认值
+            db_name_config = config.get("DB_NAME", {})
+            # 获取开发环境的数据库名称
+            db_name = db_name_config.get("development", db_name_config.get("default", "self.db"))
+            
+            # 构建数据库文件路径
+            db_file_path = os.path.join(db_path, db_name)
+            
+            if os.path.exists(db_file_path):
                 try:
-                    os.remove(db_path)
-                    print(f"Removed development database: {db_path}")
+                    os.remove(db_file_path)
+                    print(f"Removed development database: {db_file_path}")
                 except Exception as e:
                     print(f"Error removing development database: {e}")
     

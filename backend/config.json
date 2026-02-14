@@ -1,0 +1,15 @@
+{
+  "APP_NAME": "Self API",
+  "DEBUG": true,
+  "BOOT_ENV": "development",
+  "PROJECT_PATH": "/home/green/.self/",
+  "DB_NAME": {
+    "default": "self.db",
+    "development": "self.dev.db",
+    "testing": "self.test.db",
+    "production": "self.db"
+  },
+  "SECRET_KEY": "7f3a9b2c8e1d4f6a5b9c8e7d1a3f4b6c8e9d2a5f7c1b3e8d4a6f9c2b5e8a1d4f7b",
+  "ALGORITHM": "HS256",
+  "ACCESS_TOKEN_EXPIRE_MINUTES": 10080
+}
