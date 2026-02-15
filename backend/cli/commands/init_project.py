@@ -23,10 +23,18 @@ def init_project_command(boot_env, project_path):
             for root, dirs, files in os.walk(self_dir, topdown=False):
                 for file in files:
                     file_path = os.path.join(root, file)
-                    os.remove(file_path)
+                    try:
+                        os.remove(file_path)
+                    except Exception as e:
+                        click.echo(f"删除文件失败: {file_path}, 错误: {e}")
+                        logger.warning(f"Failed to remove file: {file_path}, error: {e}")
                 for dir in dirs:
                     dir_path = os.path.join(root, dir)
-                    os.rmdir(dir_path)
+                    try:
+                        os.rmdir(dir_path)
+                    except Exception as e:
+                        click.echo(f"删除目录失败: {dir_path}, 错误: {e}")
+                        logger.warning(f"Failed to remove directory: {dir_path}, error: {e}")
             click.echo(f".self目录已清空")
         
         # 创建.self目录
@@ -136,6 +144,9 @@ def init_project_command(boot_env, project_path):
         project_path = config_data.get("PROJECT_PATH", "~/.self/")
         project_path = os.path.expanduser(project_path)
         
+        # 确保目标目录存在
+        os.makedirs(project_path, exist_ok=True)
+        
         # 复制appid文件
         dest_appid_file = os.path.join(project_path, "appid")
         import shutil
@@ -161,6 +172,10 @@ def init_project_command(boot_env, project_path):
         
         # 初始化数据库
         click.echo("\n开始初始化数据库结构...")
+        
+        # 清除settings缓存，确保使用最新的配置
+        from app.core.config import get_settings
+        get_settings.cache_clear()
         
         from app.core.config import settings
         from app.core.database import Base, engine, SessionLocal

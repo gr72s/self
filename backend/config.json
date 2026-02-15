@@ -2,7 +2,7 @@
   "APP_NAME": "Self API",
   "DEBUG": true,
   "BOOT_ENV": "development",
-  "PROJECT_PATH": "/home/green/.self/",
+  "PROJECT_PATH": "~/.self/",
   "WECHAT_APP_CONFIG": "~/.self-app",
   "DB_NAME": {
     "default": "self.db",

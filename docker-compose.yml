@@ -6,10 +6,23 @@ services:
     ports:
       - "58000:8000"
     volumes:
-      - ./backend:/app
-      - ${SELF_HOME:-~/.self}:/root/.self:rw
-      - ${SELF_HOME:-~/.self}/logs:/root/.self/logs:rw
+      - type: bind
+        source: ./backend
+        target: /app
+        read_only: false
+      - type: bind
+        source: ~/.self
+        target: /root/.self
+        read_only: false
+      - type: bind
+        source: ~/.self/logs
+        target: /root/.self/logs
+        read_only: false
+      - type: bind
+        source: ~/.self-app
+        target: /root/.self-app
+        read_only: false
     environment:
       - PYTHONUNBUFFERED=1
-      - SELF_ENV=production
+      - BOOT_ENV=production
     restart: unless-stopped
