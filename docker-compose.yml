@@ -35,4 +35,4 @@ services:
       - PYTHONUNBUFFERED=1
       - BOOT_ENV=production
     command: >
-      sh -lc "mkdir -p /root/.self && find /root/.self -mindepth 1 -exec rm -rf {} \; && self init-project --boot-env production && self check-project"
+      sh -lc "mkdir -p /root/.self && find /root/.self -mindepth 1 -maxdepth 1 -exec rm -rf -- {} + && self init-project --boot-env production && self check-project"
