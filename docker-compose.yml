@@ -42,3 +42,23 @@ services:
         find /root/.self -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +
         self init-project --boot-env production
         self check-project
+
+  uninstall:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    profiles: ["uninstall"]
+    volumes:
+      - type: bind
+        source: ${SELF_HOME:?SELF_HOME is required}
+        target: /root/.self
+      - type: bind
+        source: ${SELF_APP_HOME:?SELF_APP_HOME is required}
+        target: /root/.self-app
+    environment:
+      - PYTHONUNBUFFERED=1
+      - BOOT_ENV=production
+    command:
+      - sh
+      - -lc
+      - self uninstall-self

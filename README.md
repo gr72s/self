@@ -47,6 +47,12 @@ docker compose logs -f backend
 docker compose --profile init run --rm --build init
 ```
 
+- uninstall self-api package in container env
+
+```bash
+docker compose --profile uninstall run --rm --build uninstall
+```
+
 ## 后端服务
 
 ### 服务地址
