@@ -25,7 +25,6 @@
             mode="aspectFill" 
           />
           <view class="avatar-placeholder" wx:if="{{ showAvatarPlaceholder }}">
-            <text class="avatar-placeholder-text">选择头像</text>
           </view>
         </button>
       </view>

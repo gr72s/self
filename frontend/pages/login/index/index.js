@@ -2,7 +2,7 @@
 const api = require('../../../services/api');
 
 // 默认头像URL
-const defaultAvatarUrl = 'https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna4a2F2t24Lcia07jQodd2FJGIYQfGOLIAJGFxM4FbnQP6yF1kxMBgJ0F3Y/';
+const defaultAvatarUrl = 'https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0';
 
 Page({
   /**
@@ -34,13 +34,19 @@ Page({
    */
   onChooseAvatar(e) {
     console.log('选择头像', e);
-    const { avatarUrl } = e.detail;
-    console.log('获取到头像URL:', avatarUrl);
-    this.setData({ 
-      avatarUrl,
-      showAvatarPlaceholder: false
-    });
-    console.log('设置头像URL后的数据:', this.data);
+    // 检查是否成功获取到头像URL
+    if (e.detail && e.detail.avatarUrl) {
+      const { avatarUrl } = e.detail;
+      console.log('获取到头像URL:', avatarUrl);
+      this.setData({ 
+        avatarUrl,
+        showAvatarPlaceholder: false
+      });
+      console.log('设置头像URL后的数据:', this.data);
+    } else {
+      console.log('用户取消选择头像');
+      // 保持当前状态不变
+    }
   },
 
   /**
