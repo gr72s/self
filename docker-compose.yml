@@ -7,22 +7,32 @@ services:
       - "58000:8000"
     volumes:
       - type: bind
-        source: ./backend
-        target: /app
-        read_only: false
-      - type: bind
-        source: ~/.self
+        source: ${HOME}/.self
         target: /root/.self
-        read_only: false
       - type: bind
-        source: ~/.self/logs
-        target: /root/.self/logs
-        read_only: false
-      - type: bind
-        source: ~/.self-app
+        source: ${HOME}/.self-app
         target: /root/.self-app
-        read_only: false
     environment:
       - PYTHONUNBUFFERED=1
       - BOOT_ENV=production
+    command: >
+      sh -lc "self check-project && self start"
     restart: unless-stopped
+
+  init:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    profiles: ["init"]
+    volumes:
+      - type: bind
+        source: ${HOME}/.self
+        target: /root/.self
+      - type: bind
+        source: ${HOME}/.self-app
+        target: /root/.self-app
+    environment:
+      - PYTHONUNBUFFERED=1
+      - BOOT_ENV=production
+    command: >
+      sh -lc "rm -rf /root/.self && mkdir -p /root/.self && self init-project --boot-env production && self check-project"
