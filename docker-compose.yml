@@ -7,10 +7,10 @@ services:
       - "58000:8000"
     volumes:
       - type: bind
-        source: ${HOME}/.self
+        source: ${SELF_HOME:?SELF_HOME is required}/.self
         target: /root/.self
       - type: bind
-        source: ${HOME}/.self-app
+        source: ${SELF_HOME:?SELF_HOME is required}/.self-app
         target: /root/.self-app
     environment:
       - PYTHONUNBUFFERED=1
@@ -26,13 +26,19 @@ services:
     profiles: ["init"]
     volumes:
       - type: bind
-        source: ${HOME}/.self
+        source: ${SELF_HOME:?SELF_HOME is required}/.self
         target: /root/.self
       - type: bind
-        source: ${HOME}/.self-app
+        source: ${SELF_HOME:?SELF_HOME is required}/.self-app
         target: /root/.self-app
     environment:
       - PYTHONUNBUFFERED=1
       - BOOT_ENV=production
-    command: >
-      sh -lc "mkdir -p /root/.self && find /root/.self -mindepth 1 -maxdepth 1 -exec rm -rf -- {} + && self init-project --boot-env production && self check-project"
+    command:
+      - sh
+      - -lc
+      - |
+        mkdir -p /root/.self
+        find /root/.self -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +
+        self init-project --boot-env production
+        self check-project
