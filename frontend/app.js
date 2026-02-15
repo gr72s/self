@@ -79,7 +79,7 @@ App({
     // 检查当前页面是否为登录页面，如果是则不跳转
     const pages = getCurrentPages();
     const currentPage = pages[pages.length - 1];
-    const isLoginPage = currentPage.route === 'pages/login/index/index';
+    const isLoginPage = currentPage && currentPage.route === 'pages/login/index/index';
     
     if (isLoginPage) {
       console.log('当前页面已是登录页面，不重复跳转');

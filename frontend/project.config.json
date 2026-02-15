@@ -9,6 +9,10 @@
       {
         "type": "folder",
         "value": "node_modules"
+      },
+      {
+        "type": "file",
+        "value": "package-lock.json"
       }
     ],
     "include": []
@@ -29,17 +33,18 @@
     "uglifyFileName": false,
     "checkInvalidKey": true,
     "checkSiteMap": true,
-    "uploadWithSourceMap": true,
+    "uploadWithSourceMap": false,
     "compileHotReLoad": false,
+    "ignoreDevUnusedFiles": false,
     "lazyloadPlaceholderEnable": false,
     "packNpmManually": false,
     "packNpmRelationList": [],
     "minifyWXSS": true,
     "minifyWXML": true,
     "showES6CompileOption": true,
-    "useMultiFrameRuntime": true,
-    "useApiHook": true,
-    "useApiHostProcess": true,
+    "useMultiFrameRuntime": false,
+    "useApiHook": false,
+    "useApiHostProcess": false,
     "babelSetting": {
       "ignore": [],
       "disablePlugins": [],
@@ -50,7 +55,7 @@
     "useCompilerPlugins": false,
     "userConfirmedBundleSwitch": false,
     "packMainProcessLib": false,
-    "dedupDependencies": false,
+    "dedupDependencies": true,
     "disableUseStrict": false,
     "minifyType": "terser",
     "showInsecurePages": false,
@@ -66,7 +71,7 @@
       }
     },
     "autoOrderComponent": false,
-    "typescript": true,
+    "typescript": false,
     "componentCompilerOptions": {
       "skipConfigValidation": false,
       "defaultLang": "zh-CN",
@@ -77,8 +82,8 @@
       "customWatchFiles": []
     },
     "condition": false,
-    "useMultiFrameRuntimeInternal": true,
-    "enableAsyncEntry": true,
+    "useMultiFrameRuntimeInternal": false,
+    "enableAsyncEntry": false,
     "compileWorklet": false,
     "localPlugins": false,
     "swc": false,
