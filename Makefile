@@ -1,5 +1,5 @@
 SHELL := /bin/sh
-COMPOSE ?= docker compose
+COMPOSE ?= sudo docker compose
 
 .PHONY: first-up up down restart
 

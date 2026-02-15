@@ -3,12 +3,13 @@ name: CI/CD Pipeline
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:
   
 jobs:
-  deploy:
-    name: Deploy
+  auto_deploy:
+    name: Auto Deploy
     runs-on: ubuntu-latest
-    if: "startsWith(github.event.head_commit.message, 'feat') || startsWith(github.event.head_commit.message, 'fix') || startsWith(github.event.head_commit.message, 'refactor') || startsWith(github.event.head_commit.message, 'test')"
+    if: "github.event_name == 'push' && (startsWith(github.event.head_commit.message, 'feat') || startsWith(github.event.head_commit.message, 'fix') || startsWith(github.event.head_commit.message, 'refactor') || startsWith(github.event.head_commit.message, 'test'))"
     
     steps:
       - name: Checkout code
@@ -26,22 +27,11 @@ jobs:
             
             git pull origin ${{ github.ref_name }}
             
-            echo "Stopping and removing old containers..."
-            sudo docker compose down
-            
-            echo "Building new images..."
-            sudo docker compose build
+            echo "Running make up..."
+            sudo make up
             
             if [ $? -ne 0 ]; then
-              echo "Build failed!"
-              exit 1
-            fi
-            
-            echo "Starting new containers..."
-            sudo docker compose up -d
-            
-            if [ $? -ne 0 ]; then
-              echo "Startup failed!"
+              echo "Deployment failed!"
               exit 1
             fi
             
@@ -51,5 +41,39 @@ jobs:
           SERVER_USER: ${{ secrets.SERVER_USER }}
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           PROJECT_PATH: ${{ secrets.PROJECT_PATH }}
-          
-     
+
+  dispatch_deploy:
+    name: Dispatch Deploy
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SERVER_SSH_KEY }}
+
+      - name: Deploy to Server
+        run: |
+          ssh -tt -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} -p ${{ secrets.SERVER_PORT }} << 'EOF'
+            cd ${{ secrets.PROJECT_PATH }}
+
+            git pull origin ${{ github.ref_name }}
+
+            echo "Running make first-up..."
+            sudo make first-up
+
+            if [ $? -ne 0 ]; then
+              echo "Dispatch deployment failed!"
+              exit 1
+            fi
+
+            echo "Dispatch deployment completed successfully!"
+          EOF
+        env:
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          PROJECT_PATH: ${{ secrets.PROJECT_PATH }}
