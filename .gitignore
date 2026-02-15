@@ -9,6 +9,5 @@ node_modules/
 __pycache__
 *.db
 .pytest_cache
-.env
 self_api.egg-info
 venv

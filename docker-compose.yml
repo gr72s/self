@@ -7,10 +7,10 @@ services:
       - "58000:8000"
     volumes:
       - type: bind
-        source: ${SELF_HOME:?SELF_HOME is required}/.self
+        source: ${SELF_HOME:?SELF_HOME is required}
         target: /root/.self
       - type: bind
-        source: ${SELF_HOME:?SELF_HOME is required}/.self-app
+        source: ${SELF_APP_HOME:?SELF_APP_HOME is required}
         target: /root/.self-app
     environment:
       - PYTHONUNBUFFERED=1
@@ -26,10 +26,10 @@ services:
     profiles: ["init"]
     volumes:
       - type: bind
-        source: ${SELF_HOME:?SELF_HOME is required}/.self
+        source: ${SELF_HOME:?SELF_HOME is required}
         target: /root/.self
       - type: bind
-        source: ${SELF_HOME:?SELF_HOME is required}/.self-app
+        source: ${SELF_APP_HOME:?SELF_APP_HOME is required}
         target: /root/.self-app
     environment:
       - PYTHONUNBUFFERED=1
