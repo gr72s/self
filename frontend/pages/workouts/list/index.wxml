@@ -88,4 +88,7 @@
       </block>
     </view>
   </view>
+  
+  <!-- 底部工具栏 -->
+  <tabbar />
 </view>

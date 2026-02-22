@@ -6,7 +6,8 @@ Page({
     name: '',
     group: '',
     loading: false,
-    errors: {}
+    errors: {},
+    menuOpen: false
   },
 
   // 处理名称输入变化
@@ -86,5 +87,10 @@ Page({
   // 返回上一页
   handleBack() {
     wx.navigateBack();
+  },
+
+  // 处理菜单切换
+  handleMenuToggle() {
+    this.setData({ menuOpen: !this.data.menuOpen });
   }
 });

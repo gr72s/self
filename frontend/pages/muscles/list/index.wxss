@@ -1,6 +1,11 @@
 .page-container {
   min-height: 100vh;
   background-color: var(--background-light);
+  padding-bottom: 49px;
+}
+
+.main-container {
+  padding-bottom: 16px;
 }
 
 /* 表格样式 */

@@ -2,6 +2,8 @@
   "pages": [
     "pages/login/index/index",
     "pages/index/index",
+    "pages/stats/index",
+    "pages/profile/index",
     "pages/workouts/list/index",
     "pages/workouts/create/index",
     "pages/workouts/edit/index",
@@ -23,11 +25,11 @@
     "navigationBarBackgroundColor": "#fff",
     "navigationBarTitleText": "健身追踪",
     "navigationBarTextStyle": "black",
-    "backgroundColor": "#f5f5f5"
+    "backgroundColor": "#FAFBFC"
   },
   "tabBar": {
-    "color": "#999999",
-    "selectedColor": "#1976d2",
+    "color": "#636E72",
+    "selectedColor": "#FF6B35",
     "backgroundColor": "#ffffff",
     "borderStyle": "black",
     "list": [
@@ -36,16 +38,12 @@
         "text": "首页"
       },
       {
-        "pagePath": "pages/workouts/list/index",
-        "text": "训练"
+        "pagePath": "pages/stats/index",
+        "text": "数据"
       },
       {
-        "pagePath": "pages/routines/list/index",
-        "text": "计划"
-      },
-      {
-        "pagePath": "pages/exercises/list/index",
-        "text": "动作"
+        "pagePath": "pages/profile/index",
+        "text": "我的"
       }
     ]
   }

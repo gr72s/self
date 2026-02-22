@@ -1,6 +1,7 @@
 {
   "usingComponents": {
-    "navbar": "../../../components/navbar/index"
+    "navbar": "../../../components/navbar/index",
+    "tabbar": "../../../components/tabbar/index"
   },
   "navigationBarTitleText": "Muscles"
 }

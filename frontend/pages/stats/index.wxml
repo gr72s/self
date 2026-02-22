@@ -1,0 +1,56 @@
+<view class="page-container">
+  <!-- 顶部导航栏 -->
+  <navbar 
+    menuOpen="{{menuOpen}}" 
+    bind:toggleMenu="handleMenuToggle"
+  />
+  
+  <view class="container">
+    <view class="header">
+      <text class="page-title">数据统计</text>
+    </view>
+
+    <view class="stats-cards">
+      <view class="stat-card">
+        <text class="stat-label">总训练次数</text>
+        <text class="stat-value">{{workouts.length}}</text>
+      </view>
+
+      <view class="stat-card">
+        <text class="stat-label">本月训练</text>
+        <text class="stat-value">{{thisMonthCount}}</text>
+      </view>
+
+      <view class="stat-card">
+        <text class="stat-label">使用计划</text>
+        <text class="stat-value">{{uniqueRoutines}}</text>
+      </view>
+
+      <view class="stat-card">
+        <text class="stat-label">总动作数</text>
+        <text class="stat-value">{{totalExercises}}</text>
+      </view>
+    </view>
+
+    <view class="section">
+      <text class="section-title">最近训练</text>
+      <view class="workout-list">
+        <block wx:if="{{workouts.length === 0}}">
+          <view class="empty">
+            <text class="empty-icon">📊</text>
+            <text class="empty-text">暂无训练数据</text>
+          </view>
+        </block>
+        <block wx:else>
+          <view wx:for="{{recentWorkouts}}" wx:key="id" class="workout-item" bindtap="navigateToWorkout" data-id="{{item.id}}">
+            <view class="workout-info">
+              <text class="workout-name">{{item.routine && item.routine.name ? item.routine.name : '未命名训练'}}</text>
+              <text class="workout-date">{{formatDate(item.startTime)}}</text>
+            </view>
+            <text class="workout-arrow">›</text>
+          </view>
+        </block>
+      </view>
+    </view>
+  </view>
+</view>

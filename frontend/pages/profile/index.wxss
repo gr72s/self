@@ -1,0 +1,67 @@
+.page-container {
+  min-height: 100vh;
+  background-color: var(--background-light);
+}
+
+.container {
+  padding: 32rpx;
+}
+
+.profile-header {
+  text-align: center;
+  padding: 48rpx 0;
+  margin-bottom: 32rpx;
+}
+
+.avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 60rpx;
+  background: linear-gradient(135deg, var(--gradient-orange-start), var(--gradient-orange-end));
+  color: #ffffff;
+  font-size: 48rpx;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24rpx;
+}
+
+.username {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: var(--text-primary);
+}
+
+.menu-list {
+  background: var(--background-white);
+  border-radius: 16rpx;
+  overflow: hidden;
+}
+
+.menu-item {
+  padding: 32rpx;
+  border-bottom: 1rpx solid var(--border-color);
+  display: flex;
+  align-items: center;
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+.menu-icon {
+  font-size: 40rpx;
+  margin-right: 24rpx;
+}
+
+.menu-text {
+  flex: 1;
+  font-size: 28rpx;
+  color: var(--text-primary);
+}
+
+.menu-arrow {
+  font-size: 48rpx;
+  color: var(--text-hint);
+}

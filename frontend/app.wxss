@@ -7,20 +7,32 @@ page, view, text, input, button, select, checkbox, radio, switch, image, navigat
 
 /* 颜色变量 */
 :root {
-  --primary-color: #1976d2;
-  --primary-light: #e3f2fd;
-  --primary-dark: #0d47a1;
-  --secondary-color: #64b5f6;
-  --text-primary: #333333;
-  --text-secondary: #666666;
+  --primary-color: #FF6B35;
+  --primary-light: #FF8E53;
+  --primary-dark: #E55A2B;
+  --secondary-color: #F7567C;
+  --text-primary: #2D3436;
+  --text-secondary: #636E72;
   --text-hint: #999999;
-  --background-light: #f5f5f5;
+  --background-light: #FAFBFC;
   --background-white: #ffffff;
   --border-color: #e0e0e0;
   --error-color: #f44336;
   --success-color: #4caf50;
   --warning-color: #ff9800;
   --info-color: #2196f3;
+  --gradient-orange-start: #FF6B35;
+  --gradient-orange-end: #FF8E53;
+  --gradient-pink-start: #F7567C;
+  --gradient-pink-end: #FF8FA3;
+  --gradient-purple-start: #9B59B6;
+  --gradient-purple-end: #BB6BD9;
+  --gradient-blue-start: #4A90E2;
+  --gradient-blue-end: #67B5F5;
+  --gradient-green-start: #2ECC71;
+  --gradient-green-end: #58D68D;
+  --gradient-yellow-start: #FFD93D;
+  --gradient-yellow-end: #FFE66D;
 }
 
 page {

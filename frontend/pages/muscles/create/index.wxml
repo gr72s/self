@@ -1,44 +1,53 @@
-<view class="muscle-create-container">
-  <view class="page-header">
-    <text class="page-title">添加肌肉</text>
-    <button class="back-button" bindtap="handleBack">
-      <text class="back-button-text">返回</text>
-    </button>
-  </view>
-
-  <!-- 表单 -->
-  <view class="form-container">
-    <!-- 肌肉名称 -->
-    <view class="form-item">
-      <text class="form-label">肌肉名称</text>
-      <input 
-        class="form-input" 
-        placeholder="请输入肌肉名称" 
-        value="{{name}}" 
-        bindinput="handleNameChange"
-      />
-      <text wx:if="{{errors.name}}" class="error-message">{{errors.name}}</text>
+<view class="page-container">
+  <!-- 顶部导航栏 -->
+  <navbar 
+    menuOpen="{{menuOpen}}" 
+    bind:toggleMenu="handleMenuToggle"
+  />
+  
+  <!-- 主内容区 -->
+  <view class="main-container">
+    <view class="page-header">
+      <text class="page-title">添加肌肉</text>
     </view>
 
-    <!-- 肌肉分组 -->
-    <view class="form-item">
-      <text class="form-label">肌肉分组</text>
-      <input 
-        class="form-input" 
-        placeholder="请输入肌肉分组（如：胸部、背部等）" 
-        value="{{group}}" 
-        bindinput="handleGroupChange"
-      />
-      <text wx:if="{{errors.group}}" class="error-message">{{errors.group}}</text>
-    </view>
+    <!-- 表单 -->
+    <view class="form-container">
+      <!-- 肌肉名称 -->
+      <view class="form-item">
+        <text class="form-label">肌肉名称</text>
+        <input 
+          class="form-input" 
+          placeholder="请输入肌肉名称" 
+          value="{{name}}" 
+          bindinput="handleNameChange"
+        />
+        <text wx:if="{{errors.name}}" class="error-message">{{errors.name}}</text>
+      </view>
 
-    <!-- 提交按钮 -->
-    <button 
-      class="submit-button" 
-      bindtap="handleSubmit" 
-      disabled="{{loading}}"
-    >
-      <text class="submit-button-text">{{loading ? '提交中...' : '保存'}}</text>
-    </button>
+      <!-- 肌肉分组 -->
+      <view class="form-item">
+        <text class="form-label">肌肉分组</text>
+        <input 
+          class="form-input" 
+          placeholder="请输入肌肉分组（如：胸部、背部等）" 
+          value="{{group}}" 
+          bindinput="handleGroupChange"
+        />
+        <text wx:if="{{errors.group}}" class="error-message">{{errors.group}}</text>
+      </view>
+
+      <!-- 提交按钮 -->
+      <button 
+        class="submit-button" 
+        bindtap="handleSubmit" 
+        disabled="{{loading}}"
+      >
+        <text class="submit-button-text">{{loading ? '提交中...' : '保存'}}</text>
+      </button>
+    </view>
   </view>
+  
+  <!-- 底部工具栏 -->
+  <tabbar />
 </view>

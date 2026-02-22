@@ -6,18 +6,7 @@
       </view>
     </view>
     <view class="logo-container">
-      <text class="logo-text">Fitness Tracker</text>
-    </view>
-  </view>
-  <view class="navbar-right">
-    <view class="user-avatar" wx:if="{{userInfo && userInfo.avatarUrl}}">
-      <image src="{{userInfo.avatarUrl}}" mode="aspectFill" class="avatar-image" />
-    </view>
-    <view class="user-avatar placeholder" wx:else>
-      <text class="avatar-placeholder">👤</text>
-    </view>
-    <view class="theme-switcher">
-      <text class="theme-icon">🌙</text>
+      <text class="logo-text">{{title}}</text>
     </view>
   </view>
 </view>

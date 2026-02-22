@@ -17,7 +17,8 @@ Page({
     selectedTargets: [],
     note: '',
     loading: true,
-    submitting: false
+    submitting: false,
+    menuOpen: false
   },
 
   /**
@@ -216,5 +217,12 @@ Page({
    */
   navigateBack() {
     wx.navigateBack();
+  },
+
+  /**
+   * 处理菜单切换
+   */
+  handleMenuToggle() {
+    this.setData({ menuOpen: !this.data.menuOpen });
   }
 });

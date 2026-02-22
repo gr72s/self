@@ -1,7 +1,6 @@
 .navbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   height: 64rpx;
   padding: 0 24rpx;
   background-color: #ffffff;
@@ -52,51 +51,4 @@
   font-weight: 700;
   color: #1976d2;
   white-space: nowrap;
-}
-
-.navbar-right {
-  display: flex;
-  align-items: center;
-}
-
-.user-avatar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 48rpx;
-  height: 48rpx;
-  border-radius: 50%;
-  margin-right: 16rpx;
-  overflow: hidden;
-}
-
-.avatar-image {
-  width: 100%;
-  height: 100%;
-}
-
-.user-avatar.placeholder {
-  background-color: #f0f0f0;
-}
-
-.avatar-placeholder {
-  font-size: 24rpx;
-}
-
-.theme-switcher {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 48rpx;
-  height: 48rpx;
-  border-radius: 8rpx;
-  transition: background-color 0.2s;
-}
-
-.theme-switcher:active {
-  background-color: #f0f0f0;
-}
-
-.theme-icon {
-  font-size: 28rpx;
 }

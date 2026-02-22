@@ -9,7 +9,8 @@ Page({
     loading: true,
     submitting: false,
     error: '',
-    errors: {}
+    errors: {},
+    menuOpen: false
   },
 
   onLoad(options) {
@@ -123,5 +124,10 @@ Page({
   // 返回上一页
   handleBack() {
     wx.navigateBack();
+  },
+
+  // 处理菜单切换
+  handleMenuToggle() {
+    this.setData({ menuOpen: !this.data.menuOpen });
   }
 });
