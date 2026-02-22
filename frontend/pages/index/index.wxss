@@ -12,15 +12,56 @@
   padding-bottom: 49px;
 }
 
-/* Keep shared navbar offset while disabling legacy left sidebar spacing. */
+/* Keep shared layout while disabling legacy top/left offsets. */
 .shell-content .main-container {
   margin-left: 0;
+  margin-top: 0;
+  min-height: auto;
 }
 
 .home-main-container {
   margin-left: 0;
   padding: 0;
   min-height: auto;
+}
+
+.subpage-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 32rpx 12rpx;
+  background-color: var(--background-light);
+}
+
+.subpage-nav-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 10rpx 18rpx;
+  border-radius: 24rpx;
+  background-color: var(--background-white);
+  border: 1rpx solid var(--border-color);
+}
+
+.subpage-nav-back:active {
+  background-color: #f2f4f7;
+}
+
+.subpage-nav-back-icon {
+  font-size: 24rpx;
+  color: var(--text-secondary);
+}
+
+.subpage-nav-back-text {
+  font-size: 24rpx;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.subpage-nav-title {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: var(--text-primary);
 }
 
 .container {

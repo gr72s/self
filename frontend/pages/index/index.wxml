@@ -1,9 +1,4 @@
 <view class="page-container shell-page">
-  <navbar
-    menuOpen="{{menuOpen}}"
-    bind:toggleMenu="handleMenuToggle"
-  />
-
   <view class="shell-content">
     <view wx:if="{{currentView === viewKeys.HOME}}" class="home-content">
       <view class="main-container home-main-container">
@@ -56,20 +51,28 @@
       </view>
     </view>
 
+    <view wx:if="{{currentView !== viewKeys.HOME}}" class="subpage-nav">
+      <view class="subpage-nav-back" bindtap="goHome">
+        <text class="subpage-nav-back-icon">&lt;</text>
+        <text class="subpage-nav-back-text">Home</text>
+      </view>
+      <text class="subpage-nav-title">{{currentViewTitle}}</text>
+    </view>
+
     <workouts-list-view
-      wx:elif="{{currentView === viewKeys.WORKOUTS_LIST}}"
+      wx:if="{{currentView === viewKeys.WORKOUTS_LIST}}"
       bind:navigate="handleChildNavigate"
       bind:cancel="handleChildCancel"
       bind:submitted="handleChildSubmitted"
     />
     <workouts-create-view
-      wx:elif="{{currentView === viewKeys.WORKOUTS_CREATE}}"
+      wx:if="{{currentView === viewKeys.WORKOUTS_CREATE}}"
       bind:navigate="handleChildNavigate"
       bind:cancel="handleChildCancel"
       bind:submitted="handleChildSubmitted"
     />
     <workouts-edit-view
-      wx:elif="{{currentView === viewKeys.WORKOUTS_EDIT}}"
+      wx:if="{{currentView === viewKeys.WORKOUTS_EDIT}}"
       entity-id="{{viewParams.id}}"
       bind:navigate="handleChildNavigate"
       bind:cancel="handleChildCancel"
@@ -77,19 +80,19 @@
     />
 
     <routines-list-view
-      wx:elif="{{currentView === viewKeys.ROUTINES_LIST}}"
+      wx:if="{{currentView === viewKeys.ROUTINES_LIST}}"
       bind:navigate="handleChildNavigate"
       bind:cancel="handleChildCancel"
       bind:submitted="handleChildSubmitted"
     />
     <routines-create-view
-      wx:elif="{{currentView === viewKeys.ROUTINES_CREATE}}"
+      wx:if="{{currentView === viewKeys.ROUTINES_CREATE}}"
       bind:navigate="handleChildNavigate"
       bind:cancel="handleChildCancel"
       bind:submitted="handleChildSubmitted"
     />
     <routines-edit-view
-      wx:elif="{{currentView === viewKeys.ROUTINES_EDIT}}"
+      wx:if="{{currentView === viewKeys.ROUTINES_EDIT}}"
       entity-id="{{viewParams.id}}"
       bind:navigate="handleChildNavigate"
       bind:cancel="handleChildCancel"
@@ -97,19 +100,19 @@
     />
 
     <exercises-list-view
-      wx:elif="{{currentView === viewKeys.EXERCISES_LIST}}"
+      wx:if="{{currentView === viewKeys.EXERCISES_LIST}}"
       bind:navigate="handleChildNavigate"
       bind:cancel="handleChildCancel"
       bind:submitted="handleChildSubmitted"
     />
     <exercises-create-view
-      wx:elif="{{currentView === viewKeys.EXERCISES_CREATE}}"
+      wx:if="{{currentView === viewKeys.EXERCISES_CREATE}}"
       bind:navigate="handleChildNavigate"
       bind:cancel="handleChildCancel"
       bind:submitted="handleChildSubmitted"
     />
     <exercises-edit-view
-      wx:elif="{{currentView === viewKeys.EXERCISES_EDIT}}"
+      wx:if="{{currentView === viewKeys.EXERCISES_EDIT}}"
       entity-id="{{viewParams.id}}"
       bind:navigate="handleChildNavigate"
       bind:cancel="handleChildCancel"
@@ -117,19 +120,19 @@
     />
 
     <gyms-list-view
-      wx:elif="{{currentView === viewKeys.GYMS_LIST}}"
+      wx:if="{{currentView === viewKeys.GYMS_LIST}}"
       bind:navigate="handleChildNavigate"
       bind:cancel="handleChildCancel"
       bind:submitted="handleChildSubmitted"
     />
     <gyms-create-view
-      wx:elif="{{currentView === viewKeys.GYMS_CREATE}}"
+      wx:if="{{currentView === viewKeys.GYMS_CREATE}}"
       bind:navigate="handleChildNavigate"
       bind:cancel="handleChildCancel"
       bind:submitted="handleChildSubmitted"
     />
     <gyms-edit-view
-      wx:elif="{{currentView === viewKeys.GYMS_EDIT}}"
+      wx:if="{{currentView === viewKeys.GYMS_EDIT}}"
       entity-id="{{viewParams.id}}"
       bind:navigate="handleChildNavigate"
       bind:cancel="handleChildCancel"
@@ -137,19 +140,19 @@
     />
 
     <muscles-list-view
-      wx:elif="{{currentView === viewKeys.MUSCLES_LIST}}"
+      wx:if="{{currentView === viewKeys.MUSCLES_LIST}}"
       bind:navigate="handleChildNavigate"
       bind:cancel="handleChildCancel"
       bind:submitted="handleChildSubmitted"
     />
     <muscles-create-view
-      wx:elif="{{currentView === viewKeys.MUSCLES_CREATE}}"
+      wx:if="{{currentView === viewKeys.MUSCLES_CREATE}}"
       bind:navigate="handleChildNavigate"
       bind:cancel="handleChildCancel"
       bind:submitted="handleChildSubmitted"
     />
     <muscles-edit-view
-      wx:elif="{{currentView === viewKeys.MUSCLES_EDIT}}"
+      wx:if="{{currentView === viewKeys.MUSCLES_EDIT}}"
       entity-id="{{viewParams.id}}"
       bind:navigate="handleChildNavigate"
       bind:cancel="handleChildCancel"
@@ -157,4 +160,7 @@
     />
   </view>
 </view>
+
+
+
 

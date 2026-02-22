@@ -14,14 +14,33 @@ const RESOURCE_TO_LIST_VIEW = {
   muscle: VIEW_KEYS.MUSCLES_LIST
 };
 
+const VIEW_TITLES = {
+  [VIEW_KEYS.HOME]: 'Home',
+  [VIEW_KEYS.WORKOUTS_LIST]: 'Workouts',
+  [VIEW_KEYS.WORKOUTS_CREATE]: 'Create Workout',
+  [VIEW_KEYS.WORKOUTS_EDIT]: 'Edit Workout',
+  [VIEW_KEYS.ROUTINES_LIST]: 'Routines',
+  [VIEW_KEYS.ROUTINES_CREATE]: 'Create Routine',
+  [VIEW_KEYS.ROUTINES_EDIT]: 'Edit Routine',
+  [VIEW_KEYS.EXERCISES_LIST]: 'Exercises',
+  [VIEW_KEYS.EXERCISES_CREATE]: 'Create Exercise',
+  [VIEW_KEYS.EXERCISES_EDIT]: 'Edit Exercise',
+  [VIEW_KEYS.GYMS_LIST]: 'Gyms',
+  [VIEW_KEYS.GYMS_CREATE]: 'Create Gym',
+  [VIEW_KEYS.GYMS_EDIT]: 'Edit Gym',
+  [VIEW_KEYS.MUSCLES_LIST]: 'Muscles',
+  [VIEW_KEYS.MUSCLES_CREATE]: 'Create Muscle',
+  [VIEW_KEYS.MUSCLES_EDIT]: 'Edit Muscle'
+};
+
 Page({
   data: {
     workouts: [],
     user: null,
     uniqueRoutines: 0,
     totalExercises: 0,
-    menuOpen: false,
     currentView: VIEW_KEYS.HOME,
+    currentViewTitle: VIEW_TITLES[VIEW_KEYS.HOME],
     viewParams: {},
     viewKeys: VIEW_KEYS
   },
@@ -87,6 +106,7 @@ Page({
     const nextView = normalizeView(view);
     this.setData({
       currentView: nextView,
+      currentViewTitle: VIEW_TITLES[nextView] || VIEW_TITLES[VIEW_KEYS.HOME],
       viewParams: params || {}
     });
 
@@ -148,9 +168,5 @@ Page({
 
   startNewWorkout() {
     this.setView(VIEW_KEYS.WORKOUTS_CREATE);
-  },
-
-  handleMenuToggle(e) {
-    this.setData({ menuOpen: !!(e && e.detail && e.detail.open) });
   }
 });

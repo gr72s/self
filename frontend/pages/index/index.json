@@ -1,6 +1,5 @@
 {
   "usingComponents": {
-    "navbar": "../../components/navbar/index",
     "workouts-list-view": "../../components/views/workouts/list/index",
     "workouts-create-view": "../../components/views/workouts/create/index",
     "workouts-edit-view": "../../components/views/workouts/edit/index",
