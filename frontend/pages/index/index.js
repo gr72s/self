@@ -1,19 +1,61 @@
 const { workoutApi, userApi } = require('../../services/api');
+const {
+  VIEW_KEYS,
+  SHELL_VIEW_STORAGE_KEY,
+  normalizeView,
+  parseViewQuery
+} = require('../../types/view-router');
+
+const RESOURCE_TO_LIST_VIEW = {
+  workout: VIEW_KEYS.WORKOUTS_LIST,
+  routine: VIEW_KEYS.ROUTINES_LIST,
+  exercise: VIEW_KEYS.EXERCISES_LIST,
+  gym: VIEW_KEYS.GYMS_LIST,
+  muscle: VIEW_KEYS.MUSCLES_LIST
+};
 
 Page({
   data: {
     workouts: [],
     user: null,
     uniqueRoutines: 0,
-    totalExercises: 0
+    totalExercises: 0,
+    menuOpen: false,
+    currentView: VIEW_KEYS.HOME,
+    viewParams: {},
+    viewKeys: VIEW_KEYS
   },
 
-  onLoad() {
+  onLoad(options) {
     this.fetchData();
+    this.applyEntryView(options || {});
   },
 
   onShow() {
     this.fetchData();
+    this.applyPendingView();
+  },
+
+  applyEntryView(options) {
+    const hasView = options && options.view;
+    if (!hasView) {
+      return;
+    }
+
+    const { view, params } = parseViewQuery(options);
+    this.setView(view, params);
+  },
+
+  applyPendingView() {
+    const pending = wx.getStorageSync(SHELL_VIEW_STORAGE_KEY);
+    if (!pending || typeof pending !== 'object') {
+      return;
+    }
+
+    const view = normalizeView(pending.view);
+    const params = pending.params || {};
+    wx.removeStorageSync(SHELL_VIEW_STORAGE_KEY);
+    this.setView(view, params);
   },
 
   async fetchData() {
@@ -30,7 +72,7 @@ Page({
       const workoutData = (workoutResponse.data && workoutResponse.data.data) || workoutResponse.data || [];
       const workouts = Array.isArray(workoutData) ? workoutData : [];
 
-      const uniqueRoutines = new Set(workouts.map(w => w.routineId)).size;
+      const uniqueRoutines = new Set(workouts.map((w) => w.routineId)).size;
       const totalExercises = workouts.reduce((sum, workout) => {
         return sum + ((workout.exercises && workout.exercises.length) || 0);
       }, 0);
@@ -41,24 +83,63 @@ Page({
     }
   },
 
+  setView(view, params = {}) {
+    const nextView = normalizeView(view);
+    this.setData({
+      currentView: nextView,
+      viewParams: params || {}
+    });
+
+    if (nextView === VIEW_KEYS.HOME) {
+      this.fetchData();
+    }
+  },
+
+  goHome() {
+    this.setView(VIEW_KEYS.HOME);
+  },
+
+  handleChildNavigate(e) {
+    const detail = e && e.detail ? e.detail : {};
+    if (!detail.view) {
+      return;
+    }
+    this.setView(detail.view, detail.params || {});
+  },
+
+  handleChildCancel() {
+    this.goHome();
+  },
+
+  handleChildSubmitted(e) {
+    const detail = e && e.detail ? e.detail : {};
+    const listView = RESOURCE_TO_LIST_VIEW[detail.resource];
+    if (listView) {
+      this.setView(listView);
+    } else {
+      this.goHome();
+    }
+    this.fetchData();
+  },
+
   navigateToWorkouts() {
-    wx.navigateTo({ url: '/pages/workouts/list/index' });
+    this.setView(VIEW_KEYS.WORKOUTS_LIST);
   },
 
   navigateToRoutines() {
-    wx.navigateTo({ url: '/pages/routines/list/index' });
+    this.setView(VIEW_KEYS.ROUTINES_LIST);
   },
 
   navigateToExercises() {
-    wx.navigateTo({ url: '/pages/exercises/list/index' });
+    this.setView(VIEW_KEYS.EXERCISES_LIST);
   },
 
   navigateToGyms() {
-    wx.navigateTo({ url: '/pages/gyms/list/index' });
+    this.setView(VIEW_KEYS.GYMS_LIST);
   },
 
   navigateToMuscles() {
-    wx.navigateTo({ url: '/pages/muscles/list/index' });
+    this.setView(VIEW_KEYS.MUSCLES_LIST);
   },
 
   navigateToProfile() {
@@ -66,6 +147,10 @@ Page({
   },
 
   startNewWorkout() {
-    wx.navigateTo({ url: '/pages/workouts/create/index' });
+    this.setView(VIEW_KEYS.WORKOUTS_CREATE);
+  },
+
+  handleMenuToggle(e) {
+    this.setData({ menuOpen: !!(e && e.detail && e.detail.open) });
   }
 });

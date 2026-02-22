@@ -1,50 +1,160 @@
-<view class="page-container">
-  <view class="container">
-    <!-- Header -->
-    <view class="header">
-      <text class="greeting">你好{{user && user.username ? ', ' + user.username : ''}}!</text>
-      <view class="quick-action" bindtap="startNewWorkout">
-        <text class="action-text">开始训练</text>
+<view class="page-container shell-page">
+  <navbar
+    menuOpen="{{menuOpen}}"
+    bind:toggleMenu="handleMenuToggle"
+  />
+
+  <view class="shell-content">
+    <view wx:if="{{currentView === viewKeys.HOME}}" class="home-content">
+      <view class="main-container home-main-container">
+        <view class="container">
+          <view class="header">
+            <text class="greeting">Hi{{user && user.username ? ', ' + user.username : ''}}!</text>
+            <view class="quick-action" bindtap="startNewWorkout">
+              <text class="action-text">Start Workout</text>
+            </view>
+          </view>
+
+          <view class="category-grid">
+            <view class="category-card card-orange" bindtap="navigateToWorkouts">
+              <text class="card-icon">WK</text>
+              <text class="card-title">Workouts</text>
+              <text class="card-stat">{{workouts.length}} items</text>
+            </view>
+
+            <view class="category-card card-pink" bindtap="navigateToRoutines">
+              <text class="card-icon">RT</text>
+              <text class="card-title">Routines</text>
+              <text class="card-stat">{{uniqueRoutines}} plans</text>
+            </view>
+
+            <view class="category-card card-purple" bindtap="navigateToExercises">
+              <text class="card-icon">EX</text>
+              <text class="card-title">Exercises</text>
+              <text class="card-stat">{{totalExercises}} entries</text>
+            </view>
+
+            <view class="category-card card-blue" bindtap="navigateToGyms">
+              <text class="card-icon">GY</text>
+              <text class="card-title">Gyms</text>
+              <text class="card-stat">Manage</text>
+            </view>
+
+            <view class="category-card card-green" bindtap="navigateToMuscles">
+              <text class="card-icon">MU</text>
+              <text class="card-title">Muscles</text>
+              <text class="card-stat">Browse</text>
+            </view>
+
+            <view class="category-card card-yellow" bindtap="navigateToProfile">
+              <text class="card-icon">GO</text>
+              <text class="card-title">Goals</text>
+              <text class="card-stat">Settings</text>
+            </view>
+          </view>
+        </view>
       </view>
     </view>
 
-    <!-- Category Cards -->
-    <view class="category-grid">
-      <view class="category-card card-orange" bindtap="navigateToWorkouts">
-        <text class="card-icon">🏋️</text>
-        <text class="card-title">训练管理</text>
-        <text class="card-stat">{{workouts.length}} 次</text>
-      </view>
+    <workouts-list-view
+      wx:elif="{{currentView === viewKeys.WORKOUTS_LIST}}"
+      bind:navigate="handleChildNavigate"
+      bind:cancel="handleChildCancel"
+      bind:submitted="handleChildSubmitted"
+    />
+    <workouts-create-view
+      wx:elif="{{currentView === viewKeys.WORKOUTS_CREATE}}"
+      bind:navigate="handleChildNavigate"
+      bind:cancel="handleChildCancel"
+      bind:submitted="handleChildSubmitted"
+    />
+    <workouts-edit-view
+      wx:elif="{{currentView === viewKeys.WORKOUTS_EDIT}}"
+      entity-id="{{viewParams.id}}"
+      bind:navigate="handleChildNavigate"
+      bind:cancel="handleChildCancel"
+      bind:submitted="handleChildSubmitted"
+    />
 
-      <view class="category-card card-pink" bindtap="navigateToRoutines">
-        <text class="card-icon">📋</text>
-        <text class="card-title">训练计划</text>
-        <text class="card-stat">{{uniqueRoutines}} 个</text>
-      </view>
+    <routines-list-view
+      wx:elif="{{currentView === viewKeys.ROUTINES_LIST}}"
+      bind:navigate="handleChildNavigate"
+      bind:cancel="handleChildCancel"
+      bind:submitted="handleChildSubmitted"
+    />
+    <routines-create-view
+      wx:elif="{{currentView === viewKeys.ROUTINES_CREATE}}"
+      bind:navigate="handleChildNavigate"
+      bind:cancel="handleChildCancel"
+      bind:submitted="handleChildSubmitted"
+    />
+    <routines-edit-view
+      wx:elif="{{currentView === viewKeys.ROUTINES_EDIT}}"
+      entity-id="{{viewParams.id}}"
+      bind:navigate="handleChildNavigate"
+      bind:cancel="handleChildCancel"
+      bind:submitted="handleChildSubmitted"
+    />
 
-      <view class="category-card card-purple" bindtap="navigateToExercises">
-        <text class="card-icon">💪</text>
-        <text class="card-title">动作库</text>
-        <text class="card-stat">{{totalExercises}} 个</text>
-      </view>
+    <exercises-list-view
+      wx:elif="{{currentView === viewKeys.EXERCISES_LIST}}"
+      bind:navigate="handleChildNavigate"
+      bind:cancel="handleChildCancel"
+      bind:submitted="handleChildSubmitted"
+    />
+    <exercises-create-view
+      wx:elif="{{currentView === viewKeys.EXERCISES_CREATE}}"
+      bind:navigate="handleChildNavigate"
+      bind:cancel="handleChildCancel"
+      bind:submitted="handleChildSubmitted"
+    />
+    <exercises-edit-view
+      wx:elif="{{currentView === viewKeys.EXERCISES_EDIT}}"
+      entity-id="{{viewParams.id}}"
+      bind:navigate="handleChildNavigate"
+      bind:cancel="handleChildCancel"
+      bind:submitted="handleChildSubmitted"
+    />
 
-      <view class="category-card card-blue" bindtap="navigateToGyms">
-        <text class="card-icon">🏢</text>
-        <text class="card-title">健身房</text>
-        <text class="card-stat">管理</text>
-      </view>
+    <gyms-list-view
+      wx:elif="{{currentView === viewKeys.GYMS_LIST}}"
+      bind:navigate="handleChildNavigate"
+      bind:cancel="handleChildCancel"
+      bind:submitted="handleChildSubmitted"
+    />
+    <gyms-create-view
+      wx:elif="{{currentView === viewKeys.GYMS_CREATE}}"
+      bind:navigate="handleChildNavigate"
+      bind:cancel="handleChildCancel"
+      bind:submitted="handleChildSubmitted"
+    />
+    <gyms-edit-view
+      wx:elif="{{currentView === viewKeys.GYMS_EDIT}}"
+      entity-id="{{viewParams.id}}"
+      bind:navigate="handleChildNavigate"
+      bind:cancel="handleChildCancel"
+      bind:submitted="handleChildSubmitted"
+    />
 
-      <view class="category-card card-green" bindtap="navigateToMuscles">
-        <text class="card-icon">🎯</text>
-        <text class="card-title">肌肉群</text>
-        <text class="card-stat">查看</text>
-      </view>
-
-      <view class="category-card card-yellow" bindtap="navigateToProfile">
-        <text class="card-icon">⭐</text>
-        <text class="card-title">目标设定</text>
-        <text class="card-stat">设置</text>
-      </view>
-    </view>
+    <muscles-list-view
+      wx:elif="{{currentView === viewKeys.MUSCLES_LIST}}"
+      bind:navigate="handleChildNavigate"
+      bind:cancel="handleChildCancel"
+      bind:submitted="handleChildSubmitted"
+    />
+    <muscles-create-view
+      wx:elif="{{currentView === viewKeys.MUSCLES_CREATE}}"
+      bind:navigate="handleChildNavigate"
+      bind:cancel="handleChildCancel"
+      bind:submitted="handleChildSubmitted"
+    />
+    <muscles-edit-view
+      wx:elif="{{currentView === viewKeys.MUSCLES_EDIT}}"
+      entity-id="{{viewParams.id}}"
+      bind:navigate="handleChildNavigate"
+      bind:cancel="handleChildCancel"
+      bind:submitted="handleChildSubmitted"
+    />
   </view>
 </view>
+

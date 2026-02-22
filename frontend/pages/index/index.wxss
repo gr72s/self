@@ -3,6 +3,26 @@
   background-color: var(--background-light);
 }
 
+.shell-page {
+  min-height: 100vh;
+}
+
+.shell-content {
+  min-height: 100vh;
+  padding-bottom: 49px;
+}
+
+/* Keep shared navbar offset while disabling legacy left sidebar spacing. */
+.shell-content .main-container {
+  margin-left: 0;
+}
+
+.home-main-container {
+  margin-left: 0;
+  padding: 0;
+  min-height: auto;
+}
+
 .container {
   padding: 32rpx;
 }
@@ -96,3 +116,4 @@
 .card-yellow {
   background: linear-gradient(135deg, var(--gradient-yellow-start), var(--gradient-yellow-end));
 }
+

@@ -1,0 +1,94 @@
+<view class="page-container">
+  <!-- 顶部导航�?-->
+  
+  <!-- 主内容区 -->
+  <view class="main-container">
+    <!-- 页面头部 -->
+    <view class="section-title">
+      <text>Muscles</text>
+      <view class="toolbar-right">
+        <view class="button icon-button" bindtap="handleRefresh">
+          <text>🔄</text>
+        </view>
+        <view class="button primary" bindtap="handleAddMuscle">
+          <text class="button-text">+ Create</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 肌肉列表 -->
+    <view class="table">
+      <block wx:if="{{loading}}">
+        <view class="loading">
+          <view class="loading-spinner"></view>
+          <text>Loading...</text>
+        </view>
+      </block>
+      <block wx:elif="{{error}}">
+        <view class="empty">
+          <text class="empty-icon">⚠️</text>
+          <text class="empty-text">{{error}}</text>
+          <view class="button secondary" bindtap="loadMuscles">
+            <text class="button-text">Retry</text>
+          </view>
+        </view>
+      </block>
+      <block wx:elif="{{muscles.length === 0}}">
+        <view class="empty">
+          <text class="empty-icon">💪</text>
+          <text class="empty-text">No muscles yet</text>
+          <text class="empty-subtext">Create your first muscle to get started</text>
+          <view class="button primary" bindtap="handleAddMuscle">
+            <text class="button-text">Create First Muscle</text>
+          </view>
+        </view>
+      </block>
+      <block wx:else>
+        <view class="table-header">
+          <view class="table-header-cell">Muscle</view>
+          <view class="table-header-cell">Group</view>
+          <view class="table-header-cell" style="text-align: right;">Actions</view>
+        </view>
+        <view class="table-body">
+          <view wx:for="{{muscles}}" wx:key="id" class="table-row">
+            <view class="table-cell">
+              <text class="muscle-name">{{item.name}}</text>
+            </view>
+            <view class="table-cell">
+              <text class="muscle-group">{{item.group}}</text>
+            </view>
+            <view class="table-cell" style="text-align: right;">
+              <view class="table-actions">
+                <view class="button icon-button" bindtap="handleEditMuscle" data-id="{{item.id}}">
+                  <text>✏️</text>
+                </view>
+                <view class="button icon-button delete" bindtap="handleDeleteMuscle" data-id="{{item.id}}">
+                  <text>🗑�?</text>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
+
+    <!-- 删除确认对话�?-->
+    <view wx:if="{{showDeleteConfirm}}" class="modal-overlay">
+      <view class="modal-content">
+        <text class="modal-title">Confirm Delete</text>
+        <text class="modal-message">Are you sure you want to delete this muscle?</text>
+        <view class="modal-buttons">
+          <view class="button secondary" bindtap="cancelDelete">
+            <text class="button-text">Cancel</text>
+          </view>
+          <view class="button primary delete" bindtap="confirmDelete">
+            <text class="button-text">Delete</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 底部工具�?-->
+</view>
+

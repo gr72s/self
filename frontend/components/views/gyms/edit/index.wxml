@@ -1,0 +1,61 @@
+<view class="page-container">
+  <!-- 顶部导航�?-->
+  
+  <!-- 主内容区 -->
+  <view class="main-container">
+    <view class="page-header">
+      <text class="page-title">编辑健身�?</text>
+    </view>
+
+    <!-- 加载状�?-->
+    <view wx:if="{{loading}}" class="loading-container">
+      <text class="loading-text">加载�?..</text>
+    </view>
+
+    <!-- 错误状�?-->
+    <view wx:if="{{error}}" class="error-container">
+      <text class="error-text">{{error}}</text>
+      <button class="retry-button" bindtap="loadGymData">重试</button>
+    </view>
+
+    <!-- 表单 -->
+    <view wx:if="{{!loading && !error}}" class="form-container">
+      <!-- 健身房名�?-->
+      <view class="form-item">
+        <text class="form-label">健身房名�?</text>
+        <input 
+          class="form-input" 
+          placeholder="请输入健身房名称" 
+          value="{{name}}" 
+          bindinput="handleNameChange"
+        />
+        <text wx:if="{{errors.name}}" class="error-message">{{errors.name}}</text>
+      </view>
+
+      <!-- 地址 -->
+      <view class="form-item">
+        <text class="form-label">地址</text>
+        <textarea 
+          class="form-textarea" 
+          placeholder="请输入健身房地址" 
+          value="{{address}}" 
+          bindinput="handleAddressChange"
+          auto-height
+        />
+        <text wx:if="{{errors.address}}" class="error-message">{{errors.address}}</text>
+      </view>
+
+      <!-- 提交按钮 -->
+      <button 
+        class="submit-button" 
+        bindtap="handleSubmit" 
+        disabled="{{submitting}}"
+      >
+        <text class="submit-button-text">{{submitting ? '提交�?..' : '保存'}}</text>
+      </button>
+    </view>
+  </view>
+  
+  <!-- 底部工具�?-->
+</view>
+

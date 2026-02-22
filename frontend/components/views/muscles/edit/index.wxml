@@ -1,0 +1,48 @@
+﻿<view class="page-container">
+  <view class="main-container">
+    <view class="page-header">
+      <text class="page-title">Edit Muscle</text>
+    </view>
+
+    <view wx:if="{{loading}}" class="loading-container">
+      <text class="loading-text">Loading...</text>
+    </view>
+
+    <view wx:if="{{error}}" class="error-container">
+      <text class="error-text">{{error}}</text>
+      <button class="retry-button" bindtap="loadMuscleData">Retry</button>
+    </view>
+
+    <view wx:if="{{!loading && !error}}" class="form-container">
+      <view class="form-item">
+        <text class="form-label">Muscle Name</text>
+        <input
+          class="form-input"
+          placeholder="Enter muscle name"
+          value="{{name}}"
+          bindinput="handleNameChange"
+        />
+        <text wx:if="{{errors.name}}" class="error-message">{{errors.name}}</text>
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">Muscle Group</text>
+        <input
+          class="form-input"
+          placeholder="Enter muscle group (e.g. Chest, Back)"
+          value="{{group}}"
+          bindinput="handleGroupChange"
+        />
+        <text wx:if="{{errors.group}}" class="error-message">{{errors.group}}</text>
+      </view>
+
+      <button
+        class="submit-button"
+        bindtap="handleSubmit"
+        disabled="{{submitting}}"
+      >
+        <text class="submit-button-text">{{submitting ? 'Submitting...' : 'Save'}}</text>
+      </button>
+    </view>
+  </view>
+</view>

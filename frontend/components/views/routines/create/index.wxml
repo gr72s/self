@@ -1,0 +1,78 @@
+<view class="page-container">
+  <!-- 顶部导航�?-->
+  
+  <!-- 主内容区 -->
+  <view class="main-container">
+    <!-- 页面头部 -->
+    <view class="page-header">
+      <text class="page-title">Create Routine</text>
+    </view>
+
+    <!-- 表单 -->
+    <form class="routine-form" bindsubmit="handleSubmit">
+      <!-- 基本信息 -->
+      <view class="form-section">
+        <text class="section-title">Basic Information</text>
+        <view class="form-item">
+          <text class="form-label">Name *</text>
+          <input class="form-input" placeholder="Enter routine name" value="{{name}}" bindinput="handleNameChange" />
+        </view>
+        <view class="form-item">
+          <text class="form-label">Description (Optional)</text>
+          <textarea class="form-textarea" placeholder="Enter routine description" value="{{description}}" bindinput="handleDescriptionChange" />
+        </view>
+      </view>
+
+      <!-- 目标选择 -->
+      <view class="form-section">
+        <text class="section-title">Targets</text>
+        <view class="form-item">
+          <text class="form-label">Select Targets</text>
+          <view class="targets-container">
+            <view wx:for="{{targets}}" wx:key="id" class="target-item" bindtap="toggleTarget" data-id="{{item.id}}">
+              <view class="target-checkbox {{selectedTargets.includes(item.id) ? 'checked' : ''}}">
+                <text wx:if="{{selectedTargets.includes(item.id)}}" class="checkbox-icon">�?</text>
+              </view>
+              <text class="target-name">{{item.name}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 动作选择 -->
+      <view class="form-section">
+        <text class="section-title">Exercises</text>
+        <view class="form-item">
+          <text class="form-label">Add Exercises</text>
+          <view class="exercises-container">
+            <view wx:for="{{exercises}}" wx:key="id" class="exercise-item" bindtap="toggleExercise" data-id="{{item.id}}">
+              <view class="exercise-checkbox {{selectedExercises.includes(item.id) ? 'checked' : ''}}">
+                <text wx:if="{{selectedExercises.includes(item.id)}}" class="checkbox-icon">�?</text>
+              </view>
+              <text class="exercise-name">{{item.name}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 备注 -->
+      <view class="form-section">
+        <text class="section-title">Additional</text>
+        <view class="form-item">
+          <text class="form-label">Note (Optional)</text>
+          <textarea class="form-textarea" placeholder="Add any notes about this routine" value="{{note}}" bindinput="handleNoteChange" />
+        </view>
+      </view>
+
+      <!-- 提交按钮 -->
+      <view class="form-actions">
+        <button class="cancel-button" bindtap="navigateBack">Cancel</button>
+        <button class="submit-button" form-type="submit" wx:if="{{!submitting}}">Create Routine</button>
+        <button class="submit-button" disabled wx:else>Creating...</button>
+      </view>
+    </form>
+  </view>
+  
+  <!-- 底部工具�?-->
+</view>
+

@@ -1,0 +1,90 @@
+<view class="page-container">
+  <!-- 顶部导航�?-->
+  
+  <!-- 主内容区 -->
+  <view class="main-container">
+    <!-- 页面头部 -->
+    <view class="section-title">
+      <text>Workouts</text>
+      <view class="toolbar-right">
+        <view class="button icon-button" bindtap="handleRefresh">
+          <text>🔄</text>
+        </view>
+        <view class="button primary" bindtap="navigateToCreate">
+          <text class="button-text">+ Create</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 训练列表 -->
+    <view class="table">
+      <block wx:if="{{loading}}">
+        <view class="loading">
+          <view class="loading-spinner"></view>
+          <text>Loading...</text>
+        </view>
+      </block>
+      <block wx:elif="{{workouts.length === 0}}">
+        <view class="empty">
+          <text class="empty-icon">🏋�?</text>
+          <text class="empty-text">No workouts yet</text>
+          <text class="empty-subtext">Create your first workout to get started</text>
+          <view class="button primary" bindtap="navigateToCreate">
+            <text class="button-text">Create First Workout</text>
+          </view>
+        </view>
+      </block>
+      <block wx:else>
+        <view class="table-header">
+          <view class="table-header-cell">Workout</view>
+          <view class="table-header-cell">Date</view>
+          <view class="table-header-cell">Time</view>
+          <view class="table-header-cell">Gym</view>
+          <view class="table-header-cell">Duration</view>
+          <view class="table-header-cell">Status</view>
+          <view class="table-header-cell" style="text-align: right;">Actions</view>
+        </view>
+        <view class="table-body">
+          <view wx:for="{{workouts}}" wx:key="id" class="table-row">
+            <view class="table-cell">
+              <text class="workout-name">{{item.routine && item.routine.name ? item.routine.name : 'Unnamed Workout'}}</text>
+            </view>
+            <view class="table-cell">
+              <text>{{formatDate(item.startTime)}}</text>
+            </view>
+            <view class="table-cell">
+              <text>{{formatTime(item.startTime)}} - {{item.endTime ? formatTime(item.endTime) : 'In Progress'}}</text>
+            </view>
+            <view class="table-cell">
+              <text>{{item.gym && item.gym.name ? item.gym.name : 'Unknown Gym'}}</text>
+            </view>
+            <view class="table-cell">
+              <text>{{item.endTime ? calculateDuration(item.startTime, item.endTime) : '-'}}</text>
+            </view>
+            <view class="table-cell">
+              <text class="status {{item.endTime ? 'completed' : 'in-progress'}}">
+                {{item.endTime ? 'Completed' : 'In Progress'}}
+              </text>
+            </view>
+            <view class="table-cell" style="text-align: right;">
+              <view class="table-actions">
+                <view class="button icon-button" bindtap="navigateToDetail" data-id="{{item.id}}">
+                  <text>👁�?</text>
+                </view>
+                <view class="button icon-button" bindtap="navigateToEdit" data-id="{{item.id}}">
+                  <text>✏️</text>
+                </view>
+                <view class="button icon-button delete" bindtap="confirmDelete" data-id="{{item.id}}">
+                  <text>🗑�?</text>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+  
+  <!-- 底部工具�?-->
+</view>
+

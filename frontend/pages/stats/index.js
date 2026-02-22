@@ -1,4 +1,5 @@
 const { workoutApi } = require('../../services/api');
+const { SHELL_VIEW_STORAGE_KEY, buildView, VIEW_KEYS } = require('../../types/view-router');
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -30,12 +31,12 @@ Page({
       const workouts = Array.isArray(data) ? data : [];
 
       const now = new Date();
-      const thisMonthCount = workouts.filter(w => {
+      const thisMonthCount = workouts.filter((w) => {
         const date = new Date(w.startTime || '');
         return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
       }).length;
 
-      const uniqueRoutines = new Set(workouts.map(w => w.routineId)).size;
+      const uniqueRoutines = new Set(workouts.map((w) => w.routineId)).size;
       const totalExercises = workouts.reduce((sum, workout) => {
         return sum + ((workout.exercises && workout.exercises.length) || 0);
       }, 0);
@@ -54,9 +55,11 @@ Page({
 
   navigateToWorkout(e) {
     const id = e.currentTarget.dataset.id;
-    if (id) {
-      wx.navigateTo({ url: `/pages/workouts/list/index?id=${id}` });
-    }
+    wx.setStorageSync(
+      SHELL_VIEW_STORAGE_KEY,
+      buildView(VIEW_KEYS.WORKOUTS_EDIT, id ? { id } : {})
+    );
+    wx.switchTab({ url: '/pages/index/index' });
   },
 
   handleMenuToggle() {

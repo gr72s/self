@@ -1,6 +1,21 @@
 {
   "usingComponents": {
-    "navbar": "../../components/navbar/index"
+    "navbar": "../../components/navbar/index",
+    "workouts-list-view": "../../components/views/workouts/list/index",
+    "workouts-create-view": "../../components/views/workouts/create/index",
+    "workouts-edit-view": "../../components/views/workouts/edit/index",
+    "routines-list-view": "../../components/views/routines/list/index",
+    "routines-create-view": "../../components/views/routines/create/index",
+    "routines-edit-view": "../../components/views/routines/edit/index",
+    "exercises-list-view": "../../components/views/exercises/list/index",
+    "exercises-create-view": "../../components/views/exercises/create/index",
+    "exercises-edit-view": "../../components/views/exercises/edit/index",
+    "gyms-list-view": "../../components/views/gyms/list/index",
+    "gyms-create-view": "../../components/views/gyms/create/index",
+    "gyms-edit-view": "../../components/views/gyms/edit/index",
+    "muscles-list-view": "../../components/views/muscles/list/index",
+    "muscles-create-view": "../../components/views/muscles/create/index",
+    "muscles-edit-view": "../../components/views/muscles/edit/index"
   },
   "navigationBarTitleText": "Home"
 }
