@@ -98,12 +98,12 @@ Component({
       const { routines, gyms, selectedRoutineIndex, selectedGymIndex, selectedTargets, note } = this.data;
 
       if (!routines[selectedRoutineIndex]) {
-        wx.showToast({ title: 'Please select a routine', icon: 'none' });
+        wx.showToast({ title: '请选择训练计划', icon: 'none' });
         return;
       }
 
       if (!gyms[selectedGymIndex]) {
-        wx.showToast({ title: 'Please select a gym', icon: 'none' });
+        wx.showToast({ title: '请选择健身房', icon: 'none' });
         return;
       }
 
@@ -120,7 +120,7 @@ Component({
         await workoutApi.create(workoutData);
 
         wx.showToast({
-          title: 'Workout created successfully',
+          title: '训练创建成功',
           icon: 'success'
         });
 
@@ -130,7 +130,7 @@ Component({
       } catch (error) {
         console.error('Failed to create workout:', error);
         wx.showToast({
-          title: 'Failed to create workout',
+          title: '创建训练失败',
           icon: 'none'
         });
       } finally {

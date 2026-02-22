@@ -28,7 +28,7 @@ Page({
     console.log('RoutineEditPage loaded', options);
     const routineId = options.id;
     if (!routineId) {
-      wx.showToast({ title: 'Invalid routine ID', icon: 'none' });
+      wx.showToast({ title: '无效的计划ID', icon: 'none' });
       wx.navigateBack();
       return;
     }
@@ -46,7 +46,7 @@ Page({
       const { routineId } = this.data;
       
       if (!routineId) {
-        throw new Error('Routine ID is required');
+        throw new Error('需要计划ID');
       }
       
       // 获取计划详情
@@ -72,7 +72,7 @@ Page({
       this.initFormData(routine);
     } catch (error) {
       console.error('Failed to fetch routine data:', error);
-      wx.showToast({ title: 'Failed to load routine data', icon: 'none' });
+      wx.showToast({ title: '加载计划数据失败', icon: 'none' });
     } finally {
       this.setData({ loading: false });
     }
@@ -180,12 +180,12 @@ Page({
     
     // 验证表单
     if (!name.trim()) {
-      wx.showToast({ title: 'Please enter routine name', icon: 'none' });
+      wx.showToast({ title: '请输入计划名称', icon: 'none' });
       return;
     }
     
     if (!routineId) {
-      wx.showToast({ title: 'Invalid routine ID', icon: 'none' });
+      wx.showToast({ title: '无效的计划ID', icon: 'none' });
       return;
     }
     
@@ -205,7 +205,7 @@ Page({
       await routineApi.update(routineId, routineData);
       
       wx.showToast({
-        title: 'Routine updated successfully',
+        title: '计划更新成功',
         icon: 'success'
       });
       
@@ -216,7 +216,7 @@ Page({
     } catch (error) {
       console.error('Failed to update routine:', error);
       wx.showToast({
-        title: 'Failed to update routine',
+        title: '更新计划失败',
         icon: 'none'
       });
     } finally {

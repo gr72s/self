@@ -107,7 +107,7 @@ Component({
       const { name, originName, description, selectedMainMuscles, selectedSupportMuscles, cues } = this.data;
 
       if (!name.trim()) {
-        wx.showToast({ title: 'Please enter exercise name', icon: 'none' });
+        wx.showToast({ title: '请输入动作名称', icon: 'none' });
         return;
       }
 
@@ -126,7 +126,7 @@ Component({
         await exerciseApi.create(exerciseData);
 
         wx.showToast({
-          title: 'Exercise created successfully',
+          title: '动作创建成功',
           icon: 'success'
         });
 
@@ -136,7 +136,7 @@ Component({
       } catch (error) {
         console.error('Failed to create exercise:', error);
         wx.showToast({
-          title: 'Failed to create exercise',
+          title: '创建动作失败',
           icon: 'none'
         });
       } finally {

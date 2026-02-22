@@ -35,7 +35,7 @@ Component({
         this.setData({ id: this.data.entityId }, () => this.loadGymData());
       } else {
         this.setData({
-          error: 'Missing gym id',
+          error: '缺少健身房ID',
           loading: false
         });
       }
@@ -82,11 +82,11 @@ Component({
       const errors = {};
 
       if (!this.data.name.trim()) {
-        errors.name = 'Please enter gym name';
+        errors.name = '请输入健身房名称';
       }
 
       if (!this.data.address.trim()) {
-        errors.address = 'Please enter gym address';
+        errors.address = '请输入健身房地址';
       }
 
       this.setData({ errors });
@@ -108,7 +108,7 @@ Component({
       gymApi.update(this.data.id, gymData)
         .then(() => {
           wx.showToast({
-            title: 'Gym updated',
+            title: '健身房已更新',
             icon: 'success'
           });
 
@@ -119,7 +119,7 @@ Component({
         .catch((err) => {
           console.error('Failed to update gym:', err);
           wx.showToast({
-            title: 'Failed to update gym',
+            title: '更新健身房失败',
             icon: 'none'
           });
         })

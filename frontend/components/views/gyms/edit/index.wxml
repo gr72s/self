@@ -1,18 +1,18 @@
 <view class="page-container">
-  <!-- 顶部导航�?-->
+  <!-- 顶部导航栏 -->
   
   <!-- 主内容区 -->
   <view class="main-container">
     <view class="page-header">
-      <text class="page-title">编辑健身�?</text>
+      <text class="page-title">编辑健身房</text>
     </view>
 
-    <!-- 加载状�?-->
+    <!-- 加载状态 -->
     <view wx:if="{{loading}}" class="loading-container">
-      <text class="loading-text">加载�?..</text>
+      <text class="loading-text">加载中...</text>
     </view>
 
-    <!-- 错误状�?-->
+    <!-- 错误状态 -->
     <view wx:if="{{error}}" class="error-container">
       <text class="error-text">{{error}}</text>
       <button class="retry-button" bindtap="loadGymData">重试</button>
@@ -20,9 +20,9 @@
 
     <!-- 表单 -->
     <view wx:if="{{!loading && !error}}" class="form-container">
-      <!-- 健身房名�?-->
+      <!-- 健身房名称 -->
       <view class="form-item">
-        <text class="form-label">健身房名�?</text>
+        <text class="form-label">健身房名称</text>
         <input 
           class="form-input" 
           placeholder="请输入健身房名称" 
@@ -51,11 +51,10 @@
         bindtap="handleSubmit" 
         disabled="{{submitting}}"
       >
-        <text class="submit-button-text">{{submitting ? '提交�?..' : '保存'}}</text>
+        <text class="submit-button-text">{{submitting ? '提交中...' : '保存'}}</text>
       </button>
     </view>
   </view>
   
-  <!-- 底部工具�?-->
+  <!-- 底部工具栏 -->
 </view>
-

@@ -93,7 +93,7 @@ Component({
       const { name, description, selectedTargets, selectedExercises, note } = this.data;
 
       if (!name.trim()) {
-        wx.showToast({ title: 'Please enter routine name', icon: 'none' });
+        wx.showToast({ title: '请输入计划名称', icon: 'none' });
         return;
       }
 
@@ -111,7 +111,7 @@ Component({
         await routineApi.create(routineData);
 
         wx.showToast({
-          title: 'Routine created successfully',
+          title: '计划创建成功',
           icon: 'success'
         });
 
@@ -121,7 +121,7 @@ Component({
       } catch (error) {
         console.error('Failed to create routine:', error);
         wx.showToast({
-          title: 'Failed to create routine',
+          title: '创建计划失败',
           icon: 'none'
         });
       } finally {

@@ -12,8 +12,7 @@ Page({
     thisMonthCount: 0,
     uniqueRoutines: 0,
     totalExercises: 0,
-    recentWorkouts: [],
-    menuOpen: false
+    recentWorkouts: []
   },
 
   onLoad() {
@@ -60,10 +59,6 @@ Page({
       buildView(VIEW_KEYS.WORKOUTS_EDIT, id ? { id } : {})
     );
     wx.switchTab({ url: '/pages/index/index' });
-  },
-
-  handleMenuToggle() {
-    this.setData({ menuOpen: !this.data.menuOpen });
   },
 
   formatDate

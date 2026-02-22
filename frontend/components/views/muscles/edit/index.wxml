@@ -1,24 +1,24 @@
 <view class="page-container">
   <view class="main-container">
     <view class="page-header">
-      <text class="page-title">Edit Muscle</text>
+      <text class="page-title">编辑肌肉</text>
     </view>
 
     <view wx:if="{{loading}}" class="loading-container">
-      <text class="loading-text">Loading...</text>
+      <text class="loading-text">加载中...</text>
     </view>
 
     <view wx:if="{{error}}" class="error-container">
       <text class="error-text">{{error}}</text>
-      <button class="retry-button" bindtap="loadMuscleData">Retry</button>
+      <button class="retry-button" bindtap="loadMuscleData">重试</button>
     </view>
 
     <view wx:if="{{!loading && !error}}" class="form-container">
       <view class="form-item">
-        <text class="form-label">Muscle Name</text>
+        <text class="form-label">肌肉名称</text>
         <input
           class="form-input"
-          placeholder="Enter muscle name"
+          placeholder="请输入肌肉名称"
           value="{{name}}"
           bindinput="handleNameChange"
         />
@@ -26,10 +26,10 @@
       </view>
 
       <view class="form-item">
-        <text class="form-label">Muscle Group</text>
+        <text class="form-label">肌肉分组</text>
         <input
           class="form-input"
-          placeholder="Enter muscle group (e.g. Chest, Back)"
+          placeholder="请输入肌肉分组（如：胸部、背部）"
           value="{{group}}"
           bindinput="handleGroupChange"
         />
@@ -41,7 +41,7 @@
         bindtap="handleSubmit"
         disabled="{{submitting}}"
       >
-        <text class="submit-button-text">{{submitting ? 'Submitting...' : 'Save'}}</text>
+        <text class="submit-button-text">{{submitting ? '提交中...' : '保存'}}</text>
       </button>
     </view>
   </view>

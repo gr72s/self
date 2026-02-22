@@ -61,7 +61,7 @@ Component({
         this.initFormData(exercise);
       } catch (error) {
         console.error('Failed to fetch exercise data:', error);
-        wx.showToast({ title: 'Failed to load exercise data', icon: 'none' });
+        wx.showToast({ title: '加载动作数据失败', icon: 'none' });
       } finally {
         this.setData({ loading: false });
       }
@@ -158,7 +158,7 @@ Component({
       const { entityId, name, originName, description, selectedMainMuscles, selectedSupportMuscles, cues } = this.data;
 
       if (!name.trim()) {
-        wx.showToast({ title: 'Please enter exercise name', icon: 'none' });
+        wx.showToast({ title: '请输入动作名称', icon: 'none' });
         return;
       }
 
@@ -177,7 +177,7 @@ Component({
         await exerciseApi.update(entityId, exerciseData);
 
         wx.showToast({
-          title: 'Exercise updated successfully',
+          title: '动作更新成功',
           icon: 'success'
         });
 
@@ -187,7 +187,7 @@ Component({
       } catch (error) {
         console.error('Failed to update exercise:', error);
         wx.showToast({
-          title: 'Failed to update exercise',
+          title: '更新动作失败',
           icon: 'none'
         });
       } finally {

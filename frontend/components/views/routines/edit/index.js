@@ -50,7 +50,7 @@ Component({
       try {
         const routineId = this.data.entityId;
         if (!routineId) {
-          throw new Error('Routine ID is required');
+          throw new Error('需要计划ID');
         }
 
         const routineResponse = await routineApi.getById(routineId);
@@ -72,7 +72,7 @@ Component({
         this.initFormData(routine);
       } catch (error) {
         console.error('Failed to fetch routine data:', error);
-        wx.showToast({ title: 'Failed to load routine data', icon: 'none' });
+        wx.showToast({ title: '加载计划数据失败', icon: 'none' });
       } finally {
         this.setData({ loading: false });
       }
@@ -154,12 +154,12 @@ Component({
       const { entityId, name, description, selectedTargets, selectedExercises, note } = this.data;
 
       if (!name.trim()) {
-        wx.showToast({ title: 'Please enter routine name', icon: 'none' });
+        wx.showToast({ title: '请输入计划名称', icon: 'none' });
         return;
       }
 
       if (!entityId) {
-        wx.showToast({ title: 'Invalid routine ID', icon: 'none' });
+        wx.showToast({ title: '无效的计划ID', icon: 'none' });
         return;
       }
 
@@ -177,7 +177,7 @@ Component({
         await routineApi.update(entityId, routineData);
 
         wx.showToast({
-          title: 'Routine updated successfully',
+          title: '计划更新成功',
           icon: 'success'
         });
 
@@ -187,7 +187,7 @@ Component({
       } catch (error) {
         console.error('Failed to update routine:', error);
         wx.showToast({
-          title: 'Failed to update routine',
+          title: '更新计划失败',
           icon: 'none'
         });
       } finally {

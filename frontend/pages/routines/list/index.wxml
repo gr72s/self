@@ -9,13 +9,13 @@
   <view class="main-container">
     <!-- 页面头部 -->
     <view class="section-title">
-      <text>Routines</text>
+      <text>训练计划</text>
       <view class="toolbar-right">
         <view class="button icon-button" bindtap="handleRefresh">
           <text>🔄</text>
         </view>
         <view class="button primary" bindtap="navigateToCreate">
-          <text class="button-text">+ Create</text>
+          <text class="button-text">+ 新建</text>
         </view>
       </view>
     </view>
@@ -25,26 +25,26 @@
       <block wx:if="{{loading}}">
         <view class="loading">
           <view class="loading-spinner"></view>
-          <text>Loading...</text>
+          <text>加载中...</text>
         </view>
       </block>
       <block wx:elif="{{routines.length === 0}}">
         <view class="empty">
           <text class="empty-icon">📋</text>
-          <text class="empty-text">No routines yet</text>
-          <text class="empty-subtext">Create your first routine to get started</text>
+          <text class="empty-text">暂无训练计划</text>
+          <text class="empty-subtext">创建第一个训练计划开始使用</text>
           <view class="button primary" bindtap="navigateToCreate">
-            <text class="button-text">Create First Routine</text>
+            <text class="button-text">新建首个训练计划</text>
           </view>
         </view>
       </block>
       <block wx:else>
         <view class="table-header">
-          <view class="table-header-cell">Routine</view>
-          <view class="table-header-cell">Exercises</view>
-          <view class="table-header-cell">Targets</view>
-          <view class="table-header-cell">Description</view>
-          <view class="table-header-cell" style="text-align: right;">Actions</view>
+          <view class="table-header-cell">计划</view>
+          <view class="table-header-cell">动作库</view>
+          <view class="table-header-cell">目标肌群</view>
+          <view class="table-header-cell">描述</view>
+          <view class="table-header-cell" style="text-align: right;">操作</view>
         </view>
         <view class="table-body">
           <view wx:for="{{routines}}" wx:key="{{item.id}}" class="table-row">
@@ -58,7 +58,7 @@
               <text>{{item.targets && item.targets.size ? item.targets.size : 0}}</text>
             </view>
             <view class="table-cell">
-              <text class="routine-description">{{item.description || 'No description'}}</text>
+              <text class="routine-description">{{item.description || '暂无描述'}}</text>
             </view>
             <view class="table-cell" style="text-align: right;">
               <view class="table-actions">

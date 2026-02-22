@@ -48,7 +48,7 @@ Component({
       } catch (error) {
         console.error('Failed to fetch workouts:', error);
         wx.showToast({
-          title: 'Failed to load workouts',
+          title: '加载训练记录失败',
           icon: 'none'
         });
       } finally {
@@ -88,10 +88,10 @@ Component({
       const id = e?.currentTarget?.dataset?.id;
       if (!id) return;
       wx.showModal({
-        title: 'Delete Workout',
-        content: 'Are you sure you want to delete this workout?',
-        confirmText: 'Delete',
-        cancelText: 'Cancel',
+        title: '删除训练记录',
+        content: '确定删除该训练记录吗？',
+        confirmText: '删除',
+        cancelText: '取消',
         success: async (res) => {
           if (res.confirm) {
             await this.deleteWorkout(id);
@@ -104,14 +104,14 @@ Component({
       try {
         await workoutApi.delete(id);
         wx.showToast({
-          title: 'Workout deleted',
+          title: '训练记录已删除',
           icon: 'success'
         });
         this.fetchWorkouts();
       } catch (error) {
         console.error('Failed to delete workout:', error);
         wx.showToast({
-          title: 'Failed to delete workout',
+          title: '删除训练记录失败',
           icon: 'none'
         });
       }

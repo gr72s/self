@@ -52,7 +52,7 @@ Component({
       try {
         const workoutId = this.data.entityId;
         if (!workoutId) {
-          throw new Error('Workout ID is required');
+          throw new Error('需要训练ID');
         }
 
         const workoutResponse = await workoutApi.getById(workoutId);
@@ -78,7 +78,7 @@ Component({
         this.initFormData(workout, routines, gyms);
       } catch (error) {
         console.error('Failed to fetch workout data:', error);
-        wx.showToast({ title: 'Failed to load workout data', icon: 'none' });
+        wx.showToast({ title: '加载训练数据失败', icon: 'none' });
       } finally {
         this.setData({ loading: false });
       }
@@ -146,15 +146,15 @@ Component({
       const { entityId, routines, gyms, selectedRoutineIndex, selectedGymIndex, selectedTargets, note } = this.data;
 
       if (!entityId) {
-        wx.showToast({ title: 'Invalid workout ID', icon: 'none' });
+        wx.showToast({ title: '无效的训练ID', icon: 'none' });
         return;
       }
       if (!routines[selectedRoutineIndex]) {
-        wx.showToast({ title: 'Please select a routine', icon: 'none' });
+        wx.showToast({ title: '请选择训练计划', icon: 'none' });
         return;
       }
       if (!gyms[selectedGymIndex]) {
-        wx.showToast({ title: 'Please select a gym', icon: 'none' });
+        wx.showToast({ title: '请选择健身房', icon: 'none' });
         return;
       }
 
@@ -171,7 +171,7 @@ Component({
         await workoutApi.update(entityId, workoutData);
 
         wx.showToast({
-          title: 'Workout updated successfully',
+          title: '训练更新成功',
           icon: 'success'
         });
 
@@ -181,7 +181,7 @@ Component({
       } catch (error) {
         console.error('Failed to update workout:', error);
         wx.showToast({
-          title: 'Failed to update workout',
+          title: '更新训练失败',
           icon: 'none'
         });
       } finally {

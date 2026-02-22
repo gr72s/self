@@ -28,7 +28,7 @@ Page({
     console.log('WorkoutEditPage loaded', options);
     const workoutId = options.id;
     if (!workoutId) {
-      wx.showToast({ title: 'Invalid workout ID', icon: 'none' });
+      wx.showToast({ title: '无效的训练ID', icon: 'none' });
       wx.navigateBack();
       return;
     }
@@ -46,7 +46,7 @@ Page({
       const { workoutId } = this.data;
       
       if (!workoutId) {
-        throw new Error('Workout ID is required');
+        throw new Error('需要训练ID');
       }
       
       // 获取训练详情
@@ -77,7 +77,7 @@ Page({
       this.initFormData(workout, routines, gyms);
     } catch (error) {
       console.error('Failed to fetch workout data:', error);
-      wx.showToast({ title: 'Failed to load workout data', icon: 'none' });
+      wx.showToast({ title: '加载训练数据失败', icon: 'none' });
     } finally {
       this.setData({ loading: false });
     }
@@ -164,17 +164,17 @@ Page({
     
     // 验证表单
     if (!workoutId) {
-      wx.showToast({ title: 'Invalid workout ID', icon: 'none' });
+      wx.showToast({ title: '无效的训练ID', icon: 'none' });
       return;
     }
     
     if (!routines[selectedRoutineIndex]) {
-      wx.showToast({ title: 'Please select a routine', icon: 'none' });
+      wx.showToast({ title: '请选择训练计划', icon: 'none' });
       return;
     }
     
     if (!gyms[selectedGymIndex]) {
-      wx.showToast({ title: 'Please select a gym', icon: 'none' });
+      wx.showToast({ title: '请选择健身房', icon: 'none' });
       return;
     }
     
@@ -193,7 +193,7 @@ Page({
       await workoutApi.update(workoutId, workoutData);
       
       wx.showToast({
-        title: 'Workout updated successfully',
+        title: '训练更新成功',
         icon: 'success'
       });
       
@@ -204,7 +204,7 @@ Page({
     } catch (error) {
       console.error('Failed to update workout:', error);
       wx.showToast({
-        title: 'Failed to update workout',
+        title: '更新训练失败',
         icon: 'none'
       });
     } finally {

@@ -28,7 +28,7 @@ Page({
     console.log('ExerciseEditPage loaded', options);
     const exerciseId = options.id;
     if (!exerciseId) {
-      wx.showToast({ title: 'Invalid exercise ID', icon: 'none' });
+      wx.showToast({ title: '无效的动作ID', icon: 'none' });
       wx.navigateBack();
       return;
     }
@@ -59,7 +59,7 @@ Page({
       this.initFormData(exercise);
     } catch (error) {
       console.error('Failed to fetch exercise data:', error);
-      wx.showToast({ title: 'Failed to load exercise data', icon: 'none' });
+      wx.showToast({ title: '加载动作数据失败', icon: 'none' });
     } finally {
       this.setData({ loading: false });
     }
@@ -189,7 +189,7 @@ Page({
     
     // 验证表单
     if (!name.trim()) {
-      wx.showToast({ title: 'Please enter exercise name', icon: 'none' });
+      wx.showToast({ title: '请输入动作名称', icon: 'none' });
       return;
     }
     
@@ -210,7 +210,7 @@ Page({
       await exerciseApi.update(exerciseId, exerciseData);
       
       wx.showToast({
-        title: 'Exercise updated successfully',
+        title: '动作更新成功',
         icon: 'success'
       });
       
@@ -221,7 +221,7 @@ Page({
     } catch (error) {
       console.error('Failed to update exercise:', error);
       wx.showToast({
-        title: 'Failed to update exercise',
+        title: '更新动作失败',
         icon: 'none'
       });
     } finally {

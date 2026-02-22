@@ -3,5 +3,5 @@
     "navbar": "../../../components/navbar/index",
     "tabbar": "../../../components/tabbar/index"
   },
-  "navigationBarTitleText": "Workouts"
+  "navigationBarTitleText": "训练记录"
 }

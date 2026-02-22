@@ -9,16 +9,16 @@
   <view class="main-container">
     <!-- 页面头部 -->
     <view class="page-header">
-      <text class="page-title">Edit Workout</text>
+      <text class="page-title">编辑训练</text>
     </view>
 
     <!-- 表单 -->
     <form class="workout-form" bindsubmit="handleSubmit">
       <!-- 训练计划选择 -->
       <view class="form-section">
-        <text class="section-title">Routine</text>
+        <text class="section-title">计划</text>
         <view class="form-item">
-          <text class="form-label">Select Routine</text>
+          <text class="form-label">选择训练计划</text>
           <view class="select-container">
             <picker bindchange="handleRoutineChange" range="{{routines}}" range-key="name" value="{{selectedRoutineIndex}}">
               <view class="picker-view">
@@ -31,9 +31,9 @@
 
       <!-- 健身房选择 -->
       <view class="form-section">
-        <text class="section-title">Gym</text>
+        <text class="section-title">健身房</text>
         <view class="form-item">
-          <text class="form-label">Select Gym</text>
+          <text class="form-label">选择健身房</text>
           <view class="select-container">
             <picker bindchange="handleGymChange" range="{{gyms}}" range-key="name" value="{{selectedGymIndex}}">
               <view class="picker-view">
@@ -46,9 +46,9 @@
 
       <!-- 目标选择 -->
       <view class="form-section">
-        <text class="section-title">Targets</text>
+        <text class="section-title">目标肌群</text>
         <view class="form-item">
-          <text class="form-label">Select Targets</text>
+          <text class="form-label">选择目标肌群</text>
           <view class="targets-container">
             <view wx:for="{{targets}}" wx:key="{{item.id}}" class="target-item" bindtap="toggleTarget" data-id="{{item.id}}">
               <view class="target-checkbox {{selectedTargets.includes(item.id) ? 'checked' : ''}}">
@@ -62,18 +62,18 @@
 
       <!-- 备注 -->
       <view class="form-section">
-        <text class="section-title">Additional</text>
+        <text class="section-title">其他信息</text>
         <view class="form-item">
-          <text class="form-label">Note (Optional)</text>
-          <textarea class="form-textarea" placeholder="Add any notes about this workout" value="{{note}}" bindinput="handleNoteChange"></textarea>
+          <text class="form-label">备注（选填）</text>
+          <textarea class="form-textarea" placeholder="填写该训练备注" value="{{note}}" bindinput="handleNoteChange"></textarea>
         </view>
       </view>
 
       <!-- 提交按钮 -->
       <view class="form-actions">
-        <button class="cancel-button" bindtap="navigateBack">Cancel</button>
-        <button class="submit-button" form-type="submit" wx:if="{{!submitting}}">Update Workout</button>
-        <button class="submit-button" disabled wx:else>Updating...</button>
+        <button class="cancel-button" bindtap="navigateBack">取消</button>
+        <button class="submit-button" form-type="submit" wx:if="{{!submitting}}">保存训练</button>
+        <button class="submit-button" disabled wx:else>保存中...</button>
       </view>
     </form>
   </view>

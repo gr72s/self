@@ -9,29 +9,29 @@
   <view class="main-container">
     <!-- 页面头部 -->
     <view class="page-header">
-      <text class="page-title">Edit Routine</text>
+      <text class="page-title">编辑计划</text>
     </view>
 
     <!-- 表单 -->
     <form class="routine-form" bindsubmit="handleSubmit">
       <!-- 基本信息 -->
       <view class="form-section">
-        <text class="section-title">Basic Information</text>
+        <text class="section-title">基本信息</text>
         <view class="form-item">
-          <text class="form-label">Name *</text>
-          <input class="form-input" placeholder="Enter routine name" value="{{name}}" bindinput="handleNameChange" />
+          <text class="form-label">名称 *</text>
+          <input class="form-input" placeholder="请输入计划名称" value="{{name}}" bindinput="handleNameChange" />
         </view>
         <view class="form-item">
-          <text class="form-label">Description (Optional)</text>
-          <textarea class="form-textarea" placeholder="Enter routine description" value="{{description}}" bindinput="handleDescriptionChange" />
+          <text class="form-label">描述（选填）</text>
+          <textarea class="form-textarea" placeholder="请输入计划描述" value="{{description}}" bindinput="handleDescriptionChange" />
         </view>
       </view>
 
       <!-- 目标选择 -->
       <view class="form-section">
-        <text class="section-title">Targets</text>
+        <text class="section-title">目标肌群</text>
         <view class="form-item">
-          <text class="form-label">Select Targets</text>
+          <text class="form-label">选择目标肌群</text>
           <view class="targets-container">
             <view wx:for="{{targets}}" wx:key="{{item.id}}" class="target-item" bindtap="toggleTarget" data-id="{{item.id}}">
               <view class="target-checkbox {{selectedTargets.includes(item.id) ? 'checked' : ''}}">
@@ -45,9 +45,9 @@
 
       <!-- 动作选择 -->
       <view class="form-section">
-        <text class="section-title">Exercises</text>
+        <text class="section-title">动作库</text>
         <view class="form-item">
-          <text class="form-label">Add Exercises</text>
+          <text class="form-label">添加动作</text>
           <view class="exercises-container">
             <view wx:for="{{exercises}}" wx:key="{{item.id}}" class="exercise-item" bindtap="toggleExercise" data-id="{{item.id}}">
               <view class="exercise-checkbox {{selectedExercises.includes(item.id) ? 'checked' : ''}}">
@@ -61,18 +61,18 @@
 
       <!-- 备注 -->
       <view class="form-section">
-        <text class="section-title">Additional</text>
+        <text class="section-title">其他信息</text>
         <view class="form-item">
-          <text class="form-label">Note (Optional)</text>
-          <textarea class="form-textarea" placeholder="Add any notes about this routine" value="{{note}}" bindinput="handleNoteChange" />
+          <text class="form-label">备注（选填）</text>
+          <textarea class="form-textarea" placeholder="填写该计划备注" value="{{note}}" bindinput="handleNoteChange" />
         </view>
       </view>
 
       <!-- 提交按钮 -->
       <view class="form-actions">
-        <button class="cancel-button" bindtap="navigateBack">Cancel</button>
-        <button class="submit-button" form-type="submit" wx:if="{{!submitting}}">Update Routine</button>
-        <button class="submit-button" disabled wx:else>Updating...</button>
+        <button class="cancel-button" bindtap="navigateBack">取消</button>
+        <button class="submit-button" form-type="submit" wx:if="{{!submitting}}">保存计划</button>
+        <button class="submit-button" disabled wx:else>保存中...</button>
       </view>
     </form>
   </view>

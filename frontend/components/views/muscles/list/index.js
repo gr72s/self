@@ -32,7 +32,7 @@ Component({
         .catch((err) => {
           console.error('Failed to load muscles:', err);
           this.setData({
-            error: 'Failed to load muscles. Please retry.',
+            error: '加载肌肉失败，请重试',
             loading: false
           });
         });
@@ -78,7 +78,7 @@ Component({
       muscleApi.delete(this.data.muscleIdToDelete)
         .then(() => {
           wx.showToast({
-            title: 'Muscle deleted',
+            title: '肌肉已删除',
             icon: 'success'
           });
 
@@ -92,7 +92,7 @@ Component({
         .catch((err) => {
           console.error('Failed to delete muscle:', err);
           wx.showToast({
-            title: 'Failed to delete muscle',
+            title: '删除肌肉失败',
             icon: 'none'
           });
         });

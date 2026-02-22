@@ -146,7 +146,7 @@ Page({
     
     // 验证表单
     if (!name.trim()) {
-      wx.showToast({ title: 'Please enter exercise name', icon: 'none' });
+      wx.showToast({ title: '请输入动作名称', icon: 'none' });
       return;
     }
     
@@ -167,7 +167,7 @@ Page({
       await exerciseApi.create(exerciseData);
       
       wx.showToast({
-        title: 'Exercise created successfully',
+        title: '动作创建成功',
         icon: 'success'
       });
       
@@ -178,7 +178,7 @@ Page({
     } catch (error) {
       console.error('Failed to create exercise:', error);
       wx.showToast({
-        title: 'Failed to create exercise',
+        title: '创建动作失败',
         icon: 'none'
       });
     } finally {

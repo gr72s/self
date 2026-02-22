@@ -15,22 +15,51 @@ const RESOURCE_TO_LIST_VIEW = {
 };
 
 const VIEW_TITLES = {
-  [VIEW_KEYS.HOME]: 'Home',
-  [VIEW_KEYS.WORKOUTS_LIST]: 'Workouts',
-  [VIEW_KEYS.WORKOUTS_CREATE]: 'Create Workout',
-  [VIEW_KEYS.WORKOUTS_EDIT]: 'Edit Workout',
-  [VIEW_KEYS.ROUTINES_LIST]: 'Routines',
-  [VIEW_KEYS.ROUTINES_CREATE]: 'Create Routine',
-  [VIEW_KEYS.ROUTINES_EDIT]: 'Edit Routine',
-  [VIEW_KEYS.EXERCISES_LIST]: 'Exercises',
-  [VIEW_KEYS.EXERCISES_CREATE]: 'Create Exercise',
-  [VIEW_KEYS.EXERCISES_EDIT]: 'Edit Exercise',
-  [VIEW_KEYS.GYMS_LIST]: 'Gyms',
-  [VIEW_KEYS.GYMS_CREATE]: 'Create Gym',
-  [VIEW_KEYS.GYMS_EDIT]: 'Edit Gym',
-  [VIEW_KEYS.MUSCLES_LIST]: 'Muscles',
-  [VIEW_KEYS.MUSCLES_CREATE]: 'Create Muscle',
-  [VIEW_KEYS.MUSCLES_EDIT]: 'Edit Muscle'
+  [VIEW_KEYS.HOME]: '首页',
+  [VIEW_KEYS.WORKOUTS_LIST]: '训练记录',
+  [VIEW_KEYS.WORKOUTS_CREATE]: '新建训练',
+  [VIEW_KEYS.WORKOUTS_EDIT]: '编辑训练',
+  [VIEW_KEYS.ROUTINES_LIST]: '训练计划',
+  [VIEW_KEYS.ROUTINES_CREATE]: '新建计划',
+  [VIEW_KEYS.ROUTINES_EDIT]: '编辑计划',
+  [VIEW_KEYS.EXERCISES_LIST]: '动作库',
+  [VIEW_KEYS.EXERCISES_CREATE]: '新建动作',
+  [VIEW_KEYS.EXERCISES_EDIT]: '编辑动作',
+  [VIEW_KEYS.GYMS_LIST]: '健身房',
+  [VIEW_KEYS.GYMS_CREATE]: '新建健身房',
+  [VIEW_KEYS.GYMS_EDIT]: '编辑健身房',
+  [VIEW_KEYS.MUSCLES_LIST]: '肌肉',
+  [VIEW_KEYS.MUSCLES_CREATE]: '新建肌肉',
+  [VIEW_KEYS.MUSCLES_EDIT]: '编辑肌肉'
+};
+
+const extractApiPayload = (response) => {
+  if (!response) {
+    return null;
+  }
+
+  if (Object.prototype.hasOwnProperty.call(response, 'data')) {
+    const firstLayer = response.data;
+    if (firstLayer && typeof firstLayer === 'object' && Object.prototype.hasOwnProperty.call(firstLayer, 'data')) {
+      return firstLayer.data;
+    }
+    return firstLayer;
+  }
+
+  return response;
+};
+
+const buildUserFromStorage = () => {
+  const stored = wx.getStorageSync('userInfo');
+  if (!stored || typeof stored !== 'object') {
+    return null;
+  }
+
+  return {
+    username: stored.username || stored.nickname || '',
+    nickname: stored.nickname || '',
+    avatar: stored.avatar || stored.avatarUrl || ''
+  };
 };
 
 Page({
@@ -78,12 +107,22 @@ Page({
   },
 
   async fetchData() {
+    const fallbackUser = buildUserFromStorage();
+    if (fallbackUser) {
+      this.setData({ user: fallbackUser });
+    }
+
     try {
       const userResponse = await userApi.getCurrent();
-      const userData = (userResponse.data && userResponse.data.data) || userResponse.data;
-      this.setData({ user: userData });
+      const userData = extractApiPayload(userResponse);
+      if (userData && typeof userData === 'object') {
+        this.setData({ user: userData });
+      } else {
+        this.setData({ user: fallbackUser || null });
+      }
     } catch (error) {
       console.error('Failed to fetch user:', error);
+      this.setData({ user: fallbackUser || null });
     }
 
     try {

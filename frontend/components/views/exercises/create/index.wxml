@@ -1,52 +1,52 @@
 <view class="page-container">
-  <!-- 顶部导航�?-->
+  <!-- 顶部导航栏-->
   
   <!-- 主内容区 -->
   <view class="main-container">
     <!-- 页面头部 -->
     <view class="page-header">
-      <text class="page-title">Create Exercise</text>
+      <text class="page-title">新建动作</text>
     </view>
 
     <!-- 表单 -->
     <form class="exercise-form" bindsubmit="handleSubmit">
       <!-- 基本信息 -->
       <view class="form-section">
-        <text class="section-title">Basic Information</text>
+        <text class="section-title">基本信息</text>
         <view class="form-item">
-          <text class="form-label">Name *</text>
-          <input class="form-input" placeholder="Enter exercise name" value="{{name}}" bindinput="handleNameChange" />
+          <text class="form-label">名称 *</text>
+          <input class="form-input" placeholder="请输入动作名称" value="{{name}}" bindinput="handleNameChange" />
         </view>
         <view class="form-item">
-          <text class="form-label">Origin Name (Optional)</text>
-          <input class="form-input" placeholder="Enter origin name" value="{{originName}}" bindinput="handleOriginNameChange" />
+          <text class="form-label">原名（选填）</text>
+          <input class="form-input" placeholder="请输入原名" value="{{originName}}" bindinput="handleOriginNameChange" />
         </view>
         <view class="form-item">
-          <text class="form-label">Description (Optional)</text>
-          <textarea class="form-textarea" placeholder="Enter exercise description" value="{{description}}" bindinput="handleDescriptionChange" />
+          <text class="form-label">描述（选填）</text>
+          <textarea class="form-textarea" placeholder="请输入动作描述" value="{{description}}" bindinput="handleDescriptionChange" />
         </view>
       </view>
 
       <!-- 肌肉选择 -->
       <view class="form-section">
-        <text class="section-title">Muscles</text>
+        <text class="section-title">肌肉</text>
         <view class="form-item">
-          <text class="form-label">Main Muscles</text>
+          <text class="form-label">主要肌肉</text>
           <view class="muscles-container">
             <view wx:for="{{muscles}}" wx:key="id" class="muscle-item" bindtap="toggleMainMuscle" data-id="{{item.id}}">
               <view class="muscle-checkbox {{selectedMainMuscles.includes(item.id) ? 'checked' : ''}}">
-                <text wx:if="{{selectedMainMuscles.includes(item.id)}}" class="checkbox-icon">�?</text>
+                <text wx:if="{{selectedMainMuscles.includes(item.id)}}" class="checkbox-icon">✓</text>
               </view>
               <text class="muscle-name">{{item.name}}</text>
             </view>
           </view>
         </view>
         <view class="form-item">
-          <text class="form-label">Support Muscles</text>
+          <text class="form-label">辅助肌肉</text>
           <view class="muscles-container">
             <view wx:for="{{muscles}}" wx:key="id" class="muscle-item" bindtap="toggleSupportMuscle" data-id="{{item.id}}">
               <view class="muscle-checkbox {{selectedSupportMuscles.includes(item.id) ? 'checked' : ''}}">
-                <text wx:if="{{selectedSupportMuscles.includes(item.id)}}" class="checkbox-icon">�?</text>
+                <text wx:if="{{selectedSupportMuscles.includes(item.id)}}" class="checkbox-icon">✓</text>
               </view>
               <text class="muscle-name">{{item.name}}</text>
             </view>
@@ -56,12 +56,12 @@
 
       <!-- 动作提示 -->
       <view class="form-section">
-        <text class="section-title">Cues</text>
+        <text class="section-title">提示要点</text>
         <view class="form-item">
-          <text class="form-label">Add Cues</text>
+          <text class="form-label">添加要点</text>
           <view class="cues-container">
             <view wx:for="{{cues}}" wx:key="index" class="cue-item">
-              <input class="cue-input" placeholder="Enter cue" value="{{item}}" bindinput="handleCueChange" data-index="{{index}}" />
+              <input class="cue-input" placeholder="请输入要点" value="{{item}}" bindinput="handleCueChange" data-index="{{index}}" />
               <button class="remove-cue-button" bindtap="removeCue" data-index="{{index}}">-</button>
             </view>
             <button class="add-cue-button" bindtap="addCue">+ Add Cue</button>
@@ -71,13 +71,13 @@
 
       <!-- 提交按钮 -->
       <view class="form-actions">
-        <button class="cancel-button" bindtap="navigateBack">Cancel</button>
-        <button class="submit-button" form-type="submit" wx:if="{{!submitting}}">Create Exercise</button>
-        <button class="submit-button" disabled wx:else>Creating...</button>
+        <button class="cancel-button" bindtap="navigateBack">取消</button>
+        <button class="submit-button" form-type="submit" wx:if="{{!submitting}}">新建动作</button>
+        <button class="submit-button" disabled wx:else>创建中...</button>
       </view>
     </form>
   </view>
   
-  <!-- 底部工具�?-->
+  <!-- 底部工具栏-->
 </view>
 

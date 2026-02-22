@@ -35,7 +35,7 @@ Component({
         this.setData({ id: this.data.entityId }, () => this.loadMuscleData());
       } else {
         this.setData({
-          error: 'Missing muscle id',
+          error: '缺少肌肉ID',
           loading: false
         });
       }
@@ -82,11 +82,11 @@ Component({
       const errors = {};
 
       if (!this.data.name.trim()) {
-        errors.name = 'Please enter muscle name';
+        errors.name = '请输入肌肉名称';
       }
 
       if (!this.data.group.trim()) {
-        errors.group = 'Please enter muscle group';
+        errors.group = '请输入肌肉分组';
       }
 
       this.setData({ errors });
@@ -108,7 +108,7 @@ Component({
       muscleApi.update(this.data.id, muscleData)
         .then(() => {
           wx.showToast({
-            title: 'Muscle updated',
+            title: '肌肉已更新',
             icon: 'success'
           });
 
@@ -119,7 +119,7 @@ Component({
         .catch((err) => {
           console.error('Failed to update muscle:', err);
           wx.showToast({
-            title: 'Failed to update muscle',
+            title: '更新肌肉失败',
             icon: 'none'
           });
         })

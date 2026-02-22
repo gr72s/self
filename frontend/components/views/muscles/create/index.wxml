@@ -1,15 +1,15 @@
 <view class="page-container">
   <view class="main-container">
     <view class="page-header">
-      <text class="page-title">Create Muscle</text>
+      <text class="page-title">新建肌肉</text>
     </view>
 
     <view class="form-container">
       <view class="form-item">
-        <text class="form-label">Muscle Name</text>
+        <text class="form-label">肌肉名称</text>
         <input
           class="form-input"
-          placeholder="Enter muscle name"
+          placeholder="请输入肌肉名称"
           value="{{name}}"
           bindinput="handleNameChange"
         />
@@ -17,10 +17,10 @@
       </view>
 
       <view class="form-item">
-        <text class="form-label">Muscle Group</text>
+        <text class="form-label">肌肉分组</text>
         <input
           class="form-input"
-          placeholder="Enter muscle group (e.g. Chest, Back)"
+          placeholder="请输入肌肉分组（如：胸部、背部）"
           value="{{group}}"
           bindinput="handleGroupChange"
         />
@@ -32,7 +32,7 @@
         bindtap="handleSubmit"
         disabled="{{loading}}"
       >
-        <text class="submit-button-text">{{loading ? 'Submitting...' : 'Save'}}</text>
+        <text class="submit-button-text">{{loading ? '提交中...' : '保存'}}</text>
       </button>
     </view>
   </view>

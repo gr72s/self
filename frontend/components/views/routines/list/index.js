@@ -28,7 +28,7 @@ Component({
       } catch (error) {
         console.error('Failed to fetch routines:', error);
         wx.showToast({
-          title: 'Failed to load routines',
+          title: '加载计划失败',
           icon: 'none'
         });
       } finally {
@@ -60,10 +60,10 @@ Component({
       if (!id) return;
 
       wx.showModal({
-        title: 'Delete Routine',
-        content: 'Are you sure you want to delete this routine?',
-        confirmText: 'Delete',
-        cancelText: 'Cancel',
+        title: '删除计划',
+        content: '确定删除该计划吗？',
+        confirmText: '删除',
+        cancelText: '取消',
         success: async (res) => {
           if (res.confirm) {
             await this.deleteRoutine(id);
@@ -76,14 +76,14 @@ Component({
       try {
         await routineApi.delete(id);
         wx.showToast({
-          title: 'Routine deleted',
+          title: '计划已删除',
           icon: 'success'
         });
         this.fetchRoutines();
       } catch (error) {
         console.error('Failed to delete routine:', error);
         wx.showToast({
-          title: 'Failed to delete routine',
+          title: '删除计划失败',
           icon: 'none'
         });
       }

@@ -16,5 +16,5 @@
     "muscles-create-view": "../../components/views/muscles/create/index",
     "muscles-edit-view": "../../components/views/muscles/edit/index"
   },
-  "navigationBarTitleText": "Home"
+  "navigationBarTitleText": "首页"
 }

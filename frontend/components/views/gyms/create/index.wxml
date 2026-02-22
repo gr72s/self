@@ -1,17 +1,17 @@
 <view class="page-container">
-  <!-- 顶部导航�?-->
+  <!-- 顶部导航栏 -->
   
   <!-- 主内容区 -->
   <view class="main-container">
     <view class="page-header">
-      <text class="page-title">添加健身�?</text>
+      <text class="page-title">添加健身房</text>
     </view>
 
     <!-- 表单 -->
     <view class="form-container">
-      <!-- 健身房名�?-->
+      <!-- 健身房名称 -->
       <view class="form-item">
-        <text class="form-label">健身房名�?</text>
+        <text class="form-label">健身房名称</text>
         <input 
           class="form-input" 
           placeholder="请输入健身房名称" 
@@ -40,11 +40,10 @@
         bindtap="handleSubmit" 
         disabled="{{loading}}"
       >
-        <text class="submit-button-text">{{loading ? '提交�?..' : '保存'}}</text>
+        <text class="submit-button-text">{{loading ? '提交中...' : '保存'}}</text>
       </button>
     </view>
   </view>
   
-  <!-- 底部工具�?-->
+  <!-- 底部工具栏 -->
 </view>
-

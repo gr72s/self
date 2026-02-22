@@ -1,10 +1,4 @@
 <view class="page-container">
-  <!-- 顶部导航栏 -->
-  <navbar 
-    menuOpen="{{menuOpen}}" 
-    bind:toggleMenu="handleMenuToggle"
-  />
-  
   <view class="container">
     <view class="header">
       <text class="page-title">数据统计</text>
@@ -37,7 +31,6 @@
       <view class="workout-list">
         <block wx:if="{{workouts.length === 0}}">
           <view class="empty">
-            <text class="empty-icon">📊</text>
             <text class="empty-text">暂无训练数据</text>
           </view>
         </block>
@@ -47,7 +40,7 @@
               <text class="workout-name">{{item.routine && item.routine.name ? item.routine.name : '未命名训练'}}</text>
               <text class="workout-date">{{formatDate(item.startTime)}}</text>
             </view>
-            <text class="workout-arrow">›</text>
+            <text class="workout-arrow">></text>
           </view>
         </block>
       </view>

@@ -7,7 +7,7 @@
   
   <view class="login-body">
     <view class="login-tips">
-      <text>登录后使用完整功能</text>
+      <text>登录后可使用完整功能</text>
     </view>
     
     <!-- 头像选择 -->

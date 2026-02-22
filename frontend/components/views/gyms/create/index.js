@@ -31,11 +31,11 @@ Component({
       const errors = {};
 
       if (!this.data.name.trim()) {
-        errors.name = 'Please enter gym name';
+        errors.name = '请输入健身房名称';
       }
 
       if (!this.data.address.trim()) {
-        errors.address = 'Please enter gym address';
+        errors.address = '请输入健身房地址';
       }
 
       this.setData({ errors });
@@ -57,7 +57,7 @@ Component({
       gymApi.create(gymData)
         .then(() => {
           wx.showToast({
-            title: 'Gym created',
+            title: '健身房已创建',
             icon: 'success'
           });
 
@@ -68,7 +68,7 @@ Component({
         .catch((err) => {
           console.error('Failed to create gym:', err);
           wx.showToast({
-            title: 'Failed to create gym',
+            title: '创建健身房失败',
             icon: 'none'
           });
         })

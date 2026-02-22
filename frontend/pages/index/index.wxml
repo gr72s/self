@@ -4,47 +4,47 @@
       <view class="main-container home-main-container">
         <view class="container">
           <view class="header">
-            <text class="greeting">Hi{{user && user.username ? ', ' + user.username : ''}}!</text>
+            <text class="greeting">你好{{user && user.username ? '，' + user.username : ''}}</text>
             <view class="quick-action" bindtap="startNewWorkout">
-              <text class="action-text">Start Workout</text>
+              <text class="action-text">开始训练</text>
             </view>
           </view>
 
           <view class="category-grid">
             <view class="category-card card-orange" bindtap="navigateToWorkouts">
               <text class="card-icon">WK</text>
-              <text class="card-title">Workouts</text>
-              <text class="card-stat">{{workouts.length}} items</text>
+              <text class="card-title">训练记录</text>
+              <text class="card-stat">{{workouts.length}} 条</text>
             </view>
 
             <view class="category-card card-pink" bindtap="navigateToRoutines">
               <text class="card-icon">RT</text>
-              <text class="card-title">Routines</text>
-              <text class="card-stat">{{uniqueRoutines}} plans</text>
+              <text class="card-title">训练计划</text>
+              <text class="card-stat">{{uniqueRoutines}} 个</text>
             </view>
 
             <view class="category-card card-purple" bindtap="navigateToExercises">
               <text class="card-icon">EX</text>
-              <text class="card-title">Exercises</text>
-              <text class="card-stat">{{totalExercises}} entries</text>
+              <text class="card-title">动作库</text>
+              <text class="card-stat">{{totalExercises}} 条</text>
             </view>
 
             <view class="category-card card-blue" bindtap="navigateToGyms">
               <text class="card-icon">GY</text>
-              <text class="card-title">Gyms</text>
-              <text class="card-stat">Manage</text>
+              <text class="card-title">健身房</text>
+              <text class="card-stat">管理</text>
             </view>
 
             <view class="category-card card-green" bindtap="navigateToMuscles">
               <text class="card-icon">MU</text>
-              <text class="card-title">Muscles</text>
-              <text class="card-stat">Browse</text>
+              <text class="card-title">肌肉</text>
+              <text class="card-stat">浏览</text>
             </view>
 
             <view class="category-card card-yellow" bindtap="navigateToProfile">
               <text class="card-icon">GO</text>
-              <text class="card-title">Goals</text>
-              <text class="card-stat">Settings</text>
+              <text class="card-title">我的</text>
+              <text class="card-stat">设置</text>
             </view>
           </view>
         </view>
@@ -54,7 +54,7 @@
     <view wx:if="{{currentView !== viewKeys.HOME}}" class="subpage-nav">
       <view class="subpage-nav-back" bindtap="goHome">
         <text class="subpage-nav-back-icon">&lt;</text>
-        <text class="subpage-nav-back-text">Home</text>
+        <text class="subpage-nav-back-text">返回首页</text>
       </view>
       <text class="subpage-nav-title">{{currentViewTitle}}</text>
     </view>
@@ -160,7 +160,6 @@
     />
   </view>
 </view>
-
 
 
 

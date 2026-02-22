@@ -1,27 +1,27 @@
 <view class="page-container">
-  <!-- 顶部导航�?-->
+  <!-- 顶部导航栏-->
   
   <!-- 主内容区 -->
   <view class="main-container">
     <!-- 页面头部 -->
     <view class="section-title">
-      <text>Gyms</text>
+      <text>健身房</text>
       <view class="toolbar-right">
         <view class="button icon-button" bindtap="handleRefresh">
           <text>🔄</text>
         </view>
         <view class="button primary" bindtap="handleAddGym">
-          <text class="button-text">+ Create</text>
+          <text class="button-text">+ 新建</text>
         </view>
       </view>
     </view>
 
-    <!-- 健身房列�?-->
+    <!-- 健身房列表-->
     <view class="table">
       <block wx:if="{{loading}}">
         <view class="loading">
           <view class="loading-spinner"></view>
-          <text>Loading...</text>
+          <text>加载中...</text>
         </view>
       </block>
       <block wx:elif="{{error}}">
@@ -29,25 +29,25 @@
           <text class="empty-icon">⚠️</text>
           <text class="empty-text">{{error}}</text>
           <view class="button secondary" bindtap="loadGyms">
-            <text class="button-text">Retry</text>
+            <text class="button-text">重试</text>
           </view>
         </view>
       </block>
       <block wx:elif="{{gyms.length === 0}}">
         <view class="empty">
-          <text class="empty-icon">🏟�?</text>
-          <text class="empty-text">No gyms yet</text>
-          <text class="empty-subtext">Create your first gym to get started</text>
+          <text class="empty-icon">🏟️</text>
+          <text class="empty-text">暂无健身房</text>
+          <text class="empty-subtext">创建第一个健身房开始使用</text>
           <view class="button primary" bindtap="handleAddGym">
-            <text class="button-text">Create First Gym</text>
+            <text class="button-text">新建首个健身房</text>
           </view>
         </view>
       </block>
       <block wx:else>
         <view class="table-header">
-          <view class="table-header-cell">Gym</view>
-          <view class="table-header-cell">Address</view>
-          <view class="table-header-cell" style="text-align: right;">Actions</view>
+          <view class="table-header-cell">健身房</view>
+          <view class="table-header-cell">地址</view>
+          <view class="table-header-cell" style="text-align: right;">操作</view>
         </view>
         <view class="table-body">
           <view wx:for="{{gyms}}" wx:key="id" class="table-row">
@@ -63,7 +63,7 @@
                   <text>✏️</text>
                 </view>
                 <view class="button icon-button delete" bindtap="handleDeleteGym" data-id="{{item.id}}">
-                  <text>🗑�?</text>
+                  <text>🗑️</text>
                 </view>
               </view>
             </view>
@@ -72,23 +72,23 @@
       </block>
     </view>
 
-    <!-- 删除确认对话�?-->
+    <!-- 删除确认对话框-->
     <view wx:if="{{showDeleteConfirm}}" class="modal-overlay">
       <view class="modal-content">
-        <text class="modal-title">Confirm Delete</text>
-        <text class="modal-message">Are you sure you want to delete this gym?</text>
+        <text class="modal-title">确认删除</text>
+        <text class="modal-message">确定删除该健身房吗？</text>
         <view class="modal-buttons">
           <view class="button secondary" bindtap="cancelDelete">
-            <text class="button-text">Cancel</text>
+            <text class="button-text">取消</text>
           </view>
           <view class="button primary delete" bindtap="confirmDelete">
-            <text class="button-text">Delete</text>
+            <text class="button-text">删除</text>
           </view>
         </view>
       </view>
     </view>
   </view>
   
-  <!-- 底部工具�?-->
+  <!-- 底部工具栏-->
 </view>
 

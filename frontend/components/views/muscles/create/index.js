@@ -31,11 +31,11 @@ Component({
       const errors = {};
 
       if (!this.data.name.trim()) {
-        errors.name = 'Please enter muscle name';
+        errors.name = '请输入肌肉名称';
       }
 
       if (!this.data.group.trim()) {
-        errors.group = 'Please enter muscle group';
+        errors.group = '请输入肌肉分组';
       }
 
       this.setData({ errors });
@@ -57,7 +57,7 @@ Component({
       muscleApi.create(muscleData)
         .then(() => {
           wx.showToast({
-            title: 'Muscle created',
+            title: '肌肉已创建',
             icon: 'success'
           });
 
@@ -68,7 +68,7 @@ Component({
         .catch((err) => {
           console.error('Failed to create muscle:', err);
           wx.showToast({
-            title: 'Failed to create muscle',
+            title: '创建肌肉失败',
             icon: 'none'
           });
         })

@@ -3,5 +3,5 @@
     "navbar": "../../../components/navbar/index",
     "tabbar": "../../../components/tabbar/index"
   },
-  "navigationBarTitleText": "Exercises"
+  "navigationBarTitleText": "动作库"
 }

@@ -32,7 +32,7 @@ Component({
         .catch((err) => {
           console.error('Failed to load gyms:', err);
           this.setData({
-            error: 'Failed to load gyms. Please retry.',
+            error: '加载健身房失败，请重试',
             loading: false
           });
         });
@@ -78,7 +78,7 @@ Component({
       gymApi.delete(this.data.gymIdToDelete)
         .then(() => {
           wx.showToast({
-            title: 'Gym deleted',
+            title: '健身房已删除',
             icon: 'success'
           });
 
@@ -92,7 +92,7 @@ Component({
         .catch((err) => {
           console.error('Failed to delete gym:', err);
           wx.showToast({
-            title: 'Failed to delete gym',
+            title: '删除健身房失败',
             icon: 'none'
           });
         });
