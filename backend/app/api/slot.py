@@ -27,6 +27,8 @@ async def get_slot(slot_id: int, db: Session = Depends(get_db)):
         id=slot.exercise.id,
         name=slot.exercise.name,
         description=slot.exercise.description,
+        keypoint=slot.exercise.keypoint,
+        origin_name=slot.exercise.origin_name,
         main_muscles=set(),
         support_muscles=set(),
         cues=[]
@@ -73,6 +75,8 @@ async def get_slots_by_routine(
             id=slot.exercise.id,
             name=slot.exercise.name,
             description=slot.exercise.description,
+            keypoint=slot.exercise.keypoint,
+            origin_name=slot.exercise.origin_name,
             main_muscles=set(),
             support_muscles=set(),
             cues=[]

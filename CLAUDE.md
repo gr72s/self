@@ -68,7 +68,7 @@ Only `feat` and `fix` trigger CI/CD deployment.
 
 ## Testing
 
-Tests use pytest with function-scoped fixtures. Each test gets a fresh database with test data from `backend/data/*.sql`. Default test user: `testuser` / `testpassword`.
+Tests use pytest with function-scoped fixtures. Each test gets a fresh database schema without automatic seed import. Default test user: `testuser` / `testpassword`.
 
 ## Database
 
