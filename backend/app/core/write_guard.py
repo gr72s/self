@@ -36,3 +36,12 @@ def commit_update(db: Session, entity: object) -> None:
     except (SQLAlchemyError, Exception) as exc:
         _rollback_safely(db)
         raise DataWriteException() from exc
+
+
+def commit_delete(db: Session) -> None:
+    try:
+        db.flush()
+        db.commit()
+    except (SQLAlchemyError, Exception) as exc:
+        _rollback_safely(db)
+        raise DataWriteException() from exc

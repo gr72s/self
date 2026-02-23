@@ -1,8 +1,8 @@
 from typing import Optional, List
 from sqlalchemy.orm import Session
 from app.models.muscle import Muscle
-from app.core.exceptions import NotFoundException
-from app.core.write_guard import commit_create, commit_update
+from app.core.exceptions import NotFoundException, EntityInUseException
+from app.core.write_guard import commit_create, commit_update, commit_delete
 
 
 class MuscleService:
@@ -59,3 +59,14 @@ class MuscleService:
             query = query.filter(Muscle.name.ilike(f"%{name}%"))
         
         return query.count()
+
+    @staticmethod
+    def delete(db: Session, muscle_id: int) -> None:
+        """删除肌肉"""
+        muscle = MuscleService.get_by_id(db, muscle_id)
+
+        if muscle.main_exercises or muscle.support_exercises:
+            raise EntityInUseException("该肌肉已被动作引用，无法删除")
+
+        db.delete(muscle)
+        commit_delete(db)

@@ -60,3 +60,10 @@ async def get_gym(gym_id: int, db: Session = Depends(get_db)):
     """根据ID获取健身房"""
     gym = GymService.get_by_id(db, gym_id)
     return Response(data=GymResponse.model_validate(gym))
+
+
+@router.delete("/{gym_id}", response_model=Response)
+async def delete_gym(gym_id: int, db: Session = Depends(get_db)):
+    """删除健身房"""
+    GymService.delete(db, gym_id)
+    return Response(data=None)

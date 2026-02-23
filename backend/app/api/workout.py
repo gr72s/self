@@ -139,6 +139,13 @@ async def stop_workout(request: WorkoutRequest, db: Session = Depends(get_db)):
     return Response(data=response_data)
 
 
+@router.delete("/{workout_id}", response_model=Response)
+async def delete_workout(workout_id: int, db: Session = Depends(get_db)):
+    """删除训练"""
+    WorkoutService.delete(db, workout_id)
+    return Response(data=None)
+
+
 @router.get("", response_model=Response)
 async def get_all_workouts(
     page: int = Query(0, ge=0, description="页码"),

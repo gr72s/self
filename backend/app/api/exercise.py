@@ -139,3 +139,10 @@ async def get_exercise(exercise_id: int, db: Session = Depends(get_db)):
     )
     
     return Response(data=response_data)
+
+
+@router.delete("/{exercise_id}", response_model=Response)
+async def delete_exercise(exercise_id: int, db: Session = Depends(get_db)):
+    """删除练习"""
+    ExerciseService.delete(db, exercise_id)
+    return Response(data=None)

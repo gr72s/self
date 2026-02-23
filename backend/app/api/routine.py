@@ -249,3 +249,10 @@ async def add_exercise(request: SlotRequest, db: Session = Depends(get_db)):
     )
     
     return Response(data=slot_response)
+
+
+@router.delete("/{routine_id}", response_model=Response)
+async def delete_routine(routine_id: int, db: Session = Depends(get_db)):
+    """删除训练计划"""
+    RoutineService.delete(db, routine_id)
+    return Response(data=None)

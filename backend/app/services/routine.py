@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from app.models.routine import Routine
 from app.services.target import TargetService
 from app.core.exceptions import NotFoundException
-from app.core.write_guard import commit_create, commit_update
+from app.core.write_guard import commit_create, commit_update, commit_delete
 
 
 class RoutineService:
@@ -117,3 +117,10 @@ class RoutineService:
             return json.loads(routine.checklist)
         except json.JSONDecodeError:
             return []
+
+    @staticmethod
+    def delete(db: Session, routine_id: int) -> None:
+        """删除训练计划"""
+        routine = RoutineService.get_by_id(db, routine_id)
+        db.delete(routine)
+        commit_delete(db)

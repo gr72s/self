@@ -1,12 +1,20 @@
 from fastapi import HTTPException, status, Request
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
-from typing import Optional
 
 
 class EntityAlreadyExistException(HTTPException):
     """实体已存在异常"""
     def __init__(self, detail: str = "Entity already exists"):
+        super().__init__(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=detail
+        )
+
+
+class EntityInUseException(HTTPException):
+    """资源被引用，无法删除异常"""
+    def __init__(self, detail: str = "资源已被引用，无法删除"):
         super().__init__(
             status_code=status.HTTP_409_CONFLICT,
             detail=detail

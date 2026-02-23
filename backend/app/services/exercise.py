@@ -2,9 +2,10 @@ from typing import List, Optional, Set
 
 from sqlalchemy.orm import Session
 
-from app.core.exceptions import NotFoundException
-from app.core.write_guard import commit_create, commit_update
+from app.core.exceptions import NotFoundException, EntityInUseException
+from app.core.write_guard import commit_create, commit_update, commit_delete
 from app.models.exercise import Exercise
+from app.models.slot import Slot
 from app.services.muscle import MuscleService
 
 
@@ -107,3 +108,13 @@ class ExerciseService:
         if not exercise.cues:
             return []
         return exercise.cues.split(",")
+
+    @staticmethod
+    def delete(db: Session, exercise_id: int) -> None:
+        exercise = ExerciseService.get_by_id(db, exercise_id)
+        slot_exists = db.query(Slot.id).filter(Slot.exercise_id == exercise_id).first()
+        if slot_exists:
+            raise EntityInUseException("该动作已被训练计划中的动作槽引用，无法删除")
+
+        db.delete(exercise)
+        commit_delete(db)

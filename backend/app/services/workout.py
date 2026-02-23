@@ -2,10 +2,11 @@ from typing import Optional, List, Set
 from datetime import datetime
 from sqlalchemy.orm import Session
 from app.models.workout import Workout
+from app.models.routine import Routine
 from app.services.gym import GymService
 from app.services.target import TargetService
-from app.core.exceptions import NotFoundException
-from app.core.write_guard import commit_create, commit_update
+from app.core.exceptions import NotFoundException, EntityInUseException
+from app.core.write_guard import commit_create, commit_update, commit_delete
 
 
 class WorkoutService:
@@ -127,3 +128,15 @@ class WorkoutService:
         ).order_by(Workout.start_time.desc()).first()
         
         return workout
+
+    @staticmethod
+    def delete(db: Session, workout_id: int) -> None:
+        """删除训练"""
+        workout = WorkoutService.get_by_id(db, workout_id)
+
+        routine_exists = db.query(Routine.id).filter(Routine.workout_id == workout_id).first()
+        if routine_exists:
+            raise EntityInUseException("该训练已被训练计划引用，无法删除")
+
+        db.delete(workout)
+        commit_delete(db)

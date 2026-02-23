@@ -1,8 +1,13 @@
 from typing import Optional, List
 from sqlalchemy.orm import Session
 from app.models.gym import Gym
-from app.core.exceptions import NotFoundException, EntityAlreadyExistException
-from app.core.write_guard import commit_create, commit_update
+from app.models.workout import Workout
+from app.core.exceptions import (
+    NotFoundException,
+    EntityAlreadyExistException,
+    EntityInUseException
+)
+from app.core.write_guard import commit_create, commit_update, commit_delete
 
 
 class GymService:
@@ -64,3 +69,15 @@ class GymService:
             query = query.filter(Gym.name.ilike(f"%{name}%"))
         
         return query.count()
+
+    @staticmethod
+    def delete(db: Session, gym_id: int) -> None:
+        """删除健身房"""
+        gym = GymService.get_by_id(db, gym_id)
+
+        workout_exists = db.query(Workout.id).filter(Workout.gym_id == gym_id).first()
+        if workout_exists:
+            raise EntityInUseException("该健身房已被训练记录引用，无法删除")
+
+        db.delete(gym)
+        commit_delete(db)

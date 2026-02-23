@@ -62,3 +62,10 @@ async def get_muscle(muscle_id: int, db: Session = Depends(get_db)):
     """根据ID获取肌肉"""
     muscle = MuscleService.get_by_id(db, muscle_id)
     return Response(data=MuscleResponse.model_validate(muscle))
+
+
+@router.delete("/{muscle_id}", response_model=Response)
+async def delete_muscle(muscle_id: int, db: Session = Depends(get_db)):
+    """删除肌肉"""
+    MuscleService.delete(db, muscle_id)
+    return Response(data=None)
