@@ -51,7 +51,7 @@ Component({
           const gym = res.data?.data || res.data;
           this.setData({
             name: gym.name,
-            address: gym.location || gym.address || '',
+            address: gym.location || '',
             loading: false
           });
         })
