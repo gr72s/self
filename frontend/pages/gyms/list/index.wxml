@@ -11,7 +11,7 @@
         <view class="button icon-button" bindtap="handleRefresh">
           <text>🔄</text>
         </view>
-        <view class="button primary" bindtap="handleAddGym">
+        <view class="button primary create-button" bindtap="handleAddGym">
           <text class="button-text">+ 新建</text>
         </view>
       </view>
@@ -38,7 +38,7 @@
           <text class="empty-icon">🏟️</text>
           <text class="empty-text">暂无健身房</text>
           <text class="empty-subtext">创建第一个健身房开始使用</text>
-          <view class="button primary" bindtap="handleAddGym">
+          <view class="button primary create-button" bindtap="handleAddGym">
             <text class="button-text">新建首个健身房</text>
           </view>
         </view>

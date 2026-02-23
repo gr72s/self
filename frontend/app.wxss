@@ -108,6 +108,20 @@ page {
   background-color: var(--primary-dark);
 }
 
+/* Explicit style fallback for list-page create actions. */
+.button.primary.create-button {
+  background-color: #FF6B35;
+  color: #ffffff;
+}
+
+.button.primary.create-button:active {
+  background-color: #E55A2B;
+}
+
+.button.primary.create-button .button-text {
+  color: #ffffff;
+}
+
 .button.secondary {
   background-color: var(--background-light);
   color: var(--text-primary);
