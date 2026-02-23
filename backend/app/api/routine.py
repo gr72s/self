@@ -21,19 +21,15 @@ async def create_routine(request: RoutineRequest, db: Session = Depends(get_db))
     # 转换checklist为字典列表
     checklist_data = [item.model_dump() for item in request.checklist]
     
-    try:
-        routine = RoutineService.create(
-            db,
-            name=request.name,
-            description=request.description,
-            workout_id=request.workout_id,
-            target_ids=request.target_ids,
-            checklist=checklist_data,
-            note=request.note
-        )
-    except Exception as e:
-        from fastapi import HTTPException
-        raise HTTPException(status_code=500, detail=str(e))
+    routine = RoutineService.create(
+        db,
+        name=request.name,
+        description=request.description,
+        workout_id=request.workout_id,
+        target_ids=request.target_ids,
+        checklist=checklist_data,
+        note=request.note
+    )
     
     # 构建响应
     targets = [TargetResponse.model_validate(target) for target in routine.targets]

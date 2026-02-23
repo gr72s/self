@@ -2,6 +2,7 @@ from typing import Optional, List
 from sqlalchemy.orm import Session
 from app.models.target import Target
 from app.core.exceptions import NotFoundException
+from app.core.write_guard import commit_create
 
 
 class TargetService:
@@ -25,8 +26,7 @@ class TargetService:
         """创建目标"""
         target = Target(name=name)
         db.add(target)
-        db.commit()
-        db.refresh(target)
+        commit_create(db, target)
         return target
     
     @staticmethod

@@ -59,6 +59,15 @@ class NotFoundWeChatConfig(HTTPException):
         )
 
 
+class DataWriteException(HTTPException):
+    """Data write failure exception."""
+    def __init__(self, detail: str = "数据写入失败"):
+        super().__init__(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=detail
+        )
+
+
 async def global_exception_handler(request: Request, exc: Exception):
     """全局异常处理器"""
     from app.core.logger import logger

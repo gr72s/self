@@ -3,6 +3,7 @@ from typing import List, Optional, Set
 from sqlalchemy.orm import Session
 
 from app.core.exceptions import NotFoundException
+from app.core.write_guard import commit_create, commit_update
 from app.models.exercise import Exercise
 from app.services.muscle import MuscleService
 
@@ -40,8 +41,7 @@ class ExerciseService:
         exercise.support_muscles = support_muscles
 
         db.add(exercise)
-        db.commit()
-        db.refresh(exercise)
+        commit_create(db, exercise)
         return exercise
 
     @staticmethod
@@ -76,8 +76,7 @@ class ExerciseService:
         exercise.main_muscles = main_muscles
         exercise.support_muscles = support_muscles
 
-        db.commit()
-        db.refresh(exercise)
+        commit_update(db, exercise)
         return exercise
 
     @staticmethod

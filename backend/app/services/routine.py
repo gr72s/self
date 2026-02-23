@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from app.models.routine import Routine
 from app.services.target import TargetService
 from app.core.exceptions import NotFoundException
+from app.core.write_guard import commit_create, commit_update
 
 
 class RoutineService:
@@ -47,8 +48,7 @@ class RoutineService:
         routine.targets = targets
         
         db.add(routine)
-        db.commit()
-        db.refresh(routine)
+        commit_create(db, routine)
         return routine
     
     @staticmethod
@@ -77,8 +77,7 @@ class RoutineService:
         # 更新关联关系
         routine.targets = targets
         
-        db.commit()
-        db.refresh(routine)
+        commit_update(db, routine)
         return routine
     
     @staticmethod

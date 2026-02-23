@@ -15,7 +15,7 @@ async def create_gym(request: GymRequest, db: Session = Depends(get_db)):
     gym = GymService.create(
         db,
         name=request.name,
-        location=request.location
+        location=request.resolved_location()
     )
     return Response(data=GymResponse.model_validate(gym))
 
@@ -27,7 +27,7 @@ async def update_gym(gym_id: int, request: GymRequest, db: Session = Depends(get
         db,
         gym_id=gym_id,
         name=request.name,
-        location=request.location
+        location=request.resolved_location()
     )
     return Response(data=GymResponse.model_validate(gym))
 

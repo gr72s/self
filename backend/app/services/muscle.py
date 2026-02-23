@@ -1,8 +1,8 @@
 from typing import Optional, List
 from sqlalchemy.orm import Session
-from sqlalchemy import or_
 from app.models.muscle import Muscle
 from app.core.exceptions import NotFoundException
+from app.core.write_guard import commit_create, commit_update
 
 
 class MuscleService:
@@ -18,8 +18,7 @@ class MuscleService:
             origin_name=origin_name
         )
         db.add(muscle)
-        db.commit()
-        db.refresh(muscle)
+        commit_create(db, muscle)
         return muscle
     
     @staticmethod
@@ -30,8 +29,7 @@ class MuscleService:
         muscle.name = name
         muscle.function = function
         muscle.origin_name = origin_name
-        db.commit()
-        db.refresh(muscle)
+        commit_update(db, muscle)
         return muscle
     
     @staticmethod

@@ -2,6 +2,7 @@ from typing import Optional, List
 from sqlalchemy.orm import Session
 from app.models.gym import Gym
 from app.core.exceptions import NotFoundException, EntityAlreadyExistException
+from app.core.write_guard import commit_create, commit_update
 
 
 class GymService:
@@ -17,8 +18,7 @@ class GymService:
         
         gym = Gym(name=name, location=location)
         db.add(gym)
-        db.commit()
-        db.refresh(gym)
+        commit_create(db, gym)
         return gym
     
     @staticmethod
@@ -34,8 +34,7 @@ class GymService:
         
         gym.name = name
         gym.location = location
-        db.commit()
-        db.refresh(gym)
+        commit_update(db, gym)
         return gym
     
     @staticmethod

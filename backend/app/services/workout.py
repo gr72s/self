@@ -5,6 +5,7 @@ from app.models.workout import Workout
 from app.services.gym import GymService
 from app.services.target import TargetService
 from app.core.exceptions import NotFoundException
+from app.core.write_guard import commit_create, commit_update
 
 
 class WorkoutService:
@@ -45,8 +46,7 @@ class WorkoutService:
         workout.targets = targets
         
         db.add(workout)
-        db.commit()
-        db.refresh(workout)
+        commit_create(db, workout)
         return workout
     
     @staticmethod
@@ -81,8 +81,7 @@ class WorkoutService:
         if note is not None:
             workout.note = note
         
-        db.commit()
-        db.refresh(workout)
+        commit_update(db, workout)
         return workout
     
     @staticmethod

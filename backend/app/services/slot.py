@@ -4,6 +4,7 @@ from app.models.slot import Slot, Category
 from app.services.routine import RoutineService
 from app.services.exercise import ExerciseService
 from app.core.exceptions import NotFoundException
+from app.core.write_guard import commit_create
 
 
 class SlotService:
@@ -34,8 +35,7 @@ class SlotService:
         )
         
         db.add(slot)
-        db.commit()
-        db.refresh(slot)
+        commit_create(db, slot)
         return slot
     
     @staticmethod

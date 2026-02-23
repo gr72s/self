@@ -35,7 +35,7 @@ Component({
         this.setData({ id: this.data.entityId }, () => this.loadGymData());
       } else {
         this.setData({
-          error: '缺少健身房ID',
+          error: '缺少健身房 ID',
           loading: false
         });
       }
@@ -51,14 +51,14 @@ Component({
           const gym = res.data?.data || res.data;
           this.setData({
             name: gym.name,
-            address: gym.address,
+            address: gym.location || gym.address || '',
             loading: false
           });
         })
         .catch((err) => {
           console.error('Failed to load gym data:', err);
           this.setData({
-            error: 'Failed to load gym data. Please retry.',
+            error: '加载失败，请重试',
             loading: false
           });
         });
@@ -73,22 +73,13 @@ Component({
 
     handleAddressChange(e) {
       this.setData({ address: e.detail.value });
-      if (this.data.errors.address) {
-        this.setData({ 'errors.address': '' });
-      }
     },
 
     validateForm() {
       const errors = {};
-
       if (!this.data.name.trim()) {
         errors.name = '请输入健身房名称';
       }
-
-      if (!this.data.address.trim()) {
-        errors.address = '请输入健身房地址';
-      }
-
       this.setData({ errors });
       return Object.keys(errors).length === 0;
     },
@@ -102,7 +93,7 @@ Component({
 
       const gymData = {
         name: this.data.name.trim(),
-        address: this.data.address.trim()
+        location: this.data.address.trim()
       };
 
       gymApi.update(this.data.id, gymData)
@@ -111,7 +102,6 @@ Component({
             title: '健身房已更新',
             icon: 'success'
           });
-
           setTimeout(() => {
             this.triggerEvent('submitted', { resource: 'gym', action: 'update' });
           }, 800);
@@ -119,7 +109,7 @@ Component({
         .catch((err) => {
           console.error('Failed to update gym:', err);
           wx.showToast({
-            title: '更新健身房失败',
+            title: '更新健身房失败，请重试',
             icon: 'none'
           });
         })
