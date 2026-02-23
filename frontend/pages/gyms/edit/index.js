@@ -1,4 +1,4 @@
-const { gymApi } = require('../../../services/api');
+﻿const { gymApi } = require('../../../services/api');
 
 Page({
   data: {
@@ -18,7 +18,7 @@ Page({
       this.loadGymData();
     } else {
       this.setData({
-        error: '缺少健身房 ID',
+        error: '缂哄皯鍋ヨ韩鎴?ID',
         loading: false
       });
     }
@@ -37,9 +37,9 @@ Page({
         });
       })
       .catch((err) => {
-        console.error('加载健身房数据失败:', err);
+        console.error('鍔犺浇鍋ヨ韩鎴挎暟鎹け璐?', err);
         this.setData({
-          error: '加载失败，请重试',
+          error: '鍔犺浇澶辫触锛岃閲嶈瘯',
           loading: false
         });
       });
@@ -59,8 +59,10 @@ Page({
   validateForm() {
     const errors = {};
     if (!this.data.name.trim()) {
-      errors.name = '请输入健身房名称';
-    }
+        errors.name = '请输入健身房名称';
+      } else if (this.data.name.trim().length < 2) {
+        errors.name = '健身房名称至少 2 个字符';
+      }
     this.setData({ errors });
     return Object.keys(errors).length === 0;
   },
@@ -80,7 +82,7 @@ Page({
     gymApi.update(this.data.id, gymData)
       .then(() => {
         wx.showToast({
-          title: '更新成功',
+          title: '鏇存柊鎴愬姛',
           icon: 'success'
         });
         setTimeout(() => {
@@ -88,9 +90,9 @@ Page({
         }, 1000);
       })
       .catch((err) => {
-        console.error('更新健身房失败:', err);
+        console.error('鏇存柊鍋ヨ韩鎴垮け璐?', err);
         wx.showToast({
-          title: '更新失败，请重试',
+          title: '鏇存柊澶辫触锛岃閲嶈瘯',
           icon: 'none'
         });
       })
@@ -107,3 +109,4 @@ Page({
     this.setData({ menuOpen: !this.data.menuOpen });
   }
 });
+

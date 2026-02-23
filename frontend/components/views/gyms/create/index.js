@@ -28,6 +28,8 @@ Component({
       const errors = {};
       if (!this.data.name.trim()) {
         errors.name = '请输入健身房名称';
+      } else if (this.data.name.trim().length < 2) {
+        errors.name = '健身房名称至少 2 个字符';
       }
       this.setData({ errors });
       return Object.keys(errors).length === 0;

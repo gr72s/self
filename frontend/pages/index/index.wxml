@@ -5,6 +5,35 @@
         <view class="container">
           <view class="header">
             <text class="greeting">你好{{user && user.username ? '，' + user.username : ''}}</text>
+            <text class="home-tip">从这里进入健身功能</text>
+          </view>
+
+          <view class="single-entry-grid">
+            <view class="fitness-entry-btn" bindtap="navigateToFitness">
+              <view class="fitness-entry-main">
+                <text class="fitness-entry-icon">健</text>
+                <text class="fitness-entry-title">健身</text>
+              </view>
+              <text class="fitness-entry-arrow">&gt;</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{currentView !== viewKeys.HOME}}" class="subpage-nav">
+      <view class="subpage-nav-back" bindtap="goHome">
+        <text class="subpage-nav-back-icon">&lt;</text>
+        <text class="subpage-nav-back-text">返回首页</text>
+      </view>
+      <text class="subpage-nav-title">{{currentViewTitle}}</text>
+    </view>
+
+    <view wx:if="{{currentView === viewKeys.FITNESS}}" class="fitness-content">
+      <view class="main-container home-main-container">
+        <view class="container">
+          <view class="header">
+            <text class="hub-title">选择功能</text>
             <view class="quick-action" bindtap="startNewWorkout">
               <text class="action-text">开始训练</text>
             </view>
@@ -40,23 +69,9 @@
               <text class="card-title">肌肉</text>
               <text class="card-stat">浏览</text>
             </view>
-
-            <view class="category-card card-yellow" bindtap="navigateToProfile">
-              <text class="card-icon">我</text>
-              <text class="card-title">我的</text>
-              <text class="card-stat">设置</text>
-            </view>
           </view>
         </view>
       </view>
-    </view>
-
-    <view wx:if="{{currentView !== viewKeys.HOME}}" class="subpage-nav">
-      <view class="subpage-nav-back" bindtap="goHome">
-        <text class="subpage-nav-back-icon">&lt;</text>
-        <text class="subpage-nav-back-text">返回首页</text>
-      </view>
-      <text class="subpage-nav-title">{{currentViewTitle}}</text>
     </view>
 
     <workouts-list-view

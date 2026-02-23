@@ -1,7 +1,7 @@
 <view class="login-container">
   <view class="login-header">
     <image src="/images/logo.png" class="logo" mode="aspectFill" />
-    <text class="app-name">健身追踪</text>
+    <text class="app-name">自我</text>
     <text class="slogan">记录每一次进步</text>
   </view>
   

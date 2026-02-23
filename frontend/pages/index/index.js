@@ -16,6 +16,7 @@ const RESOURCE_TO_LIST_VIEW = {
 
 const VIEW_TITLES = {
   [VIEW_KEYS.HOME]: '首页',
+  [VIEW_KEYS.FITNESS]: '健身',
   [VIEW_KEYS.WORKOUTS_LIST]: '训练记录',
   [VIEW_KEYS.WORKOUTS_CREATE]: '新建训练',
   [VIEW_KEYS.WORKOUTS_EDIT]: '编辑训练',
@@ -193,6 +194,10 @@ Page({
     this.setView(VIEW_KEYS.WORKOUTS_LIST);
   },
 
+  navigateToFitness() {
+    this.setView(VIEW_KEYS.FITNESS);
+  },
+
   navigateToRoutines() {
     this.setView(VIEW_KEYS.ROUTINES_LIST);
   },
@@ -207,10 +212,6 @@ Page({
 
   navigateToMuscles() {
     this.setView(VIEW_KEYS.MUSCLES_LIST);
-  },
-
-  navigateToProfile() {
-    wx.switchTab({ url: '/pages/profile/index' });
   },
 
   startNewWorkout() {

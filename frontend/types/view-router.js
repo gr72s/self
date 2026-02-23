@@ -1,5 +1,6 @@
 const VIEW_KEYS = {
   HOME: 'home',
+  FITNESS: 'fitness',
 
   WORKOUTS_LIST: 'workouts.list',
   WORKOUTS_CREATE: 'workouts.create',

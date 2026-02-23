@@ -1,59 +1,59 @@
-// 微信小程序原生 API 服务
-// 使用 wx.request 实现网络请求
+﻿// 寰俊灏忕▼搴忓師鐢?API 鏈嶅姟
+// 浣跨敤 wx.request 瀹炵幇缃戠粶璇锋眰
 
-const API_BASE_URL = 'https://8.137.33.126:8443/'; // 替换为实际的 API 基础地址
+const API_BASE_URL = 'https://8.137.33.126:8443/'; // 鏇挎崲涓哄疄闄呯殑 API 鍩虹鍦板潃
 
 /**
- * 通用请求方法
- * @param {string} url - 请求路径
- * @param {string} method - 请求方法 (GET, POST, PUT, DELETE)
- * @param {object} data - 请求数据
- * @returns {Promise} - 返回 Promise
+ * 閫氱敤璇锋眰鏂规硶
+ * @param {string} url - 璇锋眰璺緞
+ * @param {string} method - 璇锋眰鏂规硶 (GET, POST, PUT, DELETE)
+ * @param {object} data - 璇锋眰鏁版嵁
+ * @returns {Promise} - 杩斿洖 Promise
  */
 const request = (url, method, data = {}) => {
   return new Promise((resolve, reject) => {
-    // 获取本地存储的token
+    // 鑾峰彇鏈湴瀛樺偍鐨則oken
     const token = wx.getStorageSync('token');
     
-    // 当token为null或undefined时，跳转到登录页面
-    // 但是允许登录页面发起的登录请求
+    // 褰搕oken涓簄ull鎴杣ndefined鏃讹紝璺宠浆鍒扮櫥褰曢〉闈?
+    // 浣嗘槸鍏佽鐧诲綍椤甸潰鍙戣捣鐨勭櫥褰曡姹?
     if (!token) {
       const pages = getCurrentPages();
       const currentPage = pages[pages.length - 1];
       const isLoginPage = currentPage && currentPage.route === 'pages/login/index/index';
       
-      // 只有当不是登录页面时，才跳转到登录页面
-      // 登录页面发起的登录请求允许执行，即使token为null或undefined
+      // 鍙湁褰撲笉鏄櫥褰曢〉闈㈡椂锛屾墠璺宠浆鍒扮櫥褰曢〉闈?
+      // 鐧诲綍椤甸潰鍙戣捣鐨勭櫥褰曡姹傚厑璁告墽琛岋紝鍗充娇token涓簄ull鎴杣ndefined
       if (!isLoginPage) {
-        console.log('token为null或undefined，跳转到登录页面');
+        console.log('token涓簄ull鎴杣ndefined锛岃烦杞埌鐧诲綍椤甸潰');
         const app = getApp();
         if (app && app.showLoginModal) {
           app.showLoginModal();
         }
-        reject(new Error('未登录，请先登录'));
+        reject(new Error('鏈櫥褰曪紝璇峰厛鐧诲綍'));
         return;
       }
     }
     
-    console.log('token值:', token);
+    console.log('token鍊?', token);
     
-    // 构建 URL，确保只有一个斜杠
+    // 鏋勫缓 URL锛岀‘淇濆彧鏈変竴涓枩鏉?
     let fullUrl = `${API_BASE_URL}${url}`;
-    // 分离协议部分和路径部分
+    // 鍒嗙鍗忚閮ㄥ垎鍜岃矾寰勯儴鍒?
     const protocolMatch = fullUrl.match(/^(https?:\/\/)/i);
     if (protocolMatch) {
       const protocol = protocolMatch[1];
       const path = fullUrl.substring(protocol.length);
-      // 处理路径中的重复斜杠
+      // 澶勭悊璺緞涓殑閲嶅鏂滄潬
       const normalizedPath = path.replace(/\/+\//g, '/');
-      // 处理末尾的斜杠
+      // 澶勭悊鏈熬鐨勬枩鏉?
       const trimmedPath = normalizedPath.replace(/\/+$/, '');
       fullUrl = protocol + trimmedPath;
     } else {
-      // 没有协议，直接处理所有重复斜杠
+      // 娌℃湁鍗忚锛岀洿鎺ュ鐞嗘墍鏈夐噸澶嶆枩鏉?
       fullUrl = fullUrl.replace(/\/+\//g, '/').replace(/\/+$/, '');
     }
-    console.log('构建的完整URL:', fullUrl);
+    console.log('鏋勫缓鐨勫畬鏁碪RL:', fullUrl);
     
     wx.request({
       url: fullUrl,
@@ -61,26 +61,27 @@ const request = (url, method, data = {}) => {
       data,
       header: {
         'Content-Type': 'application/json',
-        // 只有当 token 存在且不是 undefined 时才添加认证头
+        // 鍙湁褰?token 瀛樺湪涓斾笉鏄?undefined 鏃舵墠娣诲姞璁よ瘉澶?
         ...(token ? { 'Authorization': `Bearer ${token}` } : {})
       },
       success: (res) => {
         if (res.statusCode === 200) {
           resolve(res.data);
         } else if (res.statusCode === 401) {
-          // 未授权，清除登录状态
           wx.removeStorageSync('userInfo');
           wx.removeStorageSync('token');
-          
-          // 显示登录窗口
+
           const app = getApp();
           if (app && app.showLoginModal) {
             app.showLoginModal();
           }
-          
+
           reject(new Error('登录已过期，请重新登录'));
         } else {
-          reject(new Error(`请求失败: ${res.statusCode}`));
+          const error = new Error(`请求失败: ${res.statusCode}`);
+          error.statusCode = res.statusCode;
+          error.response = res.data;
+          reject(error);
         }
       },
       fail: (err) => {
@@ -91,7 +92,7 @@ const request = (url, method, data = {}) => {
 };
 
 /**
- * API 客户端
+ * API 瀹㈡埛绔?
  */
 const apiClient = {
   get: (url) => request(url, 'GET'),
@@ -100,8 +101,27 @@ const apiClient = {
   delete: (url) => request(url, 'DELETE')
 };
 
+const getGymLocation = (data = {}) => {
+  if (typeof data.location === 'string') return data.location;
+  if (typeof data.address === 'string') return data.address;
+  return '';
+};
+
+const hasLocationValidationError = (error) => {
+  if (!error || error.statusCode !== 422) return false;
+  const details = error.response && error.response.detail;
+  if (!Array.isArray(details)) return false;
+  return details.some((item) => Array.isArray(item && item.loc) && item.loc.includes('location'));
+};
+
+const shouldRetryGymWithFallbackLocation = (error, payload) => {
+  const location = (payload.location || '').trim();
+  if (location) return false;
+  return hasLocationValidationError(error);
+};
+
 /**
- * 训练记录 API
+ * 璁粌璁板綍 API
  */
 const workoutApi = {
   getAll: () => apiClient.get('api/lifting/workout'),
@@ -114,7 +134,7 @@ const workoutApi = {
 };
 
 /**
- * 训练计划 API
+ * 璁粌璁″垝 API
  */
 const routineApi = {
   getAll: () => apiClient.get('api/lifting/routine'),
@@ -127,7 +147,7 @@ const routineApi = {
 };
 
 /**
- * 动作 API
+ * 鍔ㄤ綔 API
  */
 const exerciseApi = {
   getAll: () => apiClient.get('api/lifting/exercise'),
@@ -138,18 +158,36 @@ const exerciseApi = {
 };
 
 /**
- * 健身房 API
+ * 鍋ヨ韩鎴?API
  */
 const gymApi = {
   getAll: () => apiClient.get('api/lifting/gym'),
-  create: (data) => apiClient.post('api/lifting/gym', data),
-  update: (id, data) => apiClient.put(`api/lifting/gym/${id}`, data),
+  create: (data) => {
+    const payload = { ...data, location: getGymLocation(data).trim() };
+    return apiClient.post('api/lifting/gym', payload).catch((error) => {
+      if (shouldRetryGymWithFallbackLocation(error, payload)) {
+        const retryPayload = { ...payload, location: '未填写地址' };
+        return apiClient.post('api/lifting/gym', retryPayload);
+      }
+      throw error;
+    });
+  },
+  update: (id, data) => {
+    const payload = { ...data, location: getGymLocation(data).trim() };
+    return apiClient.put(`api/lifting/gym/${id}`, payload).catch((error) => {
+      if (shouldRetryGymWithFallbackLocation(error, payload)) {
+        const retryPayload = { ...payload, location: '未填写地址' };
+        return apiClient.put(`api/lifting/gym/${id}`, retryPayload);
+      }
+      throw error;
+    });
+  },
   getById: (id) => apiClient.get(`api/lifting/gym/${id}`),
   delete: (id) => apiClient.delete(`api/lifting/gym/${id}`)
 };
 
 /**
- * 肌肉 API
+ * 鑲岃倝 API
  */
 const muscleApi = {
   getAll: () => apiClient.get('api/lifting/muscle'),
@@ -160,21 +198,21 @@ const muscleApi = {
 };
 
 /**
- * 用户 API
+ * 鐢ㄦ埛 API
  */
 const userApi = {
   getCurrent: () => apiClient.get('api/auth/current')
 };
 
 /**
- * 微信登录 API
+ * 寰俊鐧诲綍 API
  */
 const wechatApi = {
   login: (code, nickname, avatar) => apiClient.post('api/auth/wechat', { code, nickname, avatar })
 };
 
 /**
- * 统一导出的 API 对象
+ * 缁熶竴瀵煎嚭鐨?API 瀵硅薄
  */
 module.exports = {
   workoutApi,
@@ -185,7 +223,7 @@ module.exports = {
   userApi,
   wechatApi,
   
-  // 训练记录 API
+  // 璁粌璁板綍 API
   getWorkouts: workoutApi.getAll,
   createWorkout: workoutApi.create,
   stopWorkout: workoutApi.stop,
@@ -194,7 +232,7 @@ module.exports = {
   updateWorkout: workoutApi.update,
   deleteWorkout: workoutApi.delete,
   
-  // 训练计划 API
+  // 璁粌璁″垝 API
   getRoutines: routineApi.getAll,
   createRoutine: routineApi.create,
   createRoutineTemplate: routineApi.createTemplate,
@@ -203,41 +241,43 @@ module.exports = {
   updateRoutine: routineApi.update,
   deleteRoutine: routineApi.delete,
   
-  // 动作 API
+  // 鍔ㄤ綔 API
   getExercises: exerciseApi.getAll,
   createExercise: exerciseApi.create,
   updateExercise: exerciseApi.update,
   getExercise: exerciseApi.getById,
   deleteExercise: exerciseApi.delete,
   
-  // 健身房 API
+  // 鍋ヨ韩鎴?API
   getGyms: gymApi.getAll,
   createGym: gymApi.create,
   updateGym: gymApi.update,
   getGym: gymApi.getById,
   deleteGym: gymApi.delete,
   
-  // 肌肉 API
+  // 鑲岃倝 API
   getMuscles: muscleApi.getAll,
   createMuscle: muscleApi.create,
   updateMuscle: muscleApi.update,
   getMuscle: muscleApi.getById,
   deleteMuscle: muscleApi.delete,
   
-  // 用户 API
+  // 鐢ㄦ埛 API
   getCurrentUser: userApi.getCurrent,
   
-  // 微信登录 API
+  // 寰俊鐧诲綍 API
   wechatLogin: wechatApi.login
 };
 
-// 额外导出 ES 模块格式，以兼容不同的导入方式
+// 棰濆瀵煎嚭 ES 妯″潡鏍煎紡锛屼互鍏煎涓嶅悓鐨勫鍏ユ柟寮?
 if (typeof module !== 'undefined' && module.exports) {
-  // 保持 CommonJS 导出
+  // 淇濇寔 CommonJS 瀵煎嚭
 } else if (typeof window !== 'undefined') {
-  // 在浏览器环境中导出到全局对象
+  // 鍦ㄦ祻瑙堝櫒鐜涓鍑哄埌鍏ㄥ眬瀵硅薄
   window.Api = module.exports;
 } else if (typeof self !== 'undefined') {
-  // 在 Worker 环境中导出
+  // 鍦?Worker 鐜涓鍑?
   self.Api = module.exports;
 }
+
+

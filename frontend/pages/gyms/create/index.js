@@ -1,4 +1,4 @@
-const { gymApi } = require('../../../services/api');
+﻿const { gymApi } = require('../../../services/api');
 
 Page({
   data: {
@@ -23,8 +23,10 @@ Page({
   validateForm() {
     const errors = {};
     if (!this.data.name.trim()) {
-      errors.name = '请输入健身房名称';
-    }
+        errors.name = '请输入健身房名称';
+      } else if (this.data.name.trim().length < 2) {
+        errors.name = '健身房名称至少 2 个字符';
+      }
     this.setData({ errors });
     return Object.keys(errors).length === 0;
   },
@@ -44,7 +46,7 @@ Page({
     gymApi.create(gymData)
       .then(() => {
         wx.showToast({
-          title: '创建成功',
+          title: '鍒涘缓鎴愬姛',
           icon: 'success'
         });
         setTimeout(() => {
@@ -52,9 +54,9 @@ Page({
         }, 1000);
       })
       .catch((err) => {
-        console.error('创建健身房失败:', err);
+        console.error('鍒涘缓鍋ヨ韩鎴垮け璐?', err);
         wx.showToast({
-          title: '创建失败，请重试',
+          title: '鍒涘缓澶辫触锛岃閲嶈瘯',
           icon: 'none'
         });
       })
@@ -71,3 +73,4 @@ Page({
     this.setData({ menuOpen: !this.data.menuOpen });
   }
 });
+
