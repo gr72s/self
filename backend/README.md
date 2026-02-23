@@ -40,6 +40,7 @@ self init-db
 ```
 
 `self init-project` also runs database initialization after preparing config and credentials.
+Initialization is schema-only and does not auto-import seed SQL.
 
 ## CLI Commands
 
@@ -76,7 +77,7 @@ backend/
     services/
   cli/
     commands/
-  data/             # seed SQL files
+  data/             # reserved (no auto seed import)
   main.py
   setup.py
   requirements.txt
