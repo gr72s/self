@@ -1,4 +1,4 @@
-const { muscleApi } = require('../../../../services/api');
+﻿const { muscleApi } = require('../../../../services/api');
 
 Component({
   options: {
@@ -7,7 +7,8 @@ Component({
 
   data: {
     name: '',
-    group: '',
+    functionText: '',
+    originName: '',
     loading: false,
     errors: {}
   },
@@ -20,24 +21,20 @@ Component({
       }
     },
 
-    handleGroupChange(e) {
-      this.setData({ group: e.detail.value });
-      if (this.data.errors.group) {
-        this.setData({ 'errors.group': '' });
-      }
+    handleFunctionChange(e) {
+      this.setData({ functionText: e.detail.value });
+    },
+
+    handleOriginNameChange(e) {
+      this.setData({ originName: e.detail.value });
     },
 
     validateForm() {
       const errors = {};
-
-      if (!this.data.name.trim()) {
-        errors.name = '请输入肌肉名称';
+      const trimmedName = this.data.name.trim();
+      if (trimmedName.length < 2) {
+        errors.name = '肌肉名称至少2个字符';
       }
-
-      if (!this.data.group.trim()) {
-        errors.group = '请输入肌肉分组';
-      }
-
       this.setData({ errors });
       return Object.keys(errors).length === 0;
     },
@@ -51,7 +48,8 @@ Component({
 
       const muscleData = {
         name: this.data.name.trim(),
-        group: this.data.group.trim()
+        function: this.data.functionText.trim() || undefined,
+        origin_name: this.data.originName.trim() || undefined
       };
 
       muscleApi.create(muscleData)

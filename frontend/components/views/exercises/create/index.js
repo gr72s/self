@@ -1,4 +1,4 @@
-const { exerciseApi, muscleApi } = require('../../../../services/api');
+﻿const { exerciseApi, muscleApi, parsePageItems } = require('../../../../services/api');
 
 Component({
   options: {
@@ -9,6 +9,7 @@ Component({
     name: '',
     originName: '',
     description: '',
+    keypoint: '',
     muscles: [],
     selectedMainMuscles: [],
     selectedSupportMuscles: [],
@@ -27,13 +28,11 @@ Component({
     async fetchInitialData() {
       this.setData({ loading: true });
       try {
-        try {
-          const muscleResponse = await muscleApi.getAll();
-          const muscles = muscleResponse.data?.data || muscleResponse.data || [];
-          this.setData({ muscles });
-        } catch (error) {
-          console.error('Failed to fetch muscles:', error);
-        }
+        const muscleResponse = await muscleApi.getAll();
+        this.setData({ muscles: parsePageItems(muscleResponse) });
+      } catch (error) {
+        console.error('Failed to fetch muscles:', error);
+        wx.showToast({ title: '加载肌肉数据失败', icon: 'none' });
       } finally {
         this.setData({ loading: false });
       }
@@ -51,9 +50,13 @@ Component({
       this.setData({ description: e.detail.value });
     },
 
+    handleKeypointChange(e) {
+      this.setData({ keypoint: e.detail.value });
+    },
+
     toggleMainMuscle(e) {
       const muscleId = e.currentTarget?.dataset?.id;
-      if (!muscleId) return;
+      if (typeof muscleId !== 'number') return;
 
       const selectedMainMuscles = [...this.data.selectedMainMuscles];
       const index = selectedMainMuscles.indexOf(muscleId);
@@ -68,7 +71,7 @@ Component({
 
     toggleSupportMuscle(e) {
       const muscleId = e.currentTarget?.dataset?.id;
-      if (!muscleId) return;
+      if (typeof muscleId !== 'number') return;
 
       const selectedSupportMuscles = [...this.data.selectedSupportMuscles];
       const index = selectedSupportMuscles.indexOf(muscleId);
@@ -104,10 +107,16 @@ Component({
     },
 
     async handleSubmit() {
-      const { name, originName, description, selectedMainMuscles, selectedSupportMuscles, cues } = this.data;
+      const { name, originName, description, keypoint, selectedMainMuscles, selectedSupportMuscles, cues } = this.data;
+      const trimmedName = name.trim();
 
-      if (!name.trim()) {
-        wx.showToast({ title: '请输入动作名称', icon: 'none' });
+      if (trimmedName.length < 2) {
+        wx.showToast({ title: '动作名称至少2个字符', icon: 'none' });
+        return;
+      }
+
+      if (!Array.isArray(selectedMainMuscles) || selectedMainMuscles.length === 0) {
+        wx.showToast({ title: '请至少选择一个主要肌肉', icon: 'none' });
         return;
       }
 
@@ -115,12 +124,13 @@ Component({
 
       try {
         const exerciseData = {
-          name: name.trim(),
-          originName: originName.trim(),
-          description: description.trim(),
-          mainMuscleIds: selectedMainMuscles,
-          supportMuscleIds: selectedSupportMuscles,
-          cues: cues.filter((cue) => cue.trim())
+          name: trimmedName,
+          origin_name: originName.trim() || undefined,
+          description: description.trim() || undefined,
+          keypoint: keypoint.trim() || undefined,
+          main_muscles: selectedMainMuscles,
+          support_muscles: selectedSupportMuscles,
+          cues: cues.map((cue) => cue.trim()).filter((cue) => cue)
         };
 
         await exerciseApi.create(exerciseData);

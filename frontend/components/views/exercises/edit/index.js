@@ -1,4 +1,9 @@
-const { exerciseApi, muscleApi } = require('../../../../services/api');
+﻿const {
+  exerciseApi,
+  muscleApi,
+  unwrapResponseData,
+  parsePageItems
+} = require('../../../../services/api');
 
 Component({
   options: {
@@ -17,6 +22,7 @@ Component({
     name: '',
     originName: '',
     description: '',
+    keypoint: '',
     muscles: [],
     selectedMainMuscles: [],
     selectedSupportMuscles: [],
@@ -50,14 +56,15 @@ Component({
       try {
         const exerciseId = this.data.entityId;
 
-        const exerciseResponse = await exerciseApi.getById(exerciseId);
-        const exercise = exerciseResponse.data?.data || exerciseResponse.data;
-        this.setData({ exercise });
+        const [exerciseResponse, muscleResponse] = await Promise.all([
+          exerciseApi.getById(exerciseId),
+          muscleApi.getAll()
+        ]);
 
-        const muscleResponse = await muscleApi.getAll();
-        const muscles = muscleResponse.data?.data || muscleResponse.data || [];
-        this.setData({ muscles });
+        const exercise = unwrapResponseData(exerciseResponse);
+        const muscles = parsePageItems(muscleResponse);
 
+        this.setData({ exercise, muscles });
         this.initFormData(exercise);
       } catch (error) {
         console.error('Failed to fetch exercise data:', error);
@@ -68,29 +75,22 @@ Component({
     },
 
     initFormData(exercise) {
-      const { name, originName, description, mainMuscles, supportMuscles, cues } = exercise;
+      const selectedMainMuscles = Array.isArray(exercise && exercise.main_muscles)
+        ? exercise.main_muscles.map((item) => item.id).filter((id) => typeof id === 'number')
+        : [];
 
-      const selectedMainMuscles = [];
-      if (mainMuscles) {
-        mainMuscles.forEach((muscle) => {
-          selectedMainMuscles.push(muscle.id);
-        });
-      }
-
-      const selectedSupportMuscles = [];
-      if (supportMuscles) {
-        supportMuscles.forEach((muscle) => {
-          selectedSupportMuscles.push(muscle.id);
-        });
-      }
+      const selectedSupportMuscles = Array.isArray(exercise && exercise.support_muscles)
+        ? exercise.support_muscles.map((item) => item.id).filter((id) => typeof id === 'number')
+        : [];
 
       this.setData({
-        name: name || '',
-        originName: originName || '',
-        description: description || '',
+        name: (exercise && exercise.name) || '',
+        originName: (exercise && exercise.origin_name) || '',
+        description: (exercise && exercise.description) || '',
+        keypoint: (exercise && exercise.keypoint) || '',
         selectedMainMuscles,
         selectedSupportMuscles,
-        cues: cues || []
+        cues: Array.isArray(exercise && exercise.cues) ? exercise.cues : []
       });
     },
 
@@ -106,10 +106,15 @@ Component({
       this.setData({ description: e.detail.value });
     },
 
-    toggleMainMuscle(e) {
-      const muscleId = e.currentTarget.dataset.id;
-      const selectedMainMuscles = [...this.data.selectedMainMuscles];
+    handleKeypointChange(e) {
+      this.setData({ keypoint: e.detail.value });
+    },
 
+    toggleMainMuscle(e) {
+      const muscleId = e.currentTarget?.dataset?.id;
+      if (typeof muscleId !== 'number') return;
+
+      const selectedMainMuscles = [...this.data.selectedMainMuscles];
       const index = selectedMainMuscles.indexOf(muscleId);
       if (index > -1) {
         selectedMainMuscles.splice(index, 1);
@@ -121,9 +126,10 @@ Component({
     },
 
     toggleSupportMuscle(e) {
-      const muscleId = e.currentTarget.dataset.id;
-      const selectedSupportMuscles = [...this.data.selectedSupportMuscles];
+      const muscleId = e.currentTarget?.dataset?.id;
+      if (typeof muscleId !== 'number') return;
 
+      const selectedSupportMuscles = [...this.data.selectedSupportMuscles];
       const index = selectedSupportMuscles.indexOf(muscleId);
       if (index > -1) {
         selectedSupportMuscles.splice(index, 1);
@@ -140,14 +146,18 @@ Component({
     },
 
     removeCue(e) {
-      const index = e.currentTarget.dataset.index;
+      const index = e.currentTarget?.dataset?.index;
+      if (typeof index !== 'number') return;
+
       const cues = [...this.data.cues];
       cues.splice(index, 1);
       this.setData({ cues });
     },
 
     handleCueChange(e) {
-      const index = e.currentTarget.dataset.index;
+      const index = e.currentTarget?.dataset?.index;
+      if (typeof index !== 'number') return;
+
       const value = e.detail.value;
       const cues = [...this.data.cues];
       cues[index] = value;
@@ -155,10 +165,16 @@ Component({
     },
 
     async handleSubmit() {
-      const { entityId, name, originName, description, selectedMainMuscles, selectedSupportMuscles, cues } = this.data;
+      const { entityId, name, originName, description, keypoint, selectedMainMuscles, selectedSupportMuscles, cues } = this.data;
+      const trimmedName = name.trim();
 
-      if (!name.trim()) {
-        wx.showToast({ title: '请输入动作名称', icon: 'none' });
+      if (trimmedName.length < 2) {
+        wx.showToast({ title: '动作名称至少2个字符', icon: 'none' });
+        return;
+      }
+
+      if (!Array.isArray(selectedMainMuscles) || selectedMainMuscles.length === 0) {
+        wx.showToast({ title: '请至少选择一个主要肌肉', icon: 'none' });
         return;
       }
 
@@ -166,12 +182,13 @@ Component({
 
       try {
         const exerciseData = {
-          name: name.trim(),
-          originName: originName.trim(),
-          description: description.trim(),
-          mainMuscleIds: selectedMainMuscles,
-          supportMuscleIds: selectedSupportMuscles,
-          cues: cues.filter((cue) => cue.trim())
+          name: trimmedName,
+          origin_name: originName.trim() || undefined,
+          description: description.trim() || undefined,
+          keypoint: keypoint.trim() || undefined,
+          main_muscles: selectedMainMuscles,
+          support_muscles: selectedSupportMuscles,
+          cues: cues.map((cue) => cue.trim()).filter((cue) => cue)
         };
 
         await exerciseApi.update(entityId, exerciseData);

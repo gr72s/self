@@ -1,14 +1,10 @@
-<view class="page-container">
-  <!-- 顶部导航栏-->
-  
-  <!-- 主内容区 -->
+﻿<view class="page-container">
   <view class="main-container">
-    <!-- 页面头部 -->
     <view class="section-title">
       <text>训练计划</text>
       <view class="toolbar-right">
         <view class="button icon-button" bindtap="handleRefresh">
-          <text>🔄</text>
+          <text>↻</text>
         </view>
         <view class="button primary create-button" bindtap="navigateToCreate">
           <text class="button-text">+ 新建</text>
@@ -16,7 +12,6 @@
       </view>
     </view>
 
-    <!-- 计划列表 -->
     <view class="table">
       <block wx:if="{{loading}}">
         <view class="loading">
@@ -26,7 +21,7 @@
       </block>
       <block wx:elif="{{routines.length === 0}}">
         <view class="empty">
-          <text class="empty-icon">📋</text>
+          <text class="empty-icon">📄</text>
           <text class="empty-text">暂无训练计划</text>
           <text class="empty-subtext">创建第一个训练计划开始使用</text>
           <view class="button primary create-button" bindtap="navigateToCreate">
@@ -37,8 +32,8 @@
       <block wx:else>
         <view class="table-header">
           <view class="table-header-cell">计划</view>
-          <view class="table-header-cell">动作库</view>
-          <view class="table-header-cell">目标肌群</view>
+          <view class="table-header-cell">动作数</view>
+          <view class="table-header-cell">目标数</view>
           <view class="table-header-cell">描述</view>
           <view class="table-header-cell" style="text-align: right;">操作</view>
         </view>
@@ -48,10 +43,10 @@
               <text class="routine-name">{{item.name}}</text>
             </view>
             <view class="table-cell">
-              <text>{{item.slots && item.slots.size ? item.slots.size : 0}}</text>
+              <text>{{item.slot_count}}</text>
             </view>
             <view class="table-cell">
-              <text>{{item.targets && item.targets.size ? item.targets.size : 0}}</text>
+              <text>{{item.target_count}}</text>
             </view>
             <view class="table-cell">
               <text class="routine-description">{{item.description || '暂无描述'}}</text>
@@ -59,10 +54,10 @@
             <view class="table-cell" style="text-align: right;">
               <view class="table-actions">
                 <view class="button icon-button" bindtap="navigateToEdit" data-id="{{item.id}}">
-                  <text>✏️</text>
+                  <text>✎</text>
                 </view>
                 <view class="button icon-button delete" bindtap="confirmDelete" data-id="{{item.id}}">
-                  <text>🗑️</text>
+                  <text>🗑</text>
                 </view>
               </view>
             </view>
@@ -71,7 +66,4 @@
       </block>
     </view>
   </view>
-  
-  <!-- 底部工具栏-->
 </view>
-

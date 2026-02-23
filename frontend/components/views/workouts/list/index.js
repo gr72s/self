@@ -1,13 +1,17 @@
-const { workoutApi } = require('../../../../services/api');
+﻿const { workoutApi, parsePageItems } = require('../../../../services/api');
 const { VIEW_KEYS } = require('../../../../types/view-router');
 
 const formatDate = (dateString) => {
+  if (!dateString) return '-';
   const date = new Date(dateString);
+  if (Number.isNaN(date.getTime())) return '-';
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 };
 
 const formatTime = (dateString) => {
+  if (!dateString) return '-';
   const date = new Date(dateString);
+  if (Number.isNaN(date.getTime())) return '-';
   return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
 };
 
@@ -15,11 +19,19 @@ const calculateDuration = (startTime, endTime) => {
   if (!startTime || !endTime) return '00:00';
   const start = new Date(startTime).getTime();
   const end = new Date(endTime).getTime();
+  if (Number.isNaN(start) || Number.isNaN(end) || end <= start) return '00:00';
+
   const duration = Math.floor((end - start) / 1000);
   const minutes = Math.floor(duration / 60);
   const seconds = duration % 60;
   return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 };
+
+const normalizeWorkout = (item) => ({
+  ...item,
+  startTime: item.start_time,
+  endTime: item.end_time
+});
 
 Component({
   options: {
@@ -42,10 +54,7 @@ Component({
       this.setData({ loading: true });
       try {
         const response = await workoutApi.getAll();
-        const workouts = response?.data?.items;
-        if (!Array.isArray(workouts)) {
-          throw new Error('Invalid workout list response format');
-        }
+        const workouts = parsePageItems(response).map(normalizeWorkout);
         this.setData({ workouts });
       } catch (error) {
         console.error('Failed to fetch workouts:', error);

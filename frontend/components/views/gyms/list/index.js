@@ -1,4 +1,4 @@
-const { gymApi } = require('../../../../services/api');
+﻿const { gymApi, parsePageItems } = require('../../../../services/api');
 const { VIEW_KEYS } = require('../../../../types/view-router');
 
 Component({
@@ -26,11 +26,7 @@ Component({
 
       gymApi.getAll()
         .then((res) => {
-          const gyms = res?.data?.items;
-          if (!Array.isArray(gyms)) {
-            throw new Error('Invalid gym list response format');
-          }
-          this.setData({ gyms, loading: false });
+          this.setData({ gyms: parsePageItems(res), loading: false });
         })
         .catch((err) => {
           console.error('Failed to load gyms:', err);

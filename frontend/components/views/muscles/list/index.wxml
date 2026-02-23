@@ -1,10 +1,10 @@
-<view class="page-container">
+﻿<view class="page-container">
   <view class="main-container">
     <view class="section-title">
       <text>肌肉</text>
       <view class="toolbar-right">
         <view class="button icon-button" bindtap="handleRefresh">
-          <text>🔄</text>
+          <text>↻</text>
         </view>
         <view class="button primary create-button" bindtap="handleAddMuscle">
           <text class="button-text">+ 新建</text>
@@ -21,7 +21,7 @@
       </block>
       <block wx:elif="{{error}}">
         <view class="empty">
-          <text class="empty-icon">⚠️</text>
+          <text class="empty-icon">⚠</text>
           <text class="empty-text">{{error}}</text>
           <view class="button secondary" bindtap="loadMuscles">
             <text class="button-text">重试</text>
@@ -50,15 +50,15 @@
               <text class="muscle-name">{{item.name}}</text>
             </view>
             <view class="table-cell">
-              <text class="muscle-group">{{item.function}}</text>
+              <text class="muscle-group">{{item.function || '-'}}</text>
             </view>
             <view class="table-cell" style="text-align: right;">
               <view class="table-actions">
                 <view class="button icon-button" bindtap="handleEditMuscle" data-id="{{item.id}}">
-                  <text>✏️</text>
+                  <text>✎</text>
                 </view>
                 <view class="button icon-button delete" bindtap="handleDeleteMuscle" data-id="{{item.id}}">
-                  <text>🗑️</text>
+                  <text>🗑</text>
                 </view>
               </view>
             </view>
@@ -83,4 +83,3 @@
     </view>
   </view>
 </view>
-

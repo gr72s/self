@@ -1,4 +1,13 @@
-const { workoutApi, routineApi, gymApi } = require('../../../../services/api');
+﻿const {
+  workoutApi,
+  routineApi,
+  gymApi,
+  targetApi,
+  unwrapResponseData,
+  parsePageItems
+} = require('../../../../services/api');
+
+const OPTIONAL_ROUTINE = { id: null, name: '不关联训练计划' };
 
 Component({
   options: {
@@ -14,12 +23,12 @@ Component({
 
   data: {
     workout: null,
-    routines: [],
+    routines: [OPTIONAL_ROUTINE],
     gyms: [],
     targets: [],
     selectedRoutineIndex: 0,
     selectedGymIndex: 0,
-    selectedRoutine: null,
+    selectedRoutine: OPTIONAL_ROUTINE,
     selectedGym: null,
     selectedTargets: [],
     note: '',
@@ -52,30 +61,24 @@ Component({
       try {
         const workoutId = this.data.entityId;
         if (!workoutId) {
-          throw new Error('需要训练ID');
+          throw new Error('缺少训练 ID');
         }
 
-        const workoutResponse = await workoutApi.getById(workoutId);
-        const workout = (workoutResponse.data && workoutResponse.data.data) || workoutResponse.data;
-        this.setData({ workout });
+        const [workoutResponse, routineResponse, gymResponse, targetResponse] = await Promise.all([
+          workoutApi.getById(workoutId),
+          routineApi.getAll(),
+          gymApi.getAll(),
+          targetApi.getAll()
+        ]);
 
-        const routineResponse = await routineApi.getAll();
-        const routines = (routineResponse.data && routineResponse.data.data) || routineResponse.data || [];
-        this.setData({ routines });
+        const workout = unwrapResponseData(workoutResponse);
+        const routines = [OPTIONAL_ROUTINE, ...parsePageItems(routineResponse)];
+        const gyms = parsePageItems(gymResponse);
+        const targets = parsePageItems(targetResponse);
 
-        const gymResponse = await gymApi.getAll();
-        const gyms = (gymResponse.data && gymResponse.data.data) || gymResponse.data || [];
-        this.setData({ gyms });
-
-        const mockTargets = [
-          { id: 1, name: 'Strength' },
-          { id: 2, name: 'Endurance' },
-          { id: 3, name: 'Flexibility' },
-          { id: 4, name: 'Cardio' }
-        ];
-        this.setData({ targets: mockTargets });
-
-        this.initFormData(workout, routines, gyms);
+        this.setData({ workout, routines, gyms, targets }, () => {
+          this.initFormData(workout, routines, gyms);
+        });
       } catch (error) {
         console.error('Failed to fetch workout data:', error);
         wx.showToast({ title: '加载训练数据失败', icon: 'none' });
@@ -85,42 +88,43 @@ Component({
     },
 
     initFormData(workout, routines, gyms) {
-      const selectedRoutineIndex = routines.findIndex((r) => r.id === workout.routineId);
-      const selectedGymIndex = gyms.findIndex((g) => g.id === workout.gymId);
+      const routineId = workout && workout.routine ? workout.routine.id : null;
+      const gymId = workout && workout.gym ? workout.gym.id : null;
 
-      const selectedTargets = [];
-      if (Array.isArray(workout.target)) {
-        workout.target.forEach((target) => {
-          if (target && target.id) {
-            selectedTargets.push(target.id);
-          }
-        });
-      }
+      const selectedRoutineIndex = routines.findIndex((item) => item.id === routineId);
+      const selectedGymIndex = gyms.findIndex((item) => item.id === gymId);
 
-      this.setData({
-        selectedRoutineIndex: selectedRoutineIndex > -1 ? selectedRoutineIndex : 0,
-        selectedGymIndex: selectedGymIndex > -1 ? selectedGymIndex : 0,
-        selectedTargets,
-        note: workout.note || ''
-      }, () => this.syncSelections());
+      const selectedTargets = Array.isArray(workout && workout.target)
+        ? workout.target.map((item) => item.id).filter((id) => typeof id === 'number')
+        : [];
+
+      this.setData(
+        {
+          selectedRoutineIndex: selectedRoutineIndex > -1 ? selectedRoutineIndex : 0,
+          selectedGymIndex: selectedGymIndex > -1 ? selectedGymIndex : 0,
+          selectedTargets,
+          note: (workout && workout.note) || ''
+        },
+        () => this.syncSelections()
+      );
     },
 
     syncSelections() {
       const { routines, gyms, selectedRoutineIndex, selectedGymIndex } = this.data;
       this.setData({
-        selectedRoutine: routines[selectedRoutineIndex] || null,
+        selectedRoutine: routines[selectedRoutineIndex] || OPTIONAL_ROUTINE,
         selectedGym: gyms[selectedGymIndex] || null
       });
     },
 
     handleRoutineChange(e) {
       const index = parseInt(e.detail.value, 10);
-      this.setData({ selectedRoutineIndex: index }, () => this.syncSelections());
+      this.setData({ selectedRoutineIndex: Number.isNaN(index) ? 0 : index }, () => this.syncSelections());
     },
 
     handleGymChange(e) {
       const index = parseInt(e.detail.value, 10);
-      this.setData({ selectedGymIndex: index }, () => this.syncSelections());
+      this.setData({ selectedGymIndex: Number.isNaN(index) ? 0 : index }, () => this.syncSelections());
     },
 
     toggleTarget(e) {
@@ -146,15 +150,20 @@ Component({
       const { entityId, routines, gyms, selectedRoutineIndex, selectedGymIndex, selectedTargets, note } = this.data;
 
       if (!entityId) {
-        wx.showToast({ title: '无效的训练ID', icon: 'none' });
+        wx.showToast({ title: '无效的训练 ID', icon: 'none' });
         return;
       }
-      if (!routines[selectedRoutineIndex]) {
-        wx.showToast({ title: '请选择训练计划', icon: 'none' });
-        return;
-      }
-      if (!gyms[selectedGymIndex]) {
+
+      const selectedRoutine = routines[selectedRoutineIndex] || OPTIONAL_ROUTINE;
+      const selectedGym = gyms[selectedGymIndex] || null;
+
+      if (!selectedGym) {
         wx.showToast({ title: '请选择健身房', icon: 'none' });
+        return;
+      }
+
+      if (!Array.isArray(selectedTargets) || selectedTargets.length === 0) {
+        wx.showToast({ title: '请至少选择一个目标', icon: 'none' });
         return;
       }
 
@@ -162,11 +171,14 @@ Component({
 
       try {
         const workoutData = {
-          routineId: routines[selectedRoutineIndex].id,
-          gymId: gyms[selectedGymIndex].id,
-          targetIds: selectedTargets,
-          note
+          gym: selectedGym.id,
+          target: selectedTargets,
+          note: note.trim() || undefined
         };
+
+        if (selectedRoutine.id) {
+          workoutData.routine = selectedRoutine.id;
+        }
 
         await workoutApi.update(entityId, workoutData);
 

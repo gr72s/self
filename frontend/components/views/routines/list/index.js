@@ -1,5 +1,11 @@
-const { routineApi } = require('../../../../services/api');
+﻿const { routineApi, parsePageItems } = require('../../../../services/api');
 const { VIEW_KEYS } = require('../../../../types/view-router');
+
+const normalizeRoutine = (item) => ({
+  ...item,
+  slot_count: Array.isArray(item.slots) ? item.slots.length : 0,
+  target_count: Array.isArray(item.targets) ? item.targets.length : 0
+});
 
 Component({
   options: {
@@ -22,10 +28,7 @@ Component({
       this.setData({ loading: true });
       try {
         const response = await routineApi.getAll();
-        const routines = response?.data?.items;
-        if (!Array.isArray(routines)) {
-          throw new Error('Invalid routine list response format');
-        }
+        const routines = parsePageItems(response).map(normalizeRoutine);
         this.setData({ routines });
       } catch (error) {
         console.error('Failed to fetch routines:', error);
@@ -63,7 +66,7 @@ Component({
 
       wx.showModal({
         title: '删除计划',
-        content: '确定删除该计划吗？',
+        content: '确定删除该训练计划吗？',
         confirmText: '删除',
         cancelText: '取消',
         success: async (res) => {

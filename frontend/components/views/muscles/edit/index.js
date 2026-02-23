@@ -1,4 +1,4 @@
-const { muscleApi } = require('../../../../services/api');
+﻿const { muscleApi, unwrapResponseData } = require('../../../../services/api');
 
 Component({
   options: {
@@ -15,7 +15,8 @@ Component({
   data: {
     id: '',
     name: '',
-    group: '',
+    functionText: '',
+    originName: '',
     loading: true,
     submitting: false,
     error: '',
@@ -35,7 +36,7 @@ Component({
         this.setData({ id: this.data.entityId }, () => this.loadMuscleData());
       } else {
         this.setData({
-          error: '缺少肌肉ID',
+          error: '缺少肌肉 ID',
           loading: false
         });
       }
@@ -48,17 +49,18 @@ Component({
 
       muscleApi.getById(this.data.id)
         .then((res) => {
-          const muscle = res.data?.data || res.data;
+          const muscle = unwrapResponseData(res);
           this.setData({
-            name: muscle.name,
-            group: muscle.group,
+            name: muscle.name || '',
+            functionText: muscle.function || '',
+            originName: muscle.origin_name || '',
             loading: false
           });
         })
         .catch((err) => {
           console.error('Failed to load muscle data:', err);
           this.setData({
-            error: 'Failed to load muscle data. Please retry.',
+            error: '加载肌肉数据失败，请重试',
             loading: false
           });
         });
@@ -71,22 +73,19 @@ Component({
       }
     },
 
-    handleGroupChange(e) {
-      this.setData({ group: e.detail.value });
-      if (this.data.errors.group) {
-        this.setData({ 'errors.group': '' });
-      }
+    handleFunctionChange(e) {
+      this.setData({ functionText: e.detail.value });
+    },
+
+    handleOriginNameChange(e) {
+      this.setData({ originName: e.detail.value });
     },
 
     validateForm() {
       const errors = {};
-
-      if (!this.data.name.trim()) {
-        errors.name = '请输入肌肉名称';
-      }
-
-      if (!this.data.group.trim()) {
-        errors.group = '请输入肌肉分组';
+      const trimmedName = this.data.name.trim();
+      if (trimmedName.length < 2) {
+        errors.name = '肌肉名称至少2个字符';
       }
 
       this.setData({ errors });
@@ -102,7 +101,8 @@ Component({
 
       const muscleData = {
         name: this.data.name.trim(),
-        group: this.data.group.trim()
+        function: this.data.functionText.trim() || undefined,
+        origin_name: this.data.originName.trim() || undefined
       };
 
       muscleApi.update(this.data.id, muscleData)

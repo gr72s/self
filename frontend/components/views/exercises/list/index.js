@@ -1,4 +1,4 @@
-const { exerciseApi } = require('../../../../services/api');
+﻿const { exerciseApi, parsePageItems } = require('../../../../services/api');
 const { VIEW_KEYS } = require('../../../../types/view-router');
 
 Component({
@@ -22,11 +22,7 @@ Component({
       this.setData({ loading: true });
       try {
         const response = await exerciseApi.getAll();
-        const exercises = response?.data?.items;
-        if (!Array.isArray(exercises)) {
-          throw new Error('Invalid exercise list response format');
-        }
-        this.setData({ exercises });
+        this.setData({ exercises: parsePageItems(response) });
       } catch (error) {
         console.error('Failed to fetch exercises:', error);
         wx.showToast({
@@ -92,19 +88,23 @@ Component({
     },
 
     getMusclesList(exercise) {
-      const mainMuscles = exercise.mainMuscles ? Array.from(exercise.mainMuscles).map((m) => m.name).join(', ') : '';
-      const supportMuscles = exercise.supportMuscles ? Array.from(exercise.supportMuscles).map((m) => m.name).join(', ') : '';
+      const mainMuscles = Array.isArray(exercise.main_muscles)
+        ? exercise.main_muscles.map((m) => m.name).join(', ')
+        : '';
+      const supportMuscles = Array.isArray(exercise.support_muscles)
+        ? exercise.support_muscles.map((m) => m.name).join(', ')
+        : '';
 
       if (mainMuscles && supportMuscles) {
-        return `${mainMuscles} (Main), ${supportMuscles} (Support)`;
+        return `${mainMuscles}（主肌群），${supportMuscles}（辅助肌群）`;
       }
       if (mainMuscles) {
-        return `${mainMuscles} (Main)`;
+        return `${mainMuscles}（主肌群）`;
       }
       if (supportMuscles) {
-        return `${supportMuscles} (Support)`;
+        return `${supportMuscles}（辅助肌群）`;
       }
-      return '';
+      return '-';
     }
   }
 });

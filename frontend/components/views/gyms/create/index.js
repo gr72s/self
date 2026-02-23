@@ -1,4 +1,4 @@
-const { gymApi } = require('../../../../services/api');
+﻿const { gymApi } = require('../../../../services/api');
 
 Component({
   options: {
@@ -7,7 +7,7 @@ Component({
 
   data: {
     name: '',
-    address: '',
+    location: '',
     loading: false,
     errors: {}
   },
@@ -20,16 +20,15 @@ Component({
       }
     },
 
-    handleAddressChange(e) {
-      this.setData({ address: e.detail.value });
+    handleLocationChange(e) {
+      this.setData({ location: e.detail.value });
     },
 
     validateForm() {
       const errors = {};
-      if (!this.data.name.trim()) {
-        errors.name = '请输入健身房名称';
-      } else if (this.data.name.trim().length < 2) {
-        errors.name = '健身房名称至少 2 个字符';
+      const trimmedName = this.data.name.trim();
+      if (trimmedName.length < 2) {
+        errors.name = '健身房名称至少2个字符';
       }
       this.setData({ errors });
       return Object.keys(errors).length === 0;
@@ -44,7 +43,7 @@ Component({
 
       const gymData = {
         name: this.data.name.trim(),
-        location: this.data.address.trim()
+        location: this.data.location.trim() || undefined
       };
 
       gymApi.create(gymData)

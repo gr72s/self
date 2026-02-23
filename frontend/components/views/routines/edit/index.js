@@ -1,4 +1,4 @@
-const { routineApi, exerciseApi } = require('../../../../services/api');
+﻿const { routineApi, targetApi, unwrapResponseData, parsePageItems } = require('../../../../services/api');
 
 Component({
   options: {
@@ -17,9 +17,7 @@ Component({
     name: '',
     description: '',
     targets: [],
-    exercises: [],
     selectedTargets: [],
-    selectedExercises: [],
     note: '',
     loading: true,
     submitting: false
@@ -50,26 +48,18 @@ Component({
       try {
         const routineId = this.data.entityId;
         if (!routineId) {
-          throw new Error('需要计划ID');
+          throw new Error('缺少计划 ID');
         }
 
-        const routineResponse = await routineApi.getById(routineId);
-        const routine = routineResponse.data?.data || routineResponse.data;
-        this.setData({ routine });
+        const [routineResponse, targetResponse] = await Promise.all([
+          routineApi.getById(routineId),
+          targetApi.getAll()
+        ]);
 
-        const exerciseResponse = await exerciseApi.getAll();
-        const exercises = exerciseResponse.data?.data || exerciseResponse.data || [];
-        this.setData({ exercises });
+        const routine = unwrapResponseData(routineResponse);
+        const targets = parsePageItems(targetResponse);
 
-        const mockTargets = [
-          { id: 1, name: 'Strength' },
-          { id: 2, name: 'Endurance' },
-          { id: 3, name: 'Flexibility' },
-          { id: 4, name: 'Cardio' }
-        ];
-        this.setData({ targets: mockTargets });
-
-        this.initFormData(routine);
+        this.setData({ routine, targets }, () => this.initFormData(routine));
       } catch (error) {
         console.error('Failed to fetch routine data:', error);
         wx.showToast({ title: '加载计划数据失败', icon: 'none' });
@@ -79,32 +69,15 @@ Component({
     },
 
     initFormData(routine) {
-      const { name, description, targets, exercises, note } = routine;
-
-      const selectedTargets = [];
-      if (targets && Array.isArray(targets)) {
-        targets.forEach((target) => {
-          if (typeof target === 'object' && target.id) {
-            selectedTargets.push(target.id);
-          }
-        });
-      }
-
-      const selectedExercises = [];
-      if (exercises && Array.isArray(exercises)) {
-        exercises.forEach((exercise) => {
-          if (typeof exercise === 'object' && exercise.id) {
-            selectedExercises.push(exercise.id);
-          }
-        });
-      }
+      const selectedTargets = Array.isArray(routine && routine.targets)
+        ? routine.targets.map((item) => item.id).filter((id) => typeof id === 'number')
+        : [];
 
       this.setData({
-        name: name || '',
-        description: description || '',
+        name: (routine && routine.name) || '',
+        description: (routine && routine.description) || '',
         selectedTargets,
-        selectedExercises,
-        note: note || ''
+        note: (routine && routine.note) || ''
       });
     },
 
@@ -135,31 +108,17 @@ Component({
       this.setData({ selectedTargets });
     },
 
-    toggleExercise(e) {
-      const exerciseId = e.currentTarget?.dataset?.id;
-      if (!exerciseId) return;
-
-      const selectedExercises = [...this.data.selectedExercises];
-      const index = selectedExercises.indexOf(exerciseId);
-      if (index > -1) {
-        selectedExercises.splice(index, 1);
-      } else {
-        selectedExercises.push(exerciseId);
-      }
-
-      this.setData({ selectedExercises });
-    },
-
     async handleSubmit() {
-      const { entityId, name, description, selectedTargets, selectedExercises, note } = this.data;
+      const { entityId, name, description, selectedTargets, note } = this.data;
+      const trimmedName = name.trim();
 
-      if (!name.trim()) {
-        wx.showToast({ title: '请输入计划名称', icon: 'none' });
+      if (trimmedName.length < 2) {
+        wx.showToast({ title: '计划名称至少2个字符', icon: 'none' });
         return;
       }
 
       if (!entityId) {
-        wx.showToast({ title: '无效的计划ID', icon: 'none' });
+        wx.showToast({ title: '无效的计划 ID', icon: 'none' });
         return;
       }
 
@@ -167,11 +126,10 @@ Component({
 
       try {
         const routineData = {
-          name: name.trim(),
-          description: description.trim(),
-          targetIds: selectedTargets,
-          exerciseIds: selectedExercises,
-          note: note.trim()
+          name: trimmedName,
+          description: description.trim() || undefined,
+          target_ids: selectedTargets,
+          note: note.trim() || undefined
         };
 
         await routineApi.update(entityId, routineData);

@@ -1,4 +1,6 @@
-const { workoutApi, routineApi, gymApi } = require('../../../../services/api');
+﻿const { workoutApi, routineApi, gymApi, targetApi, parsePageItems } = require('../../../../services/api');
+
+const OPTIONAL_ROUTINE = { id: null, name: '不关联训练计划' };
 
 Component({
   options: {
@@ -6,12 +8,12 @@ Component({
   },
 
   data: {
-    routines: [],
+    routines: [OPTIONAL_ROUTINE],
     gyms: [],
     targets: [],
     selectedRoutineIndex: 0,
     selectedGymIndex: 0,
-    selectedRoutine: null,
+    selectedRoutine: OPTIONAL_ROUTINE,
     selectedGym: null,
     selectedTargets: [],
     note: '',
@@ -29,30 +31,23 @@ Component({
     async fetchInitialData() {
       this.setData({ loading: true });
       try {
-        try {
-          const routineResponse = await routineApi.getAll();
-          const routines = routineResponse.data?.data || routineResponse.data || [];
-          this.setData({ routines });
-        } catch (error) {
-          console.error('Failed to fetch routines:', error);
-        }
+        const [routineResponse, gymResponse, targetResponse] = await Promise.all([
+          routineApi.getAll(),
+          gymApi.getAll(),
+          targetApi.getAll()
+        ]);
 
-        try {
-          const gymResponse = await gymApi.getAll();
-          const gyms = gymResponse.data?.data || gymResponse.data || [];
-          this.setData({ gyms });
-        } catch (error) {
-          console.error('Failed to fetch gyms:', error);
-        }
+        const routines = [OPTIONAL_ROUTINE, ...parsePageItems(routineResponse)];
+        const gyms = parsePageItems(gymResponse);
+        const targets = parsePageItems(targetResponse);
 
-        const mockTargets = [
-          { id: 1, name: 'Strength' },
-          { id: 2, name: 'Endurance' },
-          { id: 3, name: 'Flexibility' },
-          { id: 4, name: 'Cardio' }
-        ];
-        this.setData({ targets: mockTargets });
-        this.syncSelections();
+        this.setData({ routines, gyms, targets }, () => this.syncSelections());
+      } catch (error) {
+        console.error('Failed to fetch workout create data:', error);
+        wx.showToast({
+          title: '加载数据失败',
+          icon: 'none'
+        });
       } finally {
         this.setData({ loading: false });
       }
@@ -61,19 +56,19 @@ Component({
     syncSelections() {
       const { routines, gyms, selectedRoutineIndex, selectedGymIndex } = this.data;
       this.setData({
-        selectedRoutine: routines[selectedRoutineIndex] || null,
+        selectedRoutine: routines[selectedRoutineIndex] || OPTIONAL_ROUTINE,
         selectedGym: gyms[selectedGymIndex] || null
       });
     },
 
     handleRoutineChange(e) {
       const index = parseInt(e.detail.value, 10);
-      this.setData({ selectedRoutineIndex: index }, () => this.syncSelections());
+      this.setData({ selectedRoutineIndex: Number.isNaN(index) ? 0 : index }, () => this.syncSelections());
     },
 
     handleGymChange(e) {
       const index = parseInt(e.detail.value, 10);
-      this.setData({ selectedGymIndex: index }, () => this.syncSelections());
+      this.setData({ selectedGymIndex: Number.isNaN(index) ? 0 : index }, () => this.syncSelections());
     },
 
     toggleTarget(e) {
@@ -95,15 +90,25 @@ Component({
     },
 
     async handleSubmit() {
-      const { routines, gyms, selectedRoutineIndex, selectedGymIndex, selectedTargets, note } = this.data;
+      const {
+        routines,
+        gyms,
+        selectedRoutineIndex,
+        selectedGymIndex,
+        selectedTargets,
+        note
+      } = this.data;
 
-      if (!routines[selectedRoutineIndex]) {
-        wx.showToast({ title: '请选择训练计划', icon: 'none' });
+      const selectedRoutine = routines[selectedRoutineIndex] || OPTIONAL_ROUTINE;
+      const selectedGym = gyms[selectedGymIndex] || null;
+
+      if (!selectedGym) {
+        wx.showToast({ title: '请选择健身房', icon: 'none' });
         return;
       }
 
-      if (!gyms[selectedGymIndex]) {
-        wx.showToast({ title: '请选择健身房', icon: 'none' });
+      if (!Array.isArray(selectedTargets) || selectedTargets.length === 0) {
+        wx.showToast({ title: '请至少选择一个目标', icon: 'none' });
         return;
       }
 
@@ -111,11 +116,14 @@ Component({
 
       try {
         const workoutData = {
-          routineId: routines[selectedRoutineIndex].id,
-          gymId: gyms[selectedGymIndex].id,
-          targetIds: selectedTargets,
-          note
+          gym: selectedGym.id,
+          target: selectedTargets,
+          note: note.trim() || undefined
         };
+
+        if (selectedRoutine.id) {
+          workoutData.routine = selectedRoutine.id;
+        }
 
         await workoutApi.create(workoutData);
 

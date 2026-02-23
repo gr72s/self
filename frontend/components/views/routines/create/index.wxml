@@ -1,16 +1,10 @@
-<view class="page-container">
-  <!-- 顶部导航栏-->
-  
-  <!-- 主内容区 -->
+﻿<view class="page-container">
   <view class="main-container">
-    <!-- 页面头部 -->
     <view class="page-header">
       <text class="page-title">新建计划</text>
     </view>
 
-    <!-- 表单 -->
     <form class="routine-form" bindsubmit="handleSubmit">
-      <!-- 基本信息 -->
       <view class="form-section">
         <text class="section-title">基本信息</text>
         <view class="form-item">
@@ -23,11 +17,10 @@
         </view>
       </view>
 
-      <!-- 目标选择 -->
       <view class="form-section">
-        <text class="section-title">目标肌群</text>
+        <text class="section-title">训练目标</text>
         <view class="form-item">
-          <text class="form-label">选择目标肌群</text>
+          <text class="form-label">可多选（选填）</text>
           <view class="targets-container">
             <view wx:for="{{targets}}" wx:key="id" class="target-item" bindtap="toggleTarget" data-id="{{item.id}}">
               <view class="target-checkbox {{selectedTargets.includes(item.id) ? 'checked' : ''}}">
@@ -39,23 +32,6 @@
         </view>
       </view>
 
-      <!-- 动作选择 -->
-      <view class="form-section">
-        <text class="section-title">动作库</text>
-        <view class="form-item">
-          <text class="form-label">添加动作</text>
-          <view class="exercises-container">
-            <view wx:for="{{exercises}}" wx:key="id" class="exercise-item" bindtap="toggleExercise" data-id="{{item.id}}">
-              <view class="exercise-checkbox {{selectedExercises.includes(item.id) ? 'checked' : ''}}">
-                <text wx:if="{{selectedExercises.includes(item.id)}}" class="checkbox-icon">✓</text>
-              </view>
-              <text class="exercise-name">{{item.name}}</text>
-            </view>
-          </view>
-        </view>
-      </view>
-
-      <!-- 备注 -->
       <view class="form-section">
         <text class="section-title">其他信息</text>
         <view class="form-item">
@@ -64,7 +40,6 @@
         </view>
       </view>
 
-      <!-- 提交按钮 -->
       <view class="form-actions">
         <button class="cancel-button" bindtap="navigateBack">取消</button>
         <button class="submit-button" form-type="submit" wx:if="{{!submitting}}">新建计划</button>
@@ -72,7 +47,4 @@
       </view>
     </form>
   </view>
-  
-  <!-- 底部工具栏-->
 </view>
-

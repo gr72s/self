@@ -1,4 +1,4 @@
-const { routineApi, exerciseApi } = require('../../../../services/api');
+﻿const { routineApi, targetApi, parsePageItems } = require('../../../../services/api');
 
 Component({
   options: {
@@ -9,9 +9,7 @@ Component({
     name: '',
     description: '',
     targets: [],
-    exercises: [],
     selectedTargets: [],
-    selectedExercises: [],
     note: '',
     loading: true,
     submitting: false
@@ -27,21 +25,11 @@ Component({
     async fetchInitialData() {
       this.setData({ loading: true });
       try {
-        try {
-          const exerciseResponse = await exerciseApi.getAll();
-          const exercises = exerciseResponse.data?.data || exerciseResponse.data || [];
-          this.setData({ exercises });
-        } catch (error) {
-          console.error('Failed to fetch exercises:', error);
-        }
-
-        const mockTargets = [
-          { id: 1, name: 'Strength' },
-          { id: 2, name: 'Endurance' },
-          { id: 3, name: 'Flexibility' },
-          { id: 4, name: 'Cardio' }
-        ];
-        this.setData({ targets: mockTargets });
+        const targetResponse = await targetApi.getAll();
+        this.setData({ targets: parsePageItems(targetResponse) });
+      } catch (error) {
+        console.error('Failed to fetch targets:', error);
+        wx.showToast({ title: '加载目标失败', icon: 'none' });
       } finally {
         this.setData({ loading: false });
       }
@@ -74,26 +62,11 @@ Component({
       this.setData({ selectedTargets });
     },
 
-    toggleExercise(e) {
-      const exerciseId = e.currentTarget?.dataset?.id;
-      if (!exerciseId) return;
-
-      const selectedExercises = [...this.data.selectedExercises];
-      const index = selectedExercises.indexOf(exerciseId);
-      if (index > -1) {
-        selectedExercises.splice(index, 1);
-      } else {
-        selectedExercises.push(exerciseId);
-      }
-
-      this.setData({ selectedExercises });
-    },
-
     async handleSubmit() {
-      const { name, description, selectedTargets, selectedExercises, note } = this.data;
-
-      if (!name.trim()) {
-        wx.showToast({ title: '请输入计划名称', icon: 'none' });
+      const { name, description, selectedTargets, note } = this.data;
+      const trimmedName = name.trim();
+      if (trimmedName.length < 2) {
+        wx.showToast({ title: '计划名称至少2个字符', icon: 'none' });
         return;
       }
 
@@ -101,11 +74,10 @@ Component({
 
       try {
         const routineData = {
-          name: name.trim(),
-          description: description.trim(),
-          targetIds: selectedTargets,
-          exerciseIds: selectedExercises,
-          note: note.trim()
+          name: trimmedName,
+          description: description.trim() || undefined,
+          target_ids: selectedTargets,
+          note: note.trim() || undefined
         };
 
         await routineApi.create(routineData);

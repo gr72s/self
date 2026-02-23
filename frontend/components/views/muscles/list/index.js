@@ -1,4 +1,4 @@
-const { muscleApi } = require('../../../../services/api');
+﻿const { muscleApi, parsePageItems } = require('../../../../services/api');
 const { VIEW_KEYS } = require('../../../../types/view-router');
 
 Component({
@@ -26,11 +26,7 @@ Component({
 
       muscleApi.getAll()
         .then((res) => {
-          const muscles = res?.data?.items;
-          if (!Array.isArray(muscles)) {
-            throw new Error('Invalid muscle list response format');
-          }
-          this.setData({ muscles, loading: false });
+          this.setData({ muscles: parsePageItems(res), loading: false });
         })
         .catch((err) => {
           console.error('Failed to load muscles:', err);

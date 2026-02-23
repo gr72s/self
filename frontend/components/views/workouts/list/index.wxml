@@ -1,14 +1,10 @@
-<view class="page-container">
-  <!-- 顶部导航栏-->
-  
-  <!-- 主内容区 -->
+﻿<view class="page-container">
   <view class="main-container">
-    <!-- 页面头部 -->
     <view class="section-title">
       <text>训练记录</text>
       <view class="toolbar-right">
         <view class="button icon-button" bindtap="handleRefresh">
-          <text>🔄</text>
+          <text>↻</text>
         </view>
         <view class="button primary create-button" bindtap="navigateToCreate">
           <text class="button-text">+ 新建</text>
@@ -16,7 +12,6 @@
       </view>
     </view>
 
-    <!-- 训练列表 -->
     <view class="table">
       <block wx:if="{{loading}}">
         <view class="loading">
@@ -26,7 +21,7 @@
       </block>
       <block wx:elif="{{workouts.length === 0}}">
         <view class="empty">
-          <text class="empty-icon">🏋️</text>
+          <text class="empty-icon">📋</text>
           <text class="empty-text">暂无训练记录</text>
           <text class="empty-subtext">创建第一条训练记录开始使用</text>
           <view class="button primary create-button" bindtap="navigateToCreate">
@@ -69,13 +64,13 @@
             <view class="table-cell" style="text-align: right;">
               <view class="table-actions">
                 <view class="button icon-button" bindtap="navigateToDetail" data-id="{{item.id}}">
-                  <text>👁️</text>
+                  <text>👁</text>
                 </view>
                 <view class="button icon-button" bindtap="navigateToEdit" data-id="{{item.id}}">
-                  <text>✏️</text>
+                  <text>✎</text>
                 </view>
                 <view class="button icon-button delete" bindtap="confirmDelete" data-id="{{item.id}}">
-                  <text>🗑️</text>
+                  <text>🗑</text>
                 </view>
               </view>
             </view>
@@ -84,7 +79,4 @@
       </block>
     </view>
   </view>
-  
-  <!-- 底部工具栏-->
 </view>
-

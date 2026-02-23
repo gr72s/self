@@ -1,4 +1,4 @@
-<view class="page-container">
+﻿<view class="page-container">
   <view class="main-container">
     <view class="page-header">
       <text class="page-title">编辑肌肉</text>
@@ -15,32 +15,22 @@
 
     <view wx:if="{{!loading && !error}}" class="form-container">
       <view class="form-item">
-        <text class="form-label">肌肉名称</text>
-        <input
-          class="form-input"
-          placeholder="请输入肌肉名称"
-          value="{{name}}"
-          bindinput="handleNameChange"
-        />
+        <text class="form-label">肌肉名称 *</text>
+        <input class="form-input" placeholder="请输入肌肉名称" value="{{name}}" bindinput="handleNameChange" />
         <text wx:if="{{errors.name}}" class="error-message">{{errors.name}}</text>
       </view>
 
       <view class="form-item">
-        <text class="form-label">肌肉分组</text>
-        <input
-          class="form-input"
-          placeholder="请输入肌肉分组（如：胸部、背部）"
-          value="{{group}}"
-          bindinput="handleGroupChange"
-        />
-        <text wx:if="{{errors.group}}" class="error-message">{{errors.group}}</text>
+        <text class="form-label">功能（选填）</text>
+        <input class="form-input" placeholder="请输入肌肉功能" value="{{functionText}}" bindinput="handleFunctionChange" />
       </view>
 
-      <button
-        class="submit-button"
-        bindtap="handleSubmit"
-        disabled="{{submitting}}"
-      >
+      <view class="form-item">
+        <text class="form-label">原名（选填）</text>
+        <input class="form-input" placeholder="请输入原名" value="{{originName}}" bindinput="handleOriginNameChange" />
+      </view>
+
+      <button class="submit-button" bindtap="handleSubmit" disabled="{{submitting}}">
         <text class="submit-button-text">{{submitting ? '提交中...' : '保存'}}</text>
       </button>
     </view>

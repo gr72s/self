@@ -1,130 +1,19 @@
-// 计划列表逻辑
-const { routineApi } = require('../../../services/api');
+﻿const { VIEW_KEYS, SHELL_VIEW_STORAGE_KEY } = require('../../../types/view-router');
 
 Page({
-  /**
-   * 页面的初始数据
-   */
-  data: {
-    routines: [],
-    loading: true,
-    menuOpen: false
-  },
-
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad() {
-    console.log('RoutineListPage loaded');
-    this.fetchRoutines();
-  },
-
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow() {
-    // 页面显示时刷新数据
-    this.fetchRoutines();
-  },
-
-  /**
-   * 获取计划列表
-   */
-  async fetchRoutines() {
-    this.setData({ loading: true });
-    try {
-      const response = await routineApi.getAll();
-      const routines = response?.data?.items;
-      if (!Array.isArray(routines)) {
-        throw new Error('Invalid routine list response format');
-      }
-      this.setData({ routines });
-    } catch (error) {
-      console.error('Failed to fetch routines:', error);
-      wx.showToast({
-        title: '加载计划失败',
-        icon: 'none'
-      });
-    } finally {
-      this.setData({ loading: false });
+  onLoad(options = {}) {
+    const params = {};
+    if (options.id) {
+      params.id = options.id;
     }
-  },
 
-  /**
-   * 处理刷新
-   */
-  handleRefresh() {
-    if (!this.data.loading) {
-      this.fetchRoutines();
-    }
-  },
-
-  /**
-   * 导航到创建页面
-   */
-  navigateToCreate() {
-    wx.navigateTo({
-      url: '/pages/routines/create/index'
+    wx.setStorageSync(SHELL_VIEW_STORAGE_KEY, {
+      view: VIEW_KEYS.ROUTINES_LIST,
+      params
     });
-  },
 
-  /**
-   * 导航到编辑页面
-   */
-  navigateToEdit(e) {
-    const id = e.currentTarget?.dataset?.id;
-    if (id) {
-      wx.navigateTo({
-        url: `/pages/routines/edit/index?id=${id}`
-      });
-    }
-  },
-
-  /**
-   * 确认删除
-   */
-  confirmDelete(e) {
-    const id = e.currentTarget?.dataset?.id;
-    if (id) {
-      wx.showModal({
-        title: '删除计划',
-        content: '确定删除该计划吗？',
-        confirmText: '删除',
-        cancelText: '取消',
-        success: async (res) => {
-          if (res.confirm) {
-            await this.deleteRoutine(id);
-          }
-        }
-      });
-    }
-  },
-
-  /**
-   * 删除计划
-   */
-  async deleteRoutine(id) {
-    try {
-      await routineApi.delete(id);
-      wx.showToast({
-        title: '计划已删除',
-        icon: 'success'
-      });
-      // 重新获取数据
-      this.fetchRoutines();
-    } catch (error) {
-      console.error('Failed to delete routine:', error);
-      wx.showToast({
-        title: '删除计划失败',
-        icon: 'none'
-      });
-    }
-  },
-
-  /**
-   * 处理菜单切换
-   */
-  handleMenuToggle(e) {
-    this.setData({ menuOpen: e.detail.open });
+    wx.reLaunch({
+      url: '/pages/index/index'
+    });
   }
 });

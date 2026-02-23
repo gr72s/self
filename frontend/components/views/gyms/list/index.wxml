@@ -1,10 +1,10 @@
-<view class="page-container">
+﻿<view class="page-container">
   <view class="main-container">
     <view class="section-title">
       <text>健身房</text>
       <view class="toolbar-right">
         <view class="button icon-button" bindtap="handleRefresh">
-          <text>🔄</text>
+          <text>↻</text>
         </view>
         <view class="button primary create-button" bindtap="handleAddGym">
           <text class="button-text">+ 新建</text>
@@ -21,7 +21,7 @@
       </block>
       <block wx:elif="{{error}}">
         <view class="empty">
-          <text class="empty-icon">⚠️</text>
+          <text class="empty-icon">⚠</text>
           <text class="empty-text">{{error}}</text>
           <view class="button secondary" bindtap="loadGyms">
             <text class="button-text">重试</text>
@@ -30,7 +30,7 @@
       </block>
       <block wx:elif="{{gyms.length === 0}}">
         <view class="empty">
-          <text class="empty-icon">🏟️</text>
+          <text class="empty-icon">🏠</text>
           <text class="empty-text">暂无健身房</text>
           <text class="empty-subtext">创建第一个健身房开始使用</text>
           <view class="button primary create-button" bindtap="handleAddGym">
@@ -50,15 +50,15 @@
               <text class="gym-name">{{item.name}}</text>
             </view>
             <view class="table-cell">
-              <text class="gym-address">{{item.location}}</text>
+              <text class="gym-address">{{item.location || '-'}}</text>
             </view>
             <view class="table-cell" style="text-align: right;">
               <view class="table-actions">
                 <view class="button icon-button" bindtap="handleEditGym" data-id="{{item.id}}">
-                  <text>✏️</text>
+                  <text>✎</text>
                 </view>
                 <view class="button icon-button delete" bindtap="handleDeleteGym" data-id="{{item.id}}">
-                  <text>🗑️</text>
+                  <text>🗑</text>
                 </view>
               </view>
             </view>
@@ -83,4 +83,3 @@
     </view>
   </view>
 </view>
-
