@@ -26,7 +26,10 @@ Component({
 
       gymApi.getAll()
         .then((res) => {
-          const gyms = res.data?.data || res.data || [];
+          const gyms = res?.data?.items;
+          if (!Array.isArray(gyms)) {
+            throw new Error('Invalid gym list response format');
+          }
           this.setData({ gyms, loading: false });
         })
         .catch((err) => {

@@ -1,9 +1,5 @@
 <view class="page-container">
-  <!-- 顶部导航栏-->
-  
-  <!-- 主内容区 -->
   <view class="main-container">
-    <!-- 页面头部 -->
     <view class="section-title">
       <text>健身房</text>
       <view class="toolbar-right">
@@ -16,7 +12,6 @@
       </view>
     </view>
 
-    <!-- 健身房列表-->
     <view class="table">
       <block wx:if="{{loading}}">
         <view class="loading">
@@ -46,7 +41,7 @@
       <block wx:else>
         <view class="table-header">
           <view class="table-header-cell">健身房</view>
-          <view class="table-header-cell">地址</view>
+          <view class="table-header-cell">位置</view>
           <view class="table-header-cell" style="text-align: right;">操作</view>
         </view>
         <view class="table-body">
@@ -55,7 +50,7 @@
               <text class="gym-name">{{item.name}}</text>
             </view>
             <view class="table-cell">
-              <text class="gym-address">{{item.address}}</text>
+              <text class="gym-address">{{item.location}}</text>
             </view>
             <view class="table-cell" style="text-align: right;">
               <view class="table-actions">
@@ -72,7 +67,6 @@
       </block>
     </view>
 
-    <!-- 删除确认对话框-->
     <view wx:if="{{showDeleteConfirm}}" class="modal-overlay">
       <view class="modal-content">
         <text class="modal-title">确认删除</text>
@@ -88,7 +82,5 @@
       </view>
     </view>
   </view>
-  
-  <!-- 底部工具栏-->
 </view>
 

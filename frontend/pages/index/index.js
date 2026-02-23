@@ -127,17 +127,25 @@ Page({
 
     try {
       const workoutResponse = await workoutApi.getAll();
-      const workoutData = (workoutResponse.data && workoutResponse.data.data) || workoutResponse.data || [];
-      const workouts = Array.isArray(workoutData) ? workoutData : [];
+      const workouts = Array.isArray(workoutResponse?.data?.items)
+        ? workoutResponse.data.items
+        : [];
 
-      const uniqueRoutines = new Set(workouts.map((w) => w.routineId)).size;
+      const uniqueRoutines = new Set(
+        workouts
+          .map((w) => (w.routine && w.routine.id ? w.routine.id : null))
+          .filter((id) => id !== null)
+      ).size;
+
       const totalExercises = workouts.reduce((sum, workout) => {
-        return sum + ((workout.exercises && workout.exercises.length) || 0);
+        const slots = Array.isArray(workout.slots) ? workout.slots : [];
+        return sum + slots.length;
       }, 0);
 
       this.setData({ workouts, uniqueRoutines, totalExercises });
     } catch (error) {
       console.error('Failed to fetch workouts:', error);
+      this.setData({ workouts: [], uniqueRoutines: 0, totalExercises: 0 });
     }
   },
 

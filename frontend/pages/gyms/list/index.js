@@ -16,43 +16,41 @@ Page({
   },
 
   onShow() {
-    // 页面显示时重新加载数据，确保数据最新
     this.loadGyms();
   },
 
-  // 加载健身房列表
   loadGyms() {
     this.setData({ loading: true, error: '' });
-    
+
     gymApi.getAll()
-      .then(res => {
-        const gyms = res.data?.data || res.data || [];
+      .then((res) => {
+        const gyms = res?.data?.items;
+        if (!Array.isArray(gyms)) {
+          throw new Error('Invalid gym list response format');
+        }
         this.setData({ gyms, loading: false });
       })
-      .catch(err => {
+      .catch((err) => {
         console.error('加载健身房列表失败:', err);
-        this.setData({ 
-          error: '加载失败，请重试', 
-          loading: false 
+        this.setData({
+          error: '加载失败，请重试',
+          loading: false
         });
       });
   },
 
-  // 处理刷新
   handleRefresh() {
     if (!this.data.loading) {
       this.loadGyms();
     }
   },
 
-  // 跳转到添加健身房页面
   handleAddGym() {
     wx.navigateTo({
       url: '/pages/gyms/create/index'
     });
   },
 
-  // 跳转到编辑健身房页面
   handleEditGym(e) {
     const gymId = e.currentTarget.dataset.id;
     wx.navigateTo({
@@ -60,7 +58,6 @@ Page({
     });
   },
 
-  // 显示删除确认对话框
   handleDeleteGym(e) {
     const gymId = e.currentTarget.dataset.id;
     this.setData({
@@ -69,7 +66,6 @@ Page({
     });
   },
 
-  // 取消删除
   cancelDelete() {
     this.setData({
       showDeleteConfirm: false,
@@ -77,27 +73,24 @@ Page({
     });
   },
 
-  // 确认删除
   confirmDelete() {
     if (!this.data.gymIdToDelete) return;
-    
+
     gymApi.delete(this.data.gymIdToDelete)
       .then(() => {
         wx.showToast({
           title: '删除成功',
           icon: 'success'
         });
-        
-        // 刷新列表
+
         this.loadGyms();
-        
-        // 关闭对话框
+
         this.setData({
           showDeleteConfirm: false,
           gymIdToDelete: null
         });
       })
-      .catch(err => {
+      .catch((err) => {
         console.error('删除健身房失败:', err);
         wx.showToast({
           title: '删除失败，请重试',
@@ -106,7 +99,6 @@ Page({
       });
   },
 
-  // 处理菜单切换
   handleMenuToggle(e) {
     this.setData({ menuOpen: e.detail.open });
   }

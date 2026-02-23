@@ -26,7 +26,10 @@ Component({
 
       muscleApi.getAll()
         .then((res) => {
-          const muscles = res.data?.data || res.data || [];
+          const muscles = res?.data?.items;
+          if (!Array.isArray(muscles)) {
+            throw new Error('Invalid muscle list response format');
+          }
           this.setData({ muscles, loading: false });
         })
         .catch((err) => {
