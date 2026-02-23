@@ -56,8 +56,10 @@ Page({
     this.setData({ loading: true });
     try {
       const response = await workoutApi.getAll();
-      const data = (response.data && response.data.data) || response.data || [];
-      const workouts = Array.isArray(data) ? data : [];
+      const workouts = response?.data?.items;
+      if (!Array.isArray(workouts)) {
+        throw new Error('Invalid workout list response format');
+      }
       this.setData({ workouts });
     } catch (error) {
       console.error('Failed to fetch workouts:', error);

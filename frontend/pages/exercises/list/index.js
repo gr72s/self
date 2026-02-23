@@ -35,8 +35,10 @@ Page({
     this.setData({ loading: true });
     try {
       const response = await exerciseApi.getAll();
-      const data = response.data?.data || response.data || [];
-      const exercises = Array.isArray(data) ? data : [];
+      const exercises = response?.data?.items;
+      if (!Array.isArray(exercises)) {
+        throw new Error('Invalid exercise list response format');
+      }
       this.setData({ exercises });
     } catch (error) {
       console.error('Failed to fetch exercises:', error);

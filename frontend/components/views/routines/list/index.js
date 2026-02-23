@@ -22,8 +22,10 @@ Component({
       this.setData({ loading: true });
       try {
         const response = await routineApi.getAll();
-        const data = response.data?.data || response.data || [];
-        const routines = Array.isArray(data) ? data : [];
+        const routines = response?.data?.items;
+        if (!Array.isArray(routines)) {
+          throw new Error('Invalid routine list response format');
+        }
         this.setData({ routines });
       } catch (error) {
         console.error('Failed to fetch routines:', error);
