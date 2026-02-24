@@ -9,9 +9,16 @@ RUN apk add --no-cache sqlite tzdata && \
     pip install --no-cache-dir -r requirements.txt
 
 COPY . .
-RUN pip install -e .
+RUN pip install -e . && \
+    addgroup -g 1001 green && \
+    adduser -D -h /home/green -u 1001 -G green green && \
+    mkdir -p /home/green/.self /home/green/.self-app && \
+    chown -R 1001:1001 /home/green /app
 
-ENV TZ=Asia/Shanghai
+ENV TZ=Asia/Shanghai \
+    HOME=/home/green
+
+USER 1001:1001
 
 EXPOSE 8000
 CMD ["self", "start"]

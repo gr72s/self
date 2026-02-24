@@ -3,15 +3,16 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    user: "1001:1001"
     ports:
       - "58000:8000"
     volumes:
       - type: bind
         source: ${SELF_HOME:?SELF_HOME is required}
-        target: /root/.self
+        target: /home/green/.self
       - type: bind
         source: ${SELF_APP_HOME:?SELF_APP_HOME is required}
-        target: /root/.self-app
+        target: /home/green/.self-app
     environment:
       - PYTHONUNBUFFERED=1
       - BOOT_ENV=production
@@ -24,14 +25,15 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    user: "1001:1001"
     profiles: ["init"]
     volumes:
       - type: bind
         source: ${SELF_HOME:?SELF_HOME is required}
-        target: /root/.self
+        target: /home/green/.self
       - type: bind
         source: ${SELF_APP_HOME:?SELF_APP_HOME is required}
-        target: /root/.self-app
+        target: /home/green/.self-app
     environment:
       - PYTHONUNBUFFERED=1
       - BOOT_ENV=production
@@ -40,8 +42,8 @@ services:
       - sh
       - -lc
       - |
-        mkdir -p /root/.self
-        find /root/.self -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +
+        mkdir -p /home/green/.self
+        find /home/green/.self -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +
         self init-project --boot-env production
         self check-project
 
@@ -49,14 +51,15 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    user: "1001:1001"
     profiles: ["uninstall"]
     volumes:
       - type: bind
         source: ${SELF_HOME:?SELF_HOME is required}
-        target: /root/.self
+        target: /home/green/.self
       - type: bind
         source: ${SELF_APP_HOME:?SELF_APP_HOME is required}
-        target: /root/.self-app
+        target: /home/green/.self-app
     environment:
       - PYTHONUNBUFFERED=1
       - BOOT_ENV=production

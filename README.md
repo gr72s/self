@@ -11,6 +11,19 @@ SELF_APP_HOME=/home/green/.self-app
 EOF
 ```
 
+- container user
+
+所有服务容器均以宿主机 `green` 对应的 `uid:gid=1001:1001` 运行，容器内 `HOME=/home/green`。
+请确保 `${SELF_HOME}` 与 `${SELF_APP_HOME}` 目录对 `green` 用户可写。
+
+- verify user mapping
+
+```bash
+docker compose run --rm backend sh -lc "id && echo $HOME"
+```
+
+期望输出包含 `uid=1001` 且 `HOME=/home/green`。
+
 - init project (first deploy only)
 
 ```bash
