@@ -42,6 +42,11 @@
 }
 
 /* 删除按钮 */
+.button.icon-button.delete,
+.button.icon-button.delete text {
+  color: #d32f2f;
+}
+
 .button.icon-button.delete:active {
   background-color: #ffebee;
 }
@@ -88,6 +93,14 @@
   display: flex;
   justify-content: center;
   gap: 16rpx;
+}
+
+.modal-buttons .button.primary.delete {
+  background-color: #d32f2f;
+}
+
+.modal-buttons .button.primary.delete:active {
+  background-color: #b71c1c;
 }
 
 /* 响应式调整 */

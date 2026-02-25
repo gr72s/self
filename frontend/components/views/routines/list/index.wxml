@@ -56,7 +56,7 @@
                 <view class="button icon-button" bindtap="navigateToEdit" data-id="{{item.id}}">
                   <text>✎</text>
                 </view>
-                <view class="button icon-button delete" bindtap="confirmDelete" data-id="{{item.id}}">
+                <view class="button icon-button delete" bindtap="requestDelete" data-id="{{item.id}}">
                   <text>🗑</text>
                 </view>
               </view>
@@ -64,6 +64,21 @@
           </view>
         </view>
       </block>
+    </view>
+
+    <view wx:if="{{showDeleteConfirm}}" class="modal-overlay">
+      <view class="modal-content">
+        <text class="modal-title">确认删除</text>
+        <text class="modal-message">确定删除该训练计划吗？</text>
+        <view class="modal-buttons">
+          <view class="button secondary" bindtap="cancelDelete">
+            <text class="button-text">取消</text>
+          </view>
+          <view class="button primary delete" bindtap="confirmDelete">
+            <text class="button-text">删除</text>
+          </view>
+        </view>
+      </view>
     </view>
   </view>
 </view>

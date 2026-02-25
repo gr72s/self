@@ -40,7 +40,9 @@ Component({
 
   data: {
     workouts: [],
-    loading: true
+    loading: true,
+    showDeleteConfirm: false,
+    workoutIdToDelete: null
   },
 
   lifetimes: {
@@ -95,20 +97,27 @@ Component({
       });
     },
 
-    confirmDelete(e) {
+    requestDelete(e) {
       const id = e?.currentTarget?.dataset?.id;
       if (!id) return;
-      wx.showModal({
-        title: '删除训练记录',
-        content: '确定删除该训练记录吗？',
-        confirmText: '删除',
-        cancelText: '取消',
-        success: async (res) => {
-          if (res.confirm) {
-            await this.deleteWorkout(id);
-          }
-        }
+
+      this.setData({
+        showDeleteConfirm: true,
+        workoutIdToDelete: id
       });
+    },
+
+    cancelDelete() {
+      this.setData({
+        showDeleteConfirm: false,
+        workoutIdToDelete: null
+      });
+    },
+
+    async confirmDelete() {
+      const { workoutIdToDelete } = this.data;
+      if (!workoutIdToDelete) return;
+      await this.deleteWorkout(workoutIdToDelete);
     },
 
     async deleteWorkout(id) {
@@ -118,6 +127,12 @@ Component({
           title: '训练记录已删除',
           icon: 'success'
         });
+
+        this.setData({
+          showDeleteConfirm: false,
+          workoutIdToDelete: null
+        });
+
         this.fetchWorkouts();
       } catch (error) {
         console.error('Failed to delete workout:', error);

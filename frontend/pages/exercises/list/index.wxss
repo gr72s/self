@@ -56,8 +56,64 @@
 }
 
 /* 删除按钮 */
+.button.icon-button.delete,
+.button.icon-button.delete text {
+  color: #d32f2f;
+}
+
 .button.icon-button.delete:active {
   background-color: #ffebee;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: var(--background-white);
+  padding: 32rpx;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 400px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.modal-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16rpx;
+  color: var(--text-primary);
+  text-align: center;
+}
+
+.modal-message {
+  margin-bottom: 24rpx;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  text-align: center;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16rpx;
+}
+
+.modal-buttons .button.primary.delete {
+  background-color: #d32f2f;
+}
+
+.modal-buttons .button.primary.delete:active {
+  background-color: #b71c1c;
 }
 
 /* 响应式调整 */

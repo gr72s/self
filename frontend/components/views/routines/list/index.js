@@ -14,7 +14,9 @@ Component({
 
   data: {
     routines: [],
-    loading: true
+    loading: true,
+    showDeleteConfirm: false,
+    routineIdToDelete: null
   },
 
   lifetimes: {
@@ -60,21 +62,27 @@ Component({
       });
     },
 
-    confirmDelete(e) {
+    requestDelete(e) {
       const id = e.currentTarget?.dataset?.id;
       if (!id) return;
 
-      wx.showModal({
-        title: '删除计划',
-        content: '确定删除该训练计划吗？',
-        confirmText: '删除',
-        cancelText: '取消',
-        success: async (res) => {
-          if (res.confirm) {
-            await this.deleteRoutine(id);
-          }
-        }
+      this.setData({
+        showDeleteConfirm: true,
+        routineIdToDelete: id
       });
+    },
+
+    cancelDelete() {
+      this.setData({
+        showDeleteConfirm: false,
+        routineIdToDelete: null
+      });
+    },
+
+    async confirmDelete() {
+      const { routineIdToDelete } = this.data;
+      if (!routineIdToDelete) return;
+      await this.deleteRoutine(routineIdToDelete);
     },
 
     async deleteRoutine(id) {
@@ -84,6 +92,12 @@ Component({
           title: '计划已删除',
           icon: 'success'
         });
+
+        this.setData({
+          showDeleteConfirm: false,
+          routineIdToDelete: null
+        });
+
         this.fetchRoutines();
       } catch (error) {
         console.error('Failed to delete routine:', error);
